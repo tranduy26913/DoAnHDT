@@ -1,0 +1,55 @@
+@each $color,
+$val in $colors {
+    .color-#{$color} {
+        color: $val;
+    }
+    .bg-#{$color} {
+        background-color: $val;
+    }
+}
+
+@each $val in $numbers {
+    .grid-col-#{$val} {
+        grid-template-columns: repeat($val, 1fr);
+    }
+}
+
+@each $val in $numbers {
+    .grid-col-md-#{$val} {
+        @include tablet {
+            grid-template-columns: repeat($val, 1fr);
+        }
+    }
+}
+
+@each $val in $numbers {
+    .grid-col-sm-#{$val} {
+        @include mobile {
+            grid-template-columns: repeat($val, 1fr);
+        }
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 1620px;
+    padding: 0 50px;
+    margin: auto;
+    position: relative;
+    @include tablet {
+        padding: 0 20px;
+    }
+    @include mobile {
+        padding: 0 10px;
+    }
+}
+
+.main {
+    margin-top: 72px;
+    margin-bottom: 2rem;
+    min-height: 100vh;
+}
+
+.grid {
+    display: grid;
+}
