@@ -65,7 +65,7 @@ export default function Header() {
                             {
                                 user ? <Link to='/profile'>
                                     <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
-                                    {user.name}
+                                    {user.username}
                                 </Link> :
                                     <>
                                         <Link to='/' onClick={handleAuthLogin}><li>Đăng nhập</li></Link>
@@ -104,7 +104,7 @@ export default function Header() {
                             {
                                 user ? <Link to='/profile'>
                                     <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
-                                    {user.name}
+                                    {user.username}
                                 </Link> :
                                     <>
                                         <Link to='/' onClick={handleAuthLogin}><li>Đăng nhập</li></Link>
