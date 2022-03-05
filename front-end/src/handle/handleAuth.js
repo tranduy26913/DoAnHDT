@@ -6,7 +6,8 @@ export const handleLogin =async(user, dispatch,navigate)=>{
     dispatch(loginStart());
     try {
       const response = await apiMain.login(user); //gọi api login
-      dispatch(loginSuccess(response.data.info)); //lấy thông tin user
+      console.log(response.data)
+      dispatch(loginSuccess(response.data)); //lấy thông tin user
       dispatch(authInactive()) //hành động tắt modal login
     } catch (error) {
       dispatch(loginFalse());

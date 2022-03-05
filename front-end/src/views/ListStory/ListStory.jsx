@@ -1,4 +1,5 @@
 import { useEffect,useState } from 'react'
+import apiMain from '../../api/apiMain';
 import Grid from '../../components/Grid';
 import Reading from '../../components/Reading';
 import Section, {SectionHeading,SectionBody} from '../../components/section';
@@ -30,10 +31,13 @@ function ListStory() {
     ])
 
     useEffect(()=>{
-        fetch("http://localhost:8080/api/allDauTruyen")
-           .then(response=>response.json())
-            .then(list=>setData(list))
-            .catch(err=>console.log(err));
+        const getStory = async()=>{
+          const res = await apiMain.getStory({size:6});
+          
+          setData(res);
+        }
+        getStory();
+
     },[])
   return (
     <>
@@ -46,7 +50,7 @@ function ListStory() {
             </SectionHeading>
             <SectionBody>
               <div className='list-story'>
-               { datas.map(data=><Story key={data.id.toString()} data={data}/>)}
+               { datas.map((data,index)=><Story key={index} data={data}/>)}
             </div>
             </SectionBody>
           </Section>

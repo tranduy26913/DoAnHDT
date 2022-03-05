@@ -75,6 +75,21 @@
         .text-bold {
             font-weight: 600;
         }
+        &__profile {
+            &__name {
+                position: relative;
+            }
+            &__menu {
+                display: none;
+                position: absolute;
+                top: 48px;
+                border: 1px solid #bbb;
+                background-color: azure;
+                &.active {
+                    display: block
+                }
+            }
+        }
     }
     &__nav {
         @include flex (center, unset);

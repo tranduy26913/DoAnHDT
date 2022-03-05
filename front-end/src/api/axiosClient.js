@@ -2,6 +2,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 import jwt_decode from 'jwt-decode';
+import getData from './getData';
 
 export const axiosClient = axios.create({
     //baseURL: "http://localhost:5000/api",
@@ -16,8 +17,8 @@ export const axiosClient = axios.create({
 
 
 const refreshToken = async(user)=>{
-    const res= await axiosClient.get(`/auth/refresh?refreshToken=${user.refreshToken}`)
-    return res.data
+        const res= await axiosClient.post('/auth/refreshtoken',{refreshToken:user.refreshToken},{ headers:{Authorization:`Bearer ${user.accessToken}`},})
+        return res.data
 }
 
 export const axiosInstance = (user, dispatch,stateSuccess) => {
@@ -34,7 +35,7 @@ export const axiosInstance = (user, dispatch,stateSuccess) => {
             let date=new Date();
             const decodeToken=jwt_decode(user?.accessToken);
             if(decodeToken.exp < date.getTime()/1000){
-                const newAccessToken = await refreshToken(user);
+                const newAccessToken = getData(await refreshToken(user));
                 console.log(newAccessToken.accessToken)
                 const newUser = {
                     ...user,
