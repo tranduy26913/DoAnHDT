@@ -30,6 +30,12 @@ $val in $colors {
     }
 }
 
+@each $val in $numbers {
+    .col-#{$val} {
+        width: ($val/12)*100%;
+    }
+}
+
 .container {
     width: 100%;
     max-width: 1620px;

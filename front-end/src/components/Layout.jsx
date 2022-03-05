@@ -1,9 +1,18 @@
 
 function Layout(props) {
   return (
-    <div className='container'>
-        {props.children}
-    </div>
+    <>
+    <a><span 
+      className='imgHero'>
+        </span></a>
+    
+      <div className="main">
+        <div className="container">
+          {props.children}
+        </div>
+      </div>
+           
+    </>
   )
 }
 

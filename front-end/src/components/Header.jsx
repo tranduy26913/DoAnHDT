@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { useEffect, useState, useRef } from 'react'
-import { useLocation, Link } from 'react-router-dom';
+import { useEffect,  useRef } from 'react'
+import {  Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import logo from '../assets/img/logo.png';
 import Auth from './Auth';
@@ -131,7 +131,7 @@ export default function Header() {
 
                                         <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                             <ul>
-                                                <li>Hồ sơ</li>
+                                                <li><Link to="/profile">Hồ sơ</Link></li>
                                                 <li>Cài đặt</li>
                                                 <li>Thoát</li>
                                                 <li></li>
