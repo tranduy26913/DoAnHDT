@@ -11,6 +11,10 @@ const apiMain = {
         const res=await axiosClient.post('/auth/register',params)
         return res.data;
     },
+    forgetPassword:async(params)=>{
+        const res=await axiosClient.post('/auth/forgetpassword',params)
+        return res.data;
+    },
 
     getStory: async(params)=>{
         const res= await axiosClient.get('/novels/',{params:params});
@@ -56,7 +60,7 @@ const apiMain = {
             const axi = await axiosInstance(user,dispatch,stateSuccess)
             return (await axi.put('/user/info/password',params,{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
         } catch (error) {
-            console.log(error.response.data?.details[0])
+            console.log(error)
             dispatch(logoutSuccess());
         }
     }

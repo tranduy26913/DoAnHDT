@@ -11,7 +11,8 @@ export const messageSlice = createSlice({
         },
         auth:{
             msg:""
-        }
+        },
+        loading:false
     },
     reducers:{
         setMessageLogin:(state,action)=>{
@@ -31,7 +32,10 @@ export const messageSlice = createSlice({
         },
         clearMessageRegister:(state)=>{
             state.register.msg=""
-        }
+        },
+        setLoading:(state,action)=>{
+            state.loading =action.payload
+        },
     }
 })
 
@@ -42,7 +46,8 @@ export const {
     clearMessageAuth,
     clearMessageLogin,
     setMessageRegister,
-    clearMessageRegister
+    clearMessageRegister,
+    setLoading
 }=messageSlice.actions
 
 export default messageSlice.reducer

@@ -23,11 +23,10 @@ export const handleLogin =async(user, dispatch,navigate)=>{
 export const handleRegister =async(params, dispatch,navigate)=>{
   try {
     const res = await apiMain.register(params) //gọi api login
-    console.log(res.status)
     if(res.status==200){
       console.log(typeof res.data.email)
       dispatch(setMessageRegister("Đăng ký thành công")); //lấy thông tin user
-      dispatch(authInactive()) //hành động tắt modal login
+      dispatch(authInactive()) //hành động tắt modal register
     }
   } catch (error) {
     console.log(error)

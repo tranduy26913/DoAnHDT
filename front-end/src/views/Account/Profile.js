@@ -13,10 +13,10 @@ import { ref, uploadBytes,getDownloadURL } from 'firebase/storage';
 function Profile() {
   const user = useSelector(state => state.auth.login?.user);
   const [userInfo, setUserInfo] = useState(null);
-  const [image, setImage] = useState(avt);
-  const [preview, setPreview] = useState()
-  const [name, setName] = useState(userInfo?.tenhienthi);
-  const [birthDate, setBirthDate] = useState(null);
+  const [image, setImage] = useState("");
+  const [preview, setPreview] = useState(avt)
+  const [name, setName] = useState(userInfo?.tenhienthi||"");
+  const [birthDate, setBirthDate] = useState(new Date());
   const dispatch = useDispatch();
 
   const upload = async() => { //upload ảnh lên firebase
@@ -58,8 +58,6 @@ function Profile() {
   useEffect(() => {
     const getUsers = async () => {
       const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
-      console.log(res.userInfo)
-      console.log(res.userInfo?.image)
       setUserInfo(res.userInfo)
       setBirthDate(new Date(res.userInfo.birthdate))
       setName(res.userInfo?.tenhienthi)
@@ -102,11 +100,11 @@ function Profile() {
             <div className="profile__main">
               <div className="group-info">
                 <label htmlFor="" style={labelStyle}>Tên hiển thị</label>
-                {<input onChange={onChangeName} value={name} />}
+                <input onChange={onChangeName} value={name||""} />
               </div>
               <div className="group-info">
                 <label htmlFor="" style={labelStyle}>Email</label>
-                {<input readOnly value={userInfo?.email}></input>}
+                {<input readOnly value={userInfo?.email||""}></input>}
               </div>
               <div className="group-info">
                 <label htmlFor="" style={labelStyle}>Ngày sinh</label>

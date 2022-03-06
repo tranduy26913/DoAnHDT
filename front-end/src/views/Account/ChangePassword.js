@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import apiMain from '../../api/apiMain'
 import {useDispatch,useSelector} from 'react-redux'
 import { loginSuccess, logoutSuccess } from '../../redux/authSlice'
-import { async } from '@firebase/util'
+import {setLoading} from '../../redux/messageSlice'
 
 function ChangePassword() {
-
+    const loading = useSelector(state => state.message.loading)
     const [currentPW,setCurrentPW] = useState("")
     const [newPW,setNewPW] = useState("")
     const [newCfPW,setNewCfPW] = useState("")
@@ -48,12 +48,14 @@ function ChangePassword() {
 
     const handleChangePassword = async()=>{
         if(valid.new && valid.cf){
+            dispatch(setLoading(true))
             const params = {
                 newPassword:newPW,
                 password:currentPW
             }
             const result= await apiMain.ChangePassword(user,dispatch,loginSuccess,params)
             console.log(result)
+            dispatch(setLoading(false))
         }
     }
 
@@ -77,7 +79,7 @@ function ChangePassword() {
                 <span>{msgNewCfPW}</span>
             </div>
             <div className="d-flex">
-                <button onClick={handleChangePassword}>Đổi mật khẩu</button>
+                <button onClick={handleChangePassword}>{loading?<i class="fa fa-spinner fa-spin"></i>:''} Đổi mật khẩu</button>
             </div>
 
         </div>
