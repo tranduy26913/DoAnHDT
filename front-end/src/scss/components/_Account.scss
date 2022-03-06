@@ -1,0 +1,11 @@
+.list-group {
+    &__item {
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        &.active {
+            background-color: $main-color;
+        }
+    }
+}

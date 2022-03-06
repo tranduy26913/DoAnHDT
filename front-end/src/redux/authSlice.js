@@ -19,6 +19,9 @@ export const authSlice = createSlice({
         },
         loginFalse: (state) => {
             state.login.error = true
+        },
+        logoutSuccess:(state)=>{
+            state.login.user =null
         }
 
     }
@@ -27,7 +30,8 @@ export const authSlice = createSlice({
 export const {
     loginFalse,
     loginStart,
-    loginSuccess
+    loginSuccess,
+    logoutSuccess
 }=authSlice.actions
 
 export default authSlice.reducer

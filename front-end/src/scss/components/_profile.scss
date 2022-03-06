@@ -13,9 +13,15 @@
         flex-direction: column;
         justify-content: center;
         & img {
+            border-radius: 50%;
             width: 50%;
-            height: width;
             margin: 20px auto;
+        }
+    }
+    &__main {
+        height: 100%;
+        & .group-info {
+            padding-bottom: 10px;
         }
     }
 }

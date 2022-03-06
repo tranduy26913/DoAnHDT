@@ -1,8 +1,8 @@
 import {loginStart,loginSuccess,loginFalse} from "../redux/authSlice"
 import {authInactive} from '../redux/modalSlice'
 import apiMain from '../api/apiMain'
-export const handleLogin =async(user, dispatch,navigate)=>{
 
+export const handleLogin =async(user, dispatch,navigate)=>{
     dispatch(loginStart());
     try {
       const response = await apiMain.login(user); //gọi api login
@@ -13,3 +13,4 @@ export const handleLogin =async(user, dispatch,navigate)=>{
       dispatch(loginFalse());
     }
 }
+

@@ -1,3 +1,4 @@
+import { logoutSuccess } from "../redux/authSlice";
 import {axiosClient,axiosInstance} from "./axiosClient";
 
 const apiMain = {
@@ -26,8 +27,24 @@ const apiMain = {
     },
 
     getUserInfo : async(user,dispatch,stateSuccess)=>{
-        const axi = await axiosInstance(user,dispatch,stateSuccess)
-        return (await axi.get('/user/info',{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
+        try {
+            const axi = await axiosInstance(user,dispatch,stateSuccess)
+            return (await axi.get('/user/info',{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
+        } catch (error) {
+            console.log(error.response.data?.details[0])
+            dispatch(logoutSuccess());
+        }
+        
+    },
+    updateUserInfo : async(user,dispatch,stateSuccess,params)=>{
+        try {
+            const axi = await axiosInstance(user,dispatch,stateSuccess)
+            return (await axi.put('/user/info',params,{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
+        } catch (error) {
+            console.log(error.response.data?.details[0])
+            dispatch(logoutSuccess());
+        }
+        
     }
 }
 export default apiMain;

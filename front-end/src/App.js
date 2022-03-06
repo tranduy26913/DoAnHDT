@@ -3,8 +3,10 @@ import Header from './components/Header';
 import './App.scss';
 import StoryRead from './views/StoryRead';
 import Home from './views/Home/Home';
-import Layout from './components/Layout';
-import Profile from './views/Profile/Profile';
+import Profile from './views/Account/Profile';
+import ChangePassword from './views/Account/ChangePassword';
+import Account from './views/Account/Account';
+import TuTruyen from './views/Account/TuTruyen';
 
 function App() {
   return (
@@ -13,7 +15,11 @@ function App() {
         <Routes>
             <Route path='/' element={<Home />}></Route>
             <Route path='truyen' element={<StoryRead />}></Route>
-            <Route path='profile' element={<Profile />}></Route>
+            <Route path='account' element={<Account />}>
+                <Route path='profile' element={<Profile />}></Route>
+                <Route path='change-password' element={<ChangePassword />}></Route>
+                <Route path='tu-truyen' element={<TuTruyen />}></Route>
+            </Route>
           </Routes>
           
     </BrowserRouter>
