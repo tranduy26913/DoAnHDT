@@ -19,42 +19,38 @@ function Profile() {
   const [birthDate, setBirthDate] = useState(null);
   const dispatch = useDispatch();
 
-  const upload = async() => {
+  const upload = async() => { //upload ảnh lên firebase
     if (image == null)
       return;
     const storageRef = ref(storage, `/images/${userInfo?.username}`);
     uploadBytes(storageRef, image).then((result) => { 
       
       alert("success");
-      getDownloadURL(result.ref).then(async(url)=>{
+      getDownloadURL(result.ref).then(async(url)=>{//lấy liên kết tới ảnh
         const data = {
           tenhienthi:name,
           image:url,
           birthdate:birthDate
         }
-          setPreview(url)
-          await handleSubmitSaveProfile(data)  
+          await handleSubmitSaveProfile(data)  // xử lý update lại ảnh
       })         
     })  
-    
   }
 
   const handleSubmitSaveProfile = async (data) => {
     try {
-      console.log("Start update")
-      const data = {
-        tenhienthi:name,
-        image:preview,
-        birthdate:birthDate
-      }
       const res = await apiMain.updateUserInfo(user,dispatch,loginSuccess,data)
-      console.log(res)
     } catch (error) {
       console.log(error)
     }
   }
   const handleEdit = async(e) => {
-      await handleSubmitSaveProfile()
+    const data = {
+      tenhienthi:name,
+      image:preview,
+      birthdate:birthDate
+    }
+    await handleSubmitSaveProfile(data)
   }
 
 

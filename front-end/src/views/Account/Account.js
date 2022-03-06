@@ -25,7 +25,7 @@ function Account() {
 
   const { pathname } = useLocation();
   console.log(pathname.split('/'))
-const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
+  const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
   return (
     <Layout >
       <div className="main-content">

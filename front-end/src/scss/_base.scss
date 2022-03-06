@@ -81,7 +81,7 @@ button:hover {
 }
 
 input {
-    border-color: transparent;
+    border: 1px solid rgba(148, 148, 148, 0.541);
     outline-color: $main-color;
     width: 96%;
     border-radius: 1rem;

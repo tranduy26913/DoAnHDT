@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useEffect,  useRef } from 'react'
-import {  Link } from 'react-router-dom';
+import {  Link ,useNavigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import logo from '../assets/img/logo.png';
 import Auth from './Auth';
@@ -9,7 +9,7 @@ import { authLoginActive,authRegisterActive, authInactive } from '../redux/modal
 import jwt_decode from 'jwt-decode';
 import getData from '../api/getData';
 import apiMain from '../api/apiMain';
-import { loginSuccess } from '../redux/authSlice';
+import { loginSuccess, logoutSuccess } from '../redux/authSlice';
 
 
 
@@ -21,7 +21,7 @@ export default function Header() {
     const user = useSelector(state => state.auth.login?.user);
     const modalAuth = useSelector(state => state.modal.auth.active);
     const modalLogin = useSelector(state => state.modal.auth.login);
-
+    const navigate = useNavigate();
     
 
     const dispatch = useDispatch();
@@ -46,6 +46,10 @@ export default function Header() {
         dispatch(authRegisterActive());
     }
 
+    const handleLogout = ()=>{
+        dispatch(logoutSuccess())
+        navigate('/')
+    }
     useEffect(()=>{
         const checkAuth=async()=>{
             let date=new Date();
@@ -131,15 +135,12 @@ export default function Header() {
 
                                         <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                             <ul>
-                                                <li><Link to="/profile">Hồ sơ</Link></li>
+                                                <li><Link to="account/profile">Hồ sơ</Link></li>
                                                 <li>Cài đặt</li>
-                                                <li>Thoát</li>
+                                                <li ><a onClick={handleLogout}>Thoát</a></li>
                                                 <li></li>
                                             </ul>
                                         </div>
-                                   
-
-
                                     </div>
                                  :
                                     <>

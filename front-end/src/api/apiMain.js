@@ -1,9 +1,14 @@
 import { logoutSuccess } from "../redux/authSlice";
+import ChangePassword from "../views/Account/ChangePassword";
 import {axiosClient,axiosInstance} from "./axiosClient";
 
 const apiMain = {
     login: async(params)=>{
         const res=await axiosClient.post('/auth/login',params)
+        return res.data;
+    },
+    register: async(params)=>{
+        const res=await axiosClient.post('/auth/register',params)
         return res.data;
     },
 
@@ -44,7 +49,16 @@ const apiMain = {
             console.log(error.response.data?.details[0])
             dispatch(logoutSuccess());
         }
-        
+    },
+
+    ChangePassword: async(user,dispatch,stateSuccess,params)=>{
+        try {
+            const axi = await axiosInstance(user,dispatch,stateSuccess)
+            return (await axi.put('/user/info/password',params,{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
+        } catch (error) {
+            console.log(error.response.data?.details[0])
+            dispatch(logoutSuccess());
+        }
     }
 }
 export default apiMain;

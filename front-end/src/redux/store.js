@@ -1,6 +1,7 @@
 import { configureStore,combineReducers } from "@reduxjs/toolkit"
 import authReducer from "./authSlice"
 import modalReducer from "./modalSlice"
+import messageReducer from "./messageSlice"
 import {
     persistStore,
     persistReducer,
@@ -14,7 +15,7 @@ import {
 import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
 
-const rootReducer=combineReducers({auth: authReducer,modal: modalReducer})
+const rootReducer=combineReducers({auth: authReducer,modal: modalReducer,message:messageReducer})
 
 const persistConfig = {
     key: 'root',

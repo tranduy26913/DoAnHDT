@@ -22,6 +22,9 @@ export const authSlice = createSlice({
         },
         logoutSuccess:(state)=>{
             state.login.user =null
+        },
+        registerSuccess:(state)=>{
+            
         }
 
     }

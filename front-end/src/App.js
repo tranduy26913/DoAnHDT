@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter,HashRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import './App.scss';
 import StoryRead from './views/StoryRead';
@@ -10,7 +10,7 @@ import TuTruyen from './views/Account/TuTruyen';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Header />
         <Routes>
             <Route path='/' element={<Home />}></Route>
@@ -22,7 +22,7 @@ function App() {
             </Route>
           </Routes>
           
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
