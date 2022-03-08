@@ -1,6 +1,5 @@
 import { useEffect,useState } from 'react'
 import apiMain from '../../api/apiMain';
-import Grid from '../../components/Grid';
 import Reading from '../../components/Reading';
 import Section, {SectionHeading,SectionBody} from '../../components/section';
 import Story from '../../components/Story';
@@ -32,7 +31,7 @@ function ListStory() {
 
     useEffect(()=>{
         const getStory = async()=>{
-          const res = await apiMain.getStory({size:6});
+          const res = await apiMain.getStorys({size:6});
           
           setData(res);
         }

@@ -1,4 +1,3 @@
-import React, { useCallback } from 'react'
 
 import { Link, Outlet, useLocation, Route, Routes } from 'react-router-dom';
 import Layout from '../../components/Layout';
@@ -10,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import getData from '../../api/getData';
 import ChangePassword from './ChangePassword'
 import Profile from './Profile';
-import TuTruyen from './TuTruyen';
+import Users from './Users'
 
 function Account() {
   const menu = [
@@ -25,29 +24,32 @@ function Account() {
       icon: ""
     },
     {
-      path: "tu-truyen",
-      display: "Tủ truyện",
+      path: "users",
+      display: "Thành viên",
       icon: ""
     },
+    {
+      path: "add-user",
+      display: "Thêm thành viên",
+      icon: ""
+    }
   ]
 
-  const [userInfo ,setUserInfo]=useState(null)
   const user = useSelector(state => state.auth.login?.user);
+  const [userInfo, setUserInfo] = useState(null);
   const { pathname } = useLocation();
   const dispatch = useDispatch();
   const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
 
-useEffect(()=>{
-  const getUsers = async () => {
-    const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
-    setUserInfo(res.userInfo)
-  }
-  getUsers()
-},[])
+  useEffect(() => {
+    const getUsers = async () => {
+      const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
+      setUserInfo(res.userInfo)
+    }
+    getUsers()
+  }, [])
 
-  const changeUserInfo=useCallback((data)=>{
-    setUserInfo(data)
-  })
+
 
   return (
     <Layout >
@@ -65,9 +67,9 @@ useEffect(()=>{
           </div>
           <div className="col-9 ">
             <Routes>
-              <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo}/>}></Route>
+              <Route path='profile' element={<Profile userInfo={userInfo}/>}></Route>
               <Route path='change-password' element={<ChangePassword />}></Route>
-              <Route path='tu-truyen' element={<TuTruyen />}></Route>
+              <Route path='users' element={<Users dispatch={dispatch}/>}></Route>
             </Routes>
           </div>
         </div>

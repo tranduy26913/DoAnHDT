@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link } from 'react-router-dom'
 function Story(props) {
     const data=props.data;
   return (
@@ -8,7 +9,7 @@ function Story(props) {
             <img src={data.hinhanh} alt=""/>
         </div>
         <div className='story-card__content'>
-            <h2 className='story-card__tilte'>{data['tentruyen']}</h2>
+            <h2 className='story-card__tilte'><Link to={`truyen/${data.url}`}>{data['tentruyen']}</Link></h2>
             <div className='story-card__description'>{data.noidung}</div>
             <div className='story-card__info'>
               <span className='story-card__author'>{data.tacgia}</span>

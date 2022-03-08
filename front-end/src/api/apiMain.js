@@ -3,6 +3,8 @@ import ChangePassword from "../views/Account/ChangePassword";
 import {axiosClient,axiosInstance} from "./axiosClient";
 
 const apiMain = {
+
+    ///authentication
     login: async(params)=>{
         const res=await axiosClient.post('/auth/login',params)
         return res.data;
@@ -15,16 +17,42 @@ const apiMain = {
         const res=await axiosClient.post('/auth/forgetpassword',params)
         return res.data;
     },
+    reActive: async(params)=>{
+        const res=await axiosClient.post('/auth/reactive',params)
+        return res.data;
+    },
+    ///get data
 
+    getStorys: async(params)=>{
+        const res= await axiosClient.get(`/novels/`,{params:params});
+        return res.data;
+       
+    },
     getStory: async(params)=>{
-        const res= await axiosClient.get('/novels/',{params:params});
-        console.log(res);
+        const res= await axiosClient.get(`/novels/novel/${params.url}`);
+        return res.data;
+       
+    },
+    getChapters : async(url,params)=>{
+        const res= await axiosClient.get(`/novels/novel/${url}/chuong`,{params:params});
+        return res.data;
+       
+    },
+    getNameChapters : async(url,params)=>{
+        const res= await axiosClient.get(`/novels/novel/${url}/mucluc`,{params:params});
+        return res.data;   
+    },
+    getChapterByNumber : async(tentruyen,chapnum)=>{
+        const res= await axiosClient.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`);
+        console.log(res.data)
         return res.data;
        
     },
 
+    ///user
+
     getAllUser: async(user, dispatch,stateSuccess)=>{
-        const url='/getusers'
+        const url='admin/users'
         let axi = axiosInstance(user, dispatch,stateSuccess)
         return (await axi.get(url,{ headers:{Authorization: `Bearer ${user.accessToken}`},})).data;
     },
@@ -63,6 +91,10 @@ const apiMain = {
             console.log(error)
             dispatch(logoutSuccess());
         }
+    },
+    activeAccount:async(params)=>{
+        const res= await axiosClient.get(`/auth/active/`,{params:params});
+        return res.data;   
     }
 }
 export default apiMain;

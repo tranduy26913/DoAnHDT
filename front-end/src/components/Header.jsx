@@ -1,16 +1,55 @@
 import React, { useCallback } from 'react'
-import { useEffect,  useRef } from 'react'
-import {  Link ,useNavigate} from 'react-router-dom';
+import {  useRef } from 'react'
+import {  Link ,useNavigate,useLocation} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import logo from '../assets/img/logo.png';
 import Auth from './Auth';
 import Modal, { ModalContent } from './modal';
 import { authLoginActive,authRegisterActive, authInactive } from '../redux/modalSlice';
-import jwt_decode from 'jwt-decode';
-import getData from '../api/getData';
-import apiMain from '../api/apiMain';
-import { loginSuccess, logoutSuccess } from '../redux/authSlice';
+import { handleLogout } from '../handle/handleAuth';
 
+
+const menu ={
+    ADMIN:[
+        {
+            path:'admin/profile',
+            display:'Hồ sơ'
+        },
+        {
+            path:'admin/change-password',
+            display:'Đổi mật khẩu'
+        },
+        {
+            path:'admin/users',
+            display:'Người dùng'
+        },
+        {
+            path:'admin/setting',
+            display:'Cài đặt'
+        }
+    ]
+        
+    ,
+    USER:[
+        {
+            path:'user/profile',
+            display:'Hồ sơ'
+        },
+        {
+            path:'user/change-password',
+            display:'Đổi mật khẩu'
+        },
+        {
+            path:'user/tu-truyen',
+            display:'Tủ truyện'
+        },
+        {
+            path:'user/setting',
+            display:'Cài đặt'
+        }
+    ]
+    
+}
 
 
 
@@ -23,6 +62,8 @@ export default function Header() {
     const modalLogin = useSelector(state => state.modal.auth.login);
     const navigate = useNavigate();
     
+    let location = useLocation();
+    console.log(menu[user?.roles[0]])
 
     const dispatch = useDispatch();
 
@@ -46,27 +87,10 @@ export default function Header() {
         dispatch(authRegisterActive());
     }
 
-    const handleLogout = ()=>{
-        dispatch(logoutSuccess())
-        navigate('/')
+    const onClickLogout = ()=>{
+        console.log("Logout")
+        handleLogout(dispatch,navigate,location)
     }
-    useEffect(()=>{
-        const checkAuth=async()=>{
-            let date=new Date();
-            const decodeToken=jwt_decode(user?.accessToken);
-            if(decodeToken.exp < date.getTime()/1000){
-                const newAccessToken = getData(await apiMain.refreshToken(user));
-                console.log(newAccessToken.accessToken)
-                const newUser = {
-                    ...user,
-                    accessToken:newAccessToken.accessToken
-                }
-                dispatch(loginSuccess(newUser))
-            }
-        }
-        checkAuth()
-    },[])
-
     
     
     return (
@@ -91,11 +115,11 @@ export default function Header() {
                             {
                                 user ? <Link to='/profile'>
                                     <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
-                                    {user.name || user.username}
+                                    {user.tenhienthi || user.username}
                                 </Link> :
                                     <>
-                                        <Link to='/' onClick={handleAuthLogin}><li>Đăng nhập</li></Link>
-                                        <Link to='/' onClick={handleAuthRegister}><li>Đăng ký</li></Link>
+                                        <a onClick={handleAuthLogin}><li>Đăng nhập</li></a>
+                                        <a onClick={handleAuthRegister}><li>Đăng ký</li></a>
                                     </>
                             }
                     </ul>
@@ -129,23 +153,29 @@ export default function Header() {
                             </Link>
                             {
                                 user ? <div className='navbar-nav__profile'>
-                                    <div onClick={handleDropdownProfile} className="navbar-nav__profile__name"> <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
-                                    {user.name||user.username}
+                                    <div onClick={handleDropdownProfile} className="navbar-nav__profile__name">
+                                    {user.image?
+                                    <div className='navbar-nav__avatar'><img src={user.image} alt="" /></div>
+                                    :<i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
+                                    }
+                                    <a>{user.name||user.username}</a>
                                         </div>
-
                                         <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                             <ul>
-                                                <li><Link to="account/profile">Hồ sơ</Link></li>
-                                                <li>Cài đặt</li>
-                                                <li ><a onClick={handleLogout}>Thoát</a></li>
-                                                <li></li>
+                                            {
+                                                menu[user?.roles[0]].map((item,i)=>{
+                                                    return <li key={i}><Link to={item.path}>{item.display}</Link></li>
+                                                }
+                                                )
+                                            }
+                                                <li ><a onClick={onClickLogout}>Đăng xuất</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                  :
                                     <>
-                                        <Link to='/' onClick={handleAuthLogin}><li>Đăng nhập</li></Link>
-                                        <Link to='/' onClick={handleAuthRegister}><li>Đăng ký</li></Link>
+                                        <a onClick={handleAuthLogin}><li>Đăng nhập</li></a>
+                                        <a  onClick={handleAuthRegister}><li>Đăng ký</li></a>
                                     </>
                             }
                         </ul>

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { toast } from "react-toastify";
 export const authSlice = createSlice({
     name: "auth",
     initialState: {
@@ -16,6 +16,7 @@ export const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.login.isFetching = false
             state.login.user = action.payload
+            
         },
         loginFalse: (state) => {
             state.login.error = true

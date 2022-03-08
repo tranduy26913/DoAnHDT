@@ -102,7 +102,7 @@
         transform: translateY(-50%);
     }
     & input {
-        border-color: transparent;
+        border-color: 1px solid rgba(88, 88, 88, 0.726);
         outline-color: $main-color;
         border-radius: 1rem;
         height: 42px;
