@@ -12,13 +12,20 @@ const PrivateRoute = ({
     console.log(location)
     const user = useSelector(state => state.auth.login?.user);
     const navigate = useNavigate()
+    
     if(user){
-        const decodeToken=jwt_decode(user?.accessToken);
-        const userHasRequiredRole= roles.includes(decodeToken.roleNames[0])? true : false
+        const tokenDecode = jwt_decode(user?.refreshToken)
+        let date = new Date();
+        if(tokenDecode.exp<date.getTime() / 1000){
+            toast.warning("Phiên làm việc của bạn đã hết. Vui lòng đăng nhập lại",{autoClose:1000,pauseOnHover: false,hideProgressBar:true})
+            return <Navigate to="/" state={{ from: location }} />;
+        }
+        const userHasRequiredRole= roles.includes(user.roles[0])? true : false
         if(!userHasRequiredRole){
             toast.warning("Bạn không có quyền truy cập",{autoClose:1000,pauseOnHover: false,hideProgressBar:true})
             return <Navigate to="/" state={{ from: location }} />;
         }
+
         return children;
     }
     else{

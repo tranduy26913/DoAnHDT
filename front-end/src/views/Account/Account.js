@@ -1,16 +1,17 @@
 import React, { useCallback } from 'react'
 
-import { Link, Outlet, useLocation, Route, Routes } from 'react-router-dom';
+import { Link, Outlet, useLocation, Route, Routes, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 
 import { useEffect,useState } from 'react';
 import apiMain from '../../api/apiMain';
-import { loginSuccess } from '../../redux/authSlice';
+import { loginSuccess, logoutSuccess } from '../../redux/authSlice';
 import { useSelector, useDispatch } from 'react-redux'
 import getData from '../../api/getData';
 import ChangePassword from './ChangePassword'
 import Profile from './Profile';
 import TuTruyen from './TuTruyen';
+import { toast } from 'react-toastify';
 
 function Account() {
   const menu = [
@@ -35,12 +36,27 @@ function Account() {
   const user = useSelector(state => state.auth.login?.user);
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
 
 useEffect(()=>{
   const getUsers = async () => {
-    const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
-    setUserInfo(res.userInfo)
+    try{
+      const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
+      setUserInfo(res.userInfo)
+    }catch(err){
+      if(err.response.status === 403 || err.response.status === 401){
+        //toast.warning("Phiên đăng nhập của bạn đã hết. Vui lòng đăng nhập lại",
+        //  {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
+        dispatch(logoutSuccess())
+        //navigate('/')
+      }
+      else{
+      toast.error("Lỗi thông tin",
+          {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
+      }
+    }
+    
   }
   getUsers()
 },[])

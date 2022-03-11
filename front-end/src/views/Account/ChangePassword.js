@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import apiMain from '../../api/apiMain'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginSuccess, logoutSuccess } from '../../redux/authSlice'
-import { setLoading } from '../../redux/messageSlice'
 import Loading from '../../components/Loading'
 import { toast } from 'react-toastify'
+import { handleChangePassword } from '../../handle/handleAccount'
 
 function ChangePassword() {
     const loading = useSelector(state => state.message.loading)
@@ -46,24 +45,14 @@ function ChangePassword() {
 
     //handle
 
-    const handleChangePassword = async (e) => {
+    const onClickChangePassword = async (e) => {
         e.preventDefault()
         if (valid.new && valid.cf) {
-            dispatch(setLoading(true))
             const params = {
                 newPassword: newPW,
                 password: currentPW
             }
-            dispatch(setLoading(true))
-            apiMain.ChangePassword(user, dispatch, loginSuccess, params).then(res=>{
-                toast.success("Đổi mật khẩu thành công",{
-                    autoClose:1000,
-                    hideProgressBar:true,
-                    pauseOnHover:false
-                })
-            })
-            
-            dispatch(setLoading(false))
+            handleChangePassword(user,dispatch,loginSuccess,params);
         }
     }
 
@@ -88,7 +77,7 @@ function ChangePassword() {
                     <span>{msgNewCfPW}</span>
                 </div>
                 <div className="d-flex">
-                    <button onClick={handleChangePassword}>{loading ? <Loading/> : ''} Đổi mật khẩu</button>
+                    <button onClick={onClickChangePassword}>{loading ? <Loading/> : ''} Đổi mật khẩu</button>
                 </div>
             </form>
 

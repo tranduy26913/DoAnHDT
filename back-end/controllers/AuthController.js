@@ -1,13 +1,16 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
 import  jwt  from "jsonwebtoken";
+import {ResponseData,ResponseDetail} from "../services/ResponseJSON.js";
+import { Role } from "../models/Role.js";
+import { sendMail } from "../services/EmailService.js";
 
 export const AuthController = {
     generateAccessToken: (data)=>{
         const accessToken= jwt.sign(
             data,
             process.env.JWT_ACCESS_KEY,
-            {expiresIn:"10s"}
+            {expiresIn:"2h"}
             )
         return accessToken
     },
@@ -23,18 +26,22 @@ export const AuthController = {
 
     RegisterUser: async (req, res) => {
         try {
+            const roles=await Role.find({name:"USER"});
             const salt =await bcrypt.genSalt(10);
             const hash =await bcrypt.hash(req.body.password, salt);
             console.log(hash)
             const newUser = await new User({
                 username: req.body.username,
                 password: hash,
-                email: req.body.email
+                email: req.body.email,
+                role:roles.map(item=>item._id)
             });
-            console.log(newUser)
+            const temp=(await User.findOne({username:req.body.username}))
+            if(temp){
+                return res.status(400).json(ResponseDetail(400,{username:"Username đã tồn tại"}))
+            }
             const user = await newUser.save();
-            console.log("Success")
-            res.status(200).json(user)
+            res.status(200).json(ResponseData(200,user))
 
         } catch (error) {
             console.log(error)
@@ -46,42 +53,45 @@ export const AuthController = {
     LoginUser: async (req, res) => {
         try {
             console.log(req.body.username)
-            const user = await User.findOne({username:req.body.username});
+            const user = await User.findOne({username:req.body.username}).populate("roles");
+            
             if(!user){
-                console.log("Không tìm thấy")
-                return res.status(404).json("Sai tên đăng nhập/mật khẩu")
+                return res.status(404).json(ResponseDetails(400,{username:"Sai tên đăng nhập/mật khẩu"}))
             }
             const auth = await bcrypt.compare(req.body.password,user.password)
             if(auth){
                 const data = {
-                    id:user.id,
-                    role:user.role
+                    sub:user.username,
+                    roles:user.roles.map(item=>item.name)
                 };
                 const accessToken = AuthController.generateAccessToken(data);
                 const refreshToken = AuthController.generateRefreshToken(data);
-                const {password, ...rest} = user._doc;
+                const {username,tenhienthi,image,roles} = user._doc;
                 res.cookie("token", refreshToken, {
                     httpOnly:true,
                     secure: false,
                     sameSite:"strict"
                 })
-                return res.status(200).json({
-                    ...rest,
+                return res.status(200).json(ResponseData(200,{
+                    username,
+                    tenhienthi,
+                    image,
                     accessToken,
-                    refreshToken
-                })
+                    refreshToken,
+                    roles:roles.map(item=>item.name)
+                }));
             }
-            return res.status(404).json("Sai tên đăng nhập/mật khẩu")
+            return res.status(404).json(ResponseDetail(400,{username:"Sai tên đăng nhập/mật khẩu"}))
 
         } catch (error) {
             console.log(error)
-            return res.status(500).json("Lỗi đăng nhập")
+            return res.status(500).json(ResponseDetail(500,{message:"Lỗi đăng nhập"}))
         }
     },
 
     RefreshToken:async(req,res)=>{
         try {
-            const refreshToken = req.cookies?.token;
+            const refreshToken = req.body.refreshToken;
             if(!refreshToken){
                 return res.status(401).json("Bạn chưa có token")
             }
@@ -89,18 +99,19 @@ export const AuthController = {
             jwt.verify(refreshToken,process.env.JWT_ACCESS_KEY,(err,user)=>{
                 if(err){
                     console.log("Lỗi:"+err)
-                    res.status(500).json(err)
+                    return res.status(500).json(ResponseDetail(500,{message:"Token sai"}))
                 }
                 else{
                     const {iat,exp,...data} = user;
                     const newAccessToken = AuthController.generateAccessToken(data);
                     const newRefreshToken = AuthController.generateRefreshToken(data);
+                    console.log("refresh")
                     res.cookie("token", newRefreshToken, {
                         httpOnly:true,
                         secure: true,
                         sameSite:"strict"
                     })
-                    res.status(200).json({accessToken:newAccessToken});
+                    return res.status(200).json(ResponseData(200,{refreshToken:newRefreshToken,accessToken:newAccessToken}));
                 }
                     
             })
@@ -138,6 +149,72 @@ export const AuthController = {
             }
         } catch (error) {
             res.status(500).json("Lỗi xác thực")
+        }
+    },
+
+    ReActive: async (req, res)=> {
+        try {
+            const email = req.body.email;
+            console.log(email)
+            if (email) {
+                const user =await User.findOne({email:email})
+                if(user){
+                    if(user.active)
+                        return res.status(400).json(ResponseDetail(400,{message:"Tài khoản đã được kích hoạt"}))
+                    const activeCode = jwt.sign(
+                    {email},
+                    process.env.JWT_ACCESS_KEY,
+                    {expiresIn:"15m"}
+                    )
+                    console.log("active:"+activeCode);
+                    sendMail(email,"Kích hoạt tài khoản",process.env.CLIENT_URL+"/api/auth/active?key="+activeCode)
+                        .then(response=>{
+                            console.log(response)
+                            return res.status(200).json(ResponseData(200,{message:"Đã gửi mail kích hoạt"}))
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                            return res.status(500).json(ResponseDetail(400,{message:"Lỗi gửi mail"}))
+                        })
+                
+                }
+                else{
+                return res.status(400).json(ResponseDetail(400,{message:"Tài khoản không tồn tại"}))
+                }
+                
+            } else {
+                res.status(400).json(ResponseDetail(400,{message:"Thiếu email"}));
+            }
+        } catch (error) {
+            res.status(500).json("Lỗi xác thực")
+        }
+    }
+    ,
+    Active : async (req,res)=>{
+        try {
+            const key = req.query.key;
+            if(key){
+                jwt.verify(key,process.env.JWT_ACCESS_KEY,async(err,user)=>{
+                    if(err){
+                        console.log(err)
+                        return res.status(400).json(ResponseDetail(400,{message:"Mã kích hoạt hết hạn"}))
+                    }
+                    const email = user.email
+                    const newUser = await User.findOneAndUpdate({email:email},{active:true},{new:true})
+                    console.log(newUser)
+                    if(newUser){
+                        return res.status(200).json(ResponseDetail(200,{message:"Kích hoạt thành công"}))
+                    }
+                    return res.status(400).json(ResponseDetail(200,{message:"Kích hoạt không thành công"}))
+
+                })
+            }
+            else{
+                return res.status(400).json(ResponseDetail(400,{message:"Không có mã kích hoạt"}))
+            }
+
+        } catch (error) {
+            return res.status(500).json(ResponseDetail(500,{message:"Lỗi kích hoạt"}))
         }
     }
 }

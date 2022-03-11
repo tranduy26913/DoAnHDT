@@ -15,15 +15,25 @@ const schema = new mongoose.Schema({
         require: true,
         default: "Anonymous"
     },
-    role: {
-        type: Number,
-        require: true,
-        default: 1,
-    },
-    name:{
+    roles:[
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Role"
+        }
+      ],
+    tenhienthi:{
         type: String,
         require: true,
         default: "Anonymous"
+    },
+    image:{
+        type:String,
+
+    },
+    active:{
+        type:Boolean,
+        require: true,
+        default:true
     }
 },
     {timestamps:true}

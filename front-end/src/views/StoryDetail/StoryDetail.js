@@ -5,6 +5,7 @@ import { useParams,Link, useLocation } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
 import LoadingData from '../../components/LoadingData'
 import Grid from '../../components/Grid'
+import Comment from '../../components/Comment'
 
 const nav = [
   {
@@ -32,10 +33,9 @@ const nav = [
 function StoryDetail() {
   const { url } = useParams()
   const [truyen, setTruyen] = useState(null);
-  const [soChuong, setSoChuong] = useState(100)
   const [catGiu, setCatGiu] = useState(100)
-  const [main,setMain]=useState(<About truyen={truyen}/>)
-  const [tab, setTab] = useState('about')
+  const [main,setMain]=useState(null)
+  const [tab, setTab] = useState('')
   const active = nav.findIndex(e => e.path === tab)
   const [loadingData,setLoadingData]=useState(true)
 
@@ -50,27 +50,27 @@ function StoryDetail() {
 useEffect(()=>{
   switch(tab){
     case 'about':
-      setMain(<About truyen={truyen}/>)
+      setMain(<About key={'about'} truyen={truyen}/>)
       break
     case 'rate':
-      setMain(<Rate/>)
+      setMain(<Rate key={'rate'}/>)
       break
     case 'chapter':
       console.log(truyen.url)
-      setMain(<Chapter url={truyen.url}/>)
+      setMain(<Chapter key={'chapter'} url={truyen.url}/>)
       break
     case 'comment':
-      setMain(<Comment/>)
+      console.log(truyen.url)
+      setMain(<Comment key={'comment'} url={truyen.url}/>)
       break
     default:
-      setMain(<Donate/>)
+      setMain(<Donate key={'donate'}/>)
   }
 
 },[tab])
 
 
   const onClickTab = async (e) => {
-    console.log(e.target.name)
     setTab(e.target.name)
   }
   //style
@@ -94,7 +94,7 @@ useEffect(()=>{
             </ul>
             <ul className="heroSide__info">
               <li>
-                <span className='fs-16 bold'>{soChuong || '0'}</span>
+                <span className='fs-16 bold'>{truyen?.sochap || '0'}</span>
                 <br />
                 <span>Chương</span>
               </li>
@@ -133,15 +133,15 @@ useEffect(()=>{
         </div>
 
         <div className="story-detail">
-          <div className="story-detail__nav">
+          <div className="navigate">
             {
               nav.map((item, index) => {
-                return <>
-                  <a className={`story-detail__tab fs-20 bold ${active === index ? 'tab_active' : ''}`}
+                return (
+                  <a className={`navigate__tab fs-20 bold ${active === index ? 'tab_active' : ''}`}
                     key={index}
                     name={item.path}
                     onClick={onClickTab}
-                  >{item.display}</a></>
+                  >{item.display}</a>)
               })
             }
           </div>
@@ -177,17 +177,15 @@ const Chapter=props=>{
   const [loadingData, setLoadingData] =useState(true)
   const location = useLocation()
   const url = props.url
-  console.log(props.url)
   useEffect(async()=>{
     const params = {
       page:0,
-      size:50
+      size:1000
     }
   
     apiMain.getNameChapters(props.url,params).then(res=>{
       setChapters(res)
       setLoadingData(false)
-      console.log(res)
     })
   },[props.url])
 
@@ -209,11 +207,6 @@ const Chapter=props=>{
   )
 }
 
-const Comment=props=>{
-  return (
-    <h1>Bình luận</h1>
-  )
-}
 
 const Donate=props=>{
   return (

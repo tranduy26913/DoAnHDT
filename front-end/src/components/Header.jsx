@@ -63,7 +63,6 @@ export default function Header() {
     const navigate = useNavigate();
     
     let location = useLocation();
-    console.log(menu[user?.roles[0]])
 
     const dispatch = useDispatch();
 
@@ -158,7 +157,7 @@ export default function Header() {
                                     <div className='navbar-nav__avatar'><img src={user.image} alt="" /></div>
                                     :<i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                     }
-                                    <a>{user.name||user.username}</a>
+                                    <a>{user.name||user.tenhienthi||user.username}</a>
                                         </div>
                                         <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                             <ul>

@@ -1,10 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import Auth from './routers/Auth.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser'
+import {UserRoute,AuthRoute, NovelRoute, CommentRoute} from './routers/index.js'
 
 dotenv.config()
 
@@ -36,4 +36,7 @@ app.listen(PORT, () => {
 app.get('/',(req,res)=>{
         res.send('SUCCESS');
     });
-app.use('/api',Auth)
+app.use('/api',AuthRoute)
+app.use('/api/user',UserRoute)
+app.use('/api/novels',NovelRoute)
+app.use('/api/comment',CommentRoute)

@@ -5,7 +5,9 @@ import {setLoading, setMessageLogin,setMessageRegister} from '../redux/messageSl
 import {axiosClient} from '../api/axiosClient'
 import getData from '../api/getData'
 import { toast } from "react-toastify";
-import lang from '../lang/lang'
+
+import { useDispatch } from "react-redux"
+import {Navigate, useNavigate} from 'react-router-dom'
 
 const publicPath = [
   '/ddd/','/truyen/'
@@ -47,7 +49,6 @@ export const handleRegister =async(params, dispatch,navigate)=>{
 }
 
 export const handleLogout = (dispatch,navigate,location)=>{
-  const s=""
   const isPublic = publicPath.findIndex(e=>location.pathname.includes(e))>0?true:false
   dispatch(logoutSuccess())
   toast.success("Đăng xuất thành công",{autoClose: 800,pauseOnHover: false,hideProgressBar: true});//hiển thị toast thông báo
@@ -55,4 +56,12 @@ export const handleLogout = (dispatch,navigate,location)=>{
   if(!isPublic)
     navigate('/')
 }
+
+export const HandleLogoutWhenError = ()=>{
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  dispatch(logoutSuccess())
+  navigate('/')
+}
+
 

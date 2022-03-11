@@ -3,28 +3,32 @@ import axios from 'axios';
 import queryString from 'query-string';
 import jwt_decode from 'jwt-decode';
 import getData from './getData';
+import { toast } from 'react-toastify';
+import { HandleLogoutWhenError } from '../handle/handleAuth';
+import { logoutSuccess } from '../redux/authSlice';
 
 export const axiosClient = axios.create({
-    //baseURL: "http://localhost:5000/api",
-    baseURL:"https://novelbe.herokuapp.com/api",
+    baseURL: "http://localhost:5000/api",
+    //baseURL:"https://novelbe.herokuapp.com/api",
     headers: {
         "Content-Type": "application/json"
     },
-    withCredentials:true,
+    withCredentials: true,
     paramsSerializer: (params) => queryString.stringify(params)
 });
 
 
 
-const refreshToken = async(user)=>{
-        const res= await axiosClient.post('/auth/refreshtoken',{refreshToken:user.refreshToken},{ headers:{Authorization:`Bearer ${user.accessToken}`},})
-        return res.data
+const refreshToken = async (user) => {
+    const res = await axiosClient.post('/auth/refreshtoken', { refreshToken: user.refreshToken  }, { headers: { Authorization: `Bearer ${user.accessToken}` }, })
+    console.log(res)
+    return res.data
 }
 
-export const axiosInstance = (user, dispatch,stateSuccess) => {
+export const axiosInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({
-        //baseURL: "http://localhost:5000/api",
-        baseURL:"https://novelbe.herokuapp.com/api",
+        baseURL: "http://localhost:5000/api",
+        //baseURL:"https://novelbe.herokuapp.com/api",
         headers: {
             "Content-Type": "application/json"
         },
@@ -32,21 +36,22 @@ export const axiosInstance = (user, dispatch,stateSuccess) => {
     });
     newInstance.interceptors.request.use(
         async (config) => {
-            let date=new Date();
-            const decodeToken=jwt_decode(user?.accessToken);
-            if(decodeToken.exp < date.getTime()/1000){
+            let date = new Date();
+            const decodeToken = jwt_decode(user?.accessToken);
+            if (decodeToken.exp < date.getTime() / 1000) {
                 const newAccessToken = getData(await refreshToken(user));
                 console.log(newAccessToken.accessToken)
                 const newUser = {
                     ...user,
-                    accessToken:newAccessToken.accessToken
+                    accessToken: newAccessToken.accessToken
                 }
                 dispatch(stateSuccess(newUser))
                 config.headers['Authorization'] = `Bearer ${newAccessToken.accessToken}`;
+
             }
             return config;
         },
-        err =>{
+        err => {
             return Promise.reject(err)
         }
     );

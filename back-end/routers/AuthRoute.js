@@ -4,12 +4,16 @@ import {verifyToken} from "../controllers/middlewareController.js"
 
 const router = express.Router();
 
-router.post('/register', AuthController.RegisterUser);
+router.post('/auth/register', AuthController.RegisterUser);
 
-router.post('/login', AuthController.LoginUser);
+router.post('/auth/login', AuthController.LoginUser);
 
 router.get('/getusers',verifyToken,AuthController.LoadUsers);
 
-router.get('/auth/refresh',AuthController.RefreshToken);
+router.post('/auth/refreshtoken',AuthController.RefreshToken);
+
+router.post('/auth/reactive',AuthController.ReActive);
+
+router.post('/auth/active',AuthController.Active);
 
 export default router;

@@ -1,0 +1,33 @@
+.comment {
+    &__wrap {
+        margin-top: 10px;
+        padding: 0 20px;
+        li {
+            padding: 10px 0;
+        }
+    }
+    &__form {}
+    &__input {
+        position: relative;
+        width: 100%;
+        span {
+            position: absolute;
+            top: 0;
+            right: 10px;
+        }
+    }
+    &__body {
+        width: 100%;
+    }
+    &__nav {
+        display: flex;
+        gap: 20px;
+        justify-content: flex-end;
+    }
+    &__input {
+        textarea {
+            width: 100%;
+            padding: 10px;
+        }
+    }
+}

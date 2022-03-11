@@ -38,6 +38,18 @@ $val in $colors {
     }
 }
 
+@each $val in $fonts {
+    .fs-#{$val} {
+        font-size: #{$val}px;
+    }
+}
+
+@each $val in $fontw {
+    .fw-#{$val/100} {
+        font-weight: $val;
+    }
+}
+
 .container {
     width: 100%;
     max-width: 1620px;
@@ -147,4 +159,20 @@ table {
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
+}
+
+.text-secondary {
+    color: #999;
+}
+
+.avatar--45 {
+    width: 45px;
+    height: 45px;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.w-100 {
+    width: 100%;
 }

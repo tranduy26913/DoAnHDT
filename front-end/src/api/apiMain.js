@@ -1,100 +1,109 @@
 import { logoutSuccess } from "../redux/authSlice";
 import ChangePassword from "../views/Account/ChangePassword";
-import {axiosClient,axiosInstance} from "./axiosClient";
-
+import { axiosClient, axiosInstance } from "./axiosClient";
+import getData from './getData'
 const apiMain = {
 
     ///authentication
-    login: async(params)=>{
-        const res=await axiosClient.post('/auth/login',params)
+    login: async (params) => {
+        const res = await axiosClient.post('/auth/login', params)
         return res.data;
     },
-    register: async(params)=>{
-        const res=await axiosClient.post('/auth/register',params)
+    register: async (params) => {
+        const res = await axiosClient.post('/auth/register', params)
         return res.data;
     },
-    forgetPassword:async(params)=>{
-        const res=await axiosClient.post('/auth/forgetpassword',params)
+    forgetPassword: async (params) => {
+        const res = await axiosClient.post('/auth/forgetpassword', params)
         return res.data;
     },
-    reActive: async(params)=>{
-        const res=await axiosClient.post('/auth/reactive',params)
+    reActive: async (params) => {
+        const res = await axiosClient.post('/auth/reactive', params)
         return res.data;
     },
     ///get data
 
-    getStorys: async(params)=>{
-        const res= await axiosClient.get(`/novels/`,{params:params});
-        return res.data;
-       
+    getStorys: async (params) => {
+        const res = await axiosClient.get(`/novels/`, { params: params });
+        return getData(res);
+
     },
-    getStory: async(params)=>{
-        const res= await axiosClient.get(`/novels/novel/${params.url}`);
-        return res.data;
-       
+    getStory: async (params) => {
+        const res = await axiosClient.get(`/novels/novel/${params.url}`);
+        return getData(res);
+
     },
-    getChapters : async(url,params)=>{
-        const res= await axiosClient.get(`/novels/novel/${url}/chuong`,{params:params});
-        return res.data;
-       
+    getChapters: async (url, params) => {
+        const res = await axiosClient.get(`/novels/novel/${url}/chuong`, { params: params });
+        return getData(res);
+
     },
-    getNameChapters : async(url,params)=>{
-        const res= await axiosClient.get(`/novels/novel/${url}/mucluc`,{params:params});
-        return res.data;   
+    getNameChapters: async (url, params) => {
+        const res = await axiosClient.get(`/novels/novel/${url}/mucluc`, { params: params });
+        return getData(res);
     },
-    getChapterByNumber : async(tentruyen,chapnum)=>{
-        const res= await axiosClient.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`);
-        console.log(res.data)
+    getChapterByNumber: async (tentruyen, chapnum) => {
+        const res = await axiosClient.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`);
         return res.data;
-       
+    },
+    setReading: async(params,user, dispatch, stateSuccess) =>{
+        const url = `/novels/novel/reading`
+        let axi = axiosInstance(user, dispatch, stateSuccess)
+        return (await axi.post(url, params,{ headers: { Authorization: `Bearer ${user.accessToken}` } })).data;
+    },
+    getReadings: async(user, dispatch, stateSuccess) =>{
+        const url = `/novels/readings`
+        let axi = axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.get(url,{ headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
+    ///Comment
+
+    createComment: async(user, params,dispatch, stateSuccess)=>{
+        const url = `/comment/create`
+        let axi = axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.post(url,params,{ headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
+    getCommentsByUrl: async( params)=>{
+        const url = `/comment/getcomment/${params.url}`;
+        return getData(await axiosClient.get(url));
     },
 
     ///user
 
-    getAllUser: async(user, dispatch,stateSuccess)=>{
-        const url='admin/users'
-        let axi = axiosInstance(user, dispatch,stateSuccess)
-        return (await axi.get(url,{ headers:{Authorization: `Bearer ${user.accessToken}`},})).data;
+    getAllUser: async (user, dispatch, stateSuccess) => {
+        const url = 'admin/users'
+        let axi = axiosInstance(user, dispatch, stateSuccess)
+        return (await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` }, })).data;
     },
 
-    refreshToken : async(user)=>{
-        const params = {refreshToken:user.refreshToken}
-        const res= await axiosClient.post('/auth/refreshtoken',params,{ headers:{Authorization:`Bearer ${user.accessToken}`},})
+    refreshToken: async (user) => {
+        const params = { refreshToken: user.refreshToken }
+        const res = await axiosClient.post('/auth/refreshtoken', params, { headers: { Authorization: `Bearer ${user.accessToken}` }, })
         return res.data
     },
 
-    getUserInfo : async(user,dispatch,stateSuccess)=>{
-        try {
-            const axi = await axiosInstance(user,dispatch,stateSuccess)
-            return (await axi.get('/user/info',{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
-        } catch (error) {
-            console.log(error.response.data?.details[0])
-            dispatch(logoutSuccess());
-        }
-        
+    getUserInfo: async (user, dispatch, stateSuccess) => {
+        const axi = await axiosInstance(user, dispatch, stateSuccess)
+        return await axi.get('/user/info', { headers: { Authorization: `Bearer ${user.accessToken}` } });
     },
-    updateUserInfo : async(user,dispatch,stateSuccess,params)=>{
+    updateUserInfo: async (user, dispatch, stateSuccess, params) => {
         try {
-            const axi = await axiosInstance(user,dispatch,stateSuccess)
-            return (await axi.put('/user/info',params,{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
+            const axi = await axiosInstance(user, dispatch, stateSuccess)
+            return (await axi.put('/user/info', params, { headers: { Authorization: `Bearer ${user.accessToken}` } })).data;
         } catch (error) {
             console.log(error.response.data?.details[0])
             dispatch(logoutSuccess());
         }
     },
 
-    ChangePassword: async(user,dispatch,stateSuccess,params)=>{
-        try {
-            const axi = await axiosInstance(user,dispatch,stateSuccess)
-            return (await axi.put('/user/info/password',params,{headers:{Authorization:`Bearer ${user.accessToken}`}})).data;
-        } catch (error) {
-            console.log(error)
-            dispatch(logoutSuccess());
-        }
+    ChangePassword: async (user, dispatch, stateSuccess, params) => {
+        const axi = await axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.put('/user/info/password', params, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
+
     },
-    activeAccount:async(params)=>{
-        const res= await axiosClient.get(`/auth/active/`,{params:params});
-        return res.data;   
+    activeAccount: async (params) => {
+        const res = await axiosClient.get(`/auth/active/`, { params: params });
+        return res.data;
     }
 }
 export default apiMain;
