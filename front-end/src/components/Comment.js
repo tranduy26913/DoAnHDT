@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import apiMain from '../api/apiMain';
 import avt from '../assets/img/avt.png'
 import { loginSuccess } from '../redux/authSlice';
 
 function Comment(props) {
-    const [count, setCount] = useState(100);
+    const [count, setCount] = useState(0);
     const user = useSelector(state => state.auth.login?.user)
     const [comments, setComments] = useState([])
     const [content, setContent] = useState("")
@@ -27,20 +28,49 @@ function Comment(props) {
                     console.log(err)
                 })
         }
+        else{
+            toast.warning("Vui lòng đăng nhập trước khi bình luận",{
+                hideProgressBar:true,
+                pauseOnHover:false,
+                autoClose:1200
+            })
+        }
     }
 
     useEffect(async () => {
-        const params = { url: url }
-        apiMain.getCommentsByUrl(params)
-            .then(res => {
-                setComments(res)
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            }
-            )
+        const data = await getComments()
+        console.log(data)
+        setCount(data?.length||0)
+        setComments(data)
     }, [])
+
+    const getComments = async()=>{
+        try {
+            const res = await apiMain.getCommentsByUrl({url:url})
+            if(res)
+                return res
+            return []
+        } catch (error) {
+            return []
+        }
+        
+        
+    }
+
+    const onClickDeleteComment = async(e)=>{
+        if(user){
+            apiMain.deleteComment(user,{id:e.target.name},dispatch,loginSuccess)
+                .then(async (res) =>{
+                    toast.success(res.message,{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+                    const data = await getComments()
+                    setComments(data)
+                })
+                .catch(err=>{
+                    toast.error(err.response.data.detail.message,{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+                }
+                    )
+        }
+    }
 
     const calDate = (createdAt) => {
         let newDate = new Date()
@@ -67,7 +97,7 @@ function Comment(props) {
             <h1>Bình luận {count || 0}</h1>
             <div className="comment__form d-flex w100">
                 <div className="avatar--45 mr-1">
-                    <img src={user.image || avt} alt="" />
+                    <img src={user?.image || avt} alt="" />
                 </div>
                 <div className="comment__input">
                     <textarea className='fs-14' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
@@ -101,12 +131,15 @@ function Comment(props) {
                                             {item.content}
                                         </div>
                                         <div className="comment__nav">
+                                            {item.username === user?.username ?
+                                            <a name={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className="fa-solid fa-trash"></i> Xoá</a>:''
+                                            }
                                             <a className='fs-14 text-secondary'><i className="fa-solid fa-reply"></i> Trả lời</a>
                                             <a className='fs-14 text-secondary'><i className="fa-solid fa-flag"></i> Báo xấu</a>
+                                            
                                         </div>
 
                                     </div>
-
                                 </li>
                                 <hr />
                             </div>)

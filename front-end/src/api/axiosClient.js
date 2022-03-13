@@ -3,13 +3,11 @@ import axios from 'axios';
 import queryString from 'query-string';
 import jwt_decode from 'jwt-decode';
 import getData from './getData';
-import { toast } from 'react-toastify';
-import { HandleLogoutWhenError } from '../handle/handleAuth';
-import { logoutSuccess } from '../redux/authSlice';
 
 export const axiosClient = axios.create({
     baseURL: "http://localhost:5000/api",
     //baseURL:"https://novelbe.herokuapp.com/api",
+    baseURL:"https://thichtruyenchu.herokuapp.com/api",
     headers: {
         "Content-Type": "application/json"
     },
@@ -27,7 +25,8 @@ const refreshToken = async (user) => {
 
 export const axiosInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({
-        baseURL: "http://localhost:5000/api",
+        //baseURL: "http://localhost:5000/api",
+        baseURL:"https://thichtruyenchu.herokuapp.com/api",
         //baseURL:"https://novelbe.herokuapp.com/api",
         headers: {
             "Content-Type": "application/json"
@@ -48,7 +47,10 @@ export const axiosInstance = (user, dispatch, stateSuccess) => {
                 dispatch(stateSuccess(newUser))
                 config.headers['Authorization'] = `Bearer ${newAccessToken.accessToken}`;
 
+            }else{
+                config.headers['Authorization'] = `Bearer ${user.accessToken}`;
             }
+            
             return config;
         },
         err => {

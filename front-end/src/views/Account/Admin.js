@@ -1,5 +1,5 @@
 
-import { Link, Outlet, useLocation, Route, Routes } from 'react-router-dom';
+import { Link, useLocation, Route, Routes } from 'react-router-dom';
 import Layout from '../../components/Layout';
 
 import { useEffect,useState } from 'react';
@@ -10,6 +10,8 @@ import getData from '../../api/getData';
 import ChangePassword from './ChangePassword'
 import Profile from './Profile';
 import Users from './Users'
+import TuTruyen from './TuTruyen';
+import CreateNovel from './CreateNovel';
 
 function Account() {
   const menu = [
@@ -32,7 +34,17 @@ function Account() {
       path: "add-user",
       display: "Thêm thành viên",
       icon: ""
-    }
+    },
+    {
+      path: "tu-truyen/reading",
+      display: "Tủ truyện",
+      icon: ""
+    },
+    {
+      path: "dang-truyen",
+      display: "Đăng truyện",
+      icon: ""
+    },
   ]
 
   const user = useSelector(state => state.auth.login?.user);
@@ -65,11 +77,13 @@ function Account() {
             </ul>
 
           </div>
-          <div className="col-9 ">
+          <div className="col-9 " style={{'minHeight':'500px'}}>
             <Routes>
               <Route path='profile' element={<Profile userInfo={userInfo}/>}></Route>
               <Route path='change-password' element={<ChangePassword />}></Route>
               <Route path='users' element={<Users dispatch={dispatch}/>}></Route>
+              <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo}/>}></Route>
+              <Route path='dang-truyen' element={<CreateNovel  userInfo={userInfo}  />}></Route>
             </Routes>
           </div>
         </div>

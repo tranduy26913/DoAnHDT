@@ -123,7 +123,8 @@ form {
     cursor: pointer;
 }
 
-input {
+input,
+select {
     border: 1px solid rgba(148, 148, 148, 0.541);
     outline-color: $main-color;
     width: 96%;
@@ -142,14 +143,16 @@ input {
     top: 4rem !important
 }
 
-table,
 td,
 th {
     border: 1px solid black;
+    padding: 5px;
 }
 
 table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 350px;
 }
 
 .text-overflow-1-lines {
@@ -175,4 +178,36 @@ table {
 
 .w-100 {
     width: 100%;
+}
+
+
+/* top-left border-radius */
+
+table tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+}
+
+
+/* top-right border-radius */
+
+table tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+}
+
+
+/* bottom-left border-radius */
+
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+}
+
+
+/* bottom-right border-radius */
+
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+}
+
+.ma {
+    margin: auto;
 }

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 
-import { Link, Outlet, useLocation, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, useLocation, Route, Routes, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 
 import { useEffect,useState } from 'react';
@@ -12,6 +12,7 @@ import ChangePassword from './ChangePassword'
 import Profile from './Profile';
 import TuTruyen from './TuTruyen';
 import { toast } from 'react-toastify';
+import CreateNovel from './CreateNovel';
 
 function Account() {
   const menu = [
@@ -26,8 +27,13 @@ function Account() {
       icon: ""
     },
     {
-      path: "tu-truyen",
+      path: "tu-truyen/reading",
       display: "Tủ truyện",
+      icon: ""
+    },
+    {
+      path: "dang-truyen",
+      display: "Đăng truyện",
       icon: ""
     },
   ]
@@ -79,11 +85,12 @@ useEffect(()=>{
             </ul>
 
           </div>
-          <div className="col-9 ">
+          <div className="col-9 "  style={{'minHeight':'500px'}}>
             <Routes>
               <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo}/>}></Route>
               <Route path='change-password' element={<ChangePassword />}></Route>
-              <Route path='tu-truyen' element={<TuTruyen />}></Route>
+              <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo}/>}></Route>
+              <Route path='dang-truyen' element={<CreateNovel  userInfo={userInfo}  />}></Route>
             </Routes>
           </div>
         </div>

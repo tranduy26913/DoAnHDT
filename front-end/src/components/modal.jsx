@@ -6,7 +6,6 @@ const Modal = props => {
 
     useEffect(() => {
         setActive(props.active);
-        console.log("act:"+props.active);
     },[props.active]);
 
     return (
