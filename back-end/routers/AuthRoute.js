@@ -14,12 +14,18 @@ router.post('/auth/refreshtoken',AuthController.RefreshToken);
 
 router.post('/auth/reactive',AuthController.ReActive);
 
-router.post('/auth/active',AuthController.Active);
+router.get('/auth/active',AuthController.Active);
 
 router.put('/auth/activebyadmin',verifyTokenAdmin,AuthController.activeByAdmin);
 
 router.put('/auth/inactivebyadmin',verifyTokenAdmin,AuthController.inactiveByAdmin);
 
 router.get('/auth/verifytoken',AuthController.verifyToken);
+
+router.post('/auth/forgetpassword',AuthController.Forgotpassword);
+
+router.post('/auth/checkusername',AuthController.checkUsername);
+
+router.post('/auth/checkemail',AuthController.checkEmail);
 
 export default router;

@@ -15,19 +15,24 @@ function App() {
   return (
     <HashRouter>
       <Header />
-        <Routes>
-            <Route path='/' element={<Home />}></Route>
-            <Route path='truyen/:url' element={<StoryDetail />}></Route>
-            <Route element={<PrivateRoute roles={['USER']}/>}>
-              <Route path='/user/*' element={<Account />}></Route>
-            </Route>
-            <Route element={<PrivateRoute roles={['ADMIN']}/>}>
-              <Route path='admin/*' element={<Admin />}>
-                </Route></Route>
-            <Route path='active/:token' element={<Active />}></Route>
-            <Route path='truyen/:url/:chapnum' element={<Chapter />}></Route>
-          </Routes>
-    <ToastContainer/>
+      <Routes>
+        <Route path='/' element={<Home />}></Route>
+        <Route path='truyen/:url' element={<StoryDetail />}></Route>
+        <Route element={<PrivateRoute roles={['USER']} />}>
+          <Route path='/user/*' element={<Account />}></Route>
+        </Route>
+        <Route element={<PrivateRoute roles={['ADMIN']} />}>
+          <Route path='admin/*' element={<Admin />}>
+          </Route></Route>
+        <Route path='active/:token' element={<Active />}></Route>
+        <Route path='truyen/:url/:chapnum' element={<Chapter />}></Route>
+      </Routes>
+      <ToastContainer autoClose={1000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        pauseOnHover={false} />
     </HashRouter>
   );
 }

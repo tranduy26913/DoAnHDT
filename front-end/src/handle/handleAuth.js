@@ -33,6 +33,7 @@ export const handleLogin =async(user, dispatch,navigate)=>{
 
 export const handleRegister =async(params, dispatch,navigate)=>{
   try {
+    dispatch(setLoading(true))
     const res = await apiMain.register(params) //gọi api login
     if(res.status==200){
       dispatch(setMessageRegister("")); 
@@ -45,6 +46,9 @@ export const handleRegister =async(params, dispatch,navigate)=>{
     let _ = msg.email||msg.username||msg.password
     console.log(error.response.data)
     dispatch(setMessageRegister(_));
+  }
+  finally{
+    dispatch(setLoading(false))
   }
 }
 

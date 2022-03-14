@@ -24,6 +24,10 @@ const menu ={
             display:'Người dùng'
         },
         {
+            path:'admin/tu-truyen/reading',
+            display:'Tủ truyện'
+        },
+        {
             path:'admin/setting',
             display:'Cài đặt'
         }
@@ -40,7 +44,7 @@ const menu ={
             display:'Đổi mật khẩu'
         },
         {
-            path:'user/tu-truyen',
+            path:'user/tu-truyen/reading',
             display:'Tủ truyện'
         },
         {
@@ -72,6 +76,10 @@ export default function Header() {
 
     const handleDropdownProfile=()=>{
         profileDropdownRef?.current.classList.toggle('active')    
+    }
+
+    const hideProfileDropdown = ()=>{
+        profileDropdownRef?.current.classList.remove('active') 
     }
 
     const closeModalAuth=useCallback(()=>{
@@ -108,7 +116,7 @@ export default function Header() {
                         <Link to='/truyen'>
                             <li className='text-bold'>Bảng xếp hạng</li>
                         </Link>
-                        <Link to='/'>
+                        <Link to={'/'}>
                                 <li>Đăng truyện</li>
                             </Link>
                             {
@@ -147,7 +155,7 @@ export default function Header() {
                             </div>
                         </div>
                         <ul className='navbar-nav__list navbar-nav__list--right'>
-                            <Link to='/'>
+                            <Link to={user?.roles[0]==='ADMIN'?'/admin/dang-truyen':'/user/dang-truyen'}>
                                 <li><i style={{ marginRight: 4 + 'px' }} className="fa-regular fa-circle-up"></i> Đăng truyện</li>
                             </Link>
                             {
@@ -159,10 +167,10 @@ export default function Header() {
                                     }
                                     <a>{user.name||user.tenhienthi||user.username}</a>
                                         </div>
-                                        <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
+                                        <div tabindex={1} onBlur={hideProfileDropdown} ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                             <ul>
                                             {
-                                                menu[user?.roles[0]].map((item,i)=>{
+                                                menu[user?.roles[0]||'USER'].map((item,i)=>{
                                                     return <li key={i}><Link to={item.path}>{item.display}</Link></li>
                                                 }
                                                 )

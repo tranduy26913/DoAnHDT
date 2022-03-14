@@ -3,11 +3,11 @@ import axios from 'axios';
 import queryString from 'query-string';
 import jwt_decode from 'jwt-decode';
 import getData from './getData';
-
+const baseURL='https://thichtruyenchu.herokuapp.com/api'
+//const baseURL='http://localhost:5000/api'
 export const axiosClient = axios.create({
-    baseURL: "http://localhost:5000/api",
-    //baseURL:"https://novelbe.herokuapp.com/api",
-    baseURL:"https://thichtruyenchu.herokuapp.com/api",
+    baseURL: baseURL,
+    
     headers: {
         "Content-Type": "application/json"
     },
@@ -25,9 +25,7 @@ const refreshToken = async (user) => {
 
 export const axiosInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({
-        //baseURL: "http://localhost:5000/api",
-        baseURL:"https://thichtruyenchu.herokuapp.com/api",
-        //baseURL:"https://novelbe.herokuapp.com/api",
+        baseURL: baseURL,
         headers: {
             "Content-Type": "application/json"
         },

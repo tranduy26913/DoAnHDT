@@ -12,18 +12,19 @@ import LoadingData from '../../components/LoadingData';
 import getData from '../../api/getData';
 
 function CreateNovel({userInfo}) {
+    const types = ["Tiên hiệp", "Dã sử", "Kì ảo", "Kiếm hiệp", "Huyền huyễn", "Khoa huyễn"]
     const user = useSelector(state=>state.auth.login.user)
     const [image, setImage] = useState("");
     const [preview, setPreview] = useState(avt)
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [tacgia, setTacgia] = useState("");
-    const [theloai, setTheloai] = useState("");
+    const [theloai, setTheloai] = useState(types[0]);
     const loading = useSelector(state => state.message.loading)
     const [loadingUser, setLoadingUser] = useState(true)
     const dispatch = useDispatch()
 
-    const types = ["Tiên hiệp", "Dã sử", "Kì ảo", "Kiếm hiệp", "Huyền huyễn", "Khoa huyễn"]
+    
 
 
     useEffect(async() => {
@@ -37,14 +38,13 @@ function CreateNovel({userInfo}) {
         try {
             apiMain.createNovel(data,user, dispatch, loginSuccess )
                 .then(res =>{
-                    console.log(res)
                     toast.success("Đăng truyện thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
                     dispatch(setLoading(false))
                 })
                 .catch(err=>{
-                    console.log(err)
+                    
                     dispatch(setLoading(false))
-                    toast.error(err.response?.details.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+                    toast.error(getData(err.response)?.details.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
                 })
             
             
@@ -100,7 +100,7 @@ function CreateNovel({userInfo}) {
                         <div className="col-5 profile__avt">
 
                             <img src={preview} alt="" />
-                            <input type={"file"} name={"avatar"} onChange={onChangeImage} />
+                            <input type={"file"} accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name={"avatar"} onChange={onChangeImage} />
                         </div>
                         <div className="col-7 ">
                             <div className="profile__main">

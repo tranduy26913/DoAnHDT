@@ -15,10 +15,8 @@ const URI=process.env.MONGODB_URL;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}))
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ credentials: true, origin:true}));
 app.use(cookieParser());
-
-
 
 mongoose.connect(URI)
     .then(()=>{

@@ -5,7 +5,7 @@ import { ResponseData, ResponseDetail } from "../services/ResponseJSON.js";
 import { Role } from "../models/Role.js";
 import { sendMail } from "../services/EmailService.js";
 import mongoose from "mongoose";
-
+import generator from "generate-password"
 export const AuthController = {
     generateAccessToken: (data) => {
         const accessToken = jwt.sign(
@@ -35,18 +35,33 @@ export const AuthController = {
                 username: req.body.username,
                 password: hash,
                 email: req.body.email,
-                role: roles.map(item => item._id)
+                roles: roles.map(item => item._id),
+                birthdate:new Date()
             });
-            const temp = (await User.findOne({ username: req.body.username }))
+            let error = newUser.validateSync();
+            if(error)
+                return res.status(400).json(ResponseDetail(400, { 
+                    message: error.errors['email']?.message||error.errors['username']?.message }))
+            let temp = (await User.findOne({ username: req.body.username }))
             if (temp) {
                 return res.status(400).json(ResponseDetail(400, { username: "Username đã tồn tại" }))
             }
+            temp = (await User.findOne({ email: req.body.email }))
+            if (temp) {
+                return res.status(400).json(ResponseDetail(400, { username: "Email đã tồn tại" }))
+            }
+            const activeCode = jwt.sign(
+                { email:req.body.email },
+                process.env.JWT_ACCESS_KEY,
+                { expiresIn: "15m" }
+            )
+            sendMail(req.body.email , "Kích hoạt tài khoản", process.env.CLIENT_URL + "active/" + activeCode)
             const user = await newUser.save();
-            res.status(200).json(ResponseData(200, user))
+            return res.status(200).json(ResponseData(200, user))
 
         } catch (error) {
             console.log(error)
-            res.status(500).json(error)
+            res.status(500).json(ResponseDetail(400, { username: "Lỗi tạo tài khoản" }))
         }
 
     },
@@ -167,7 +182,7 @@ export const AuthController = {
                         { expiresIn: "15m" }
                     )
                     console.log("active:" + activeCode);
-                    sendMail(email, "Kích hoạt tài khoản", process.env.CLIENT_URL + "/api/auth/active?key=" + activeCode)
+                    sendMail(email, "Kích hoạt tài khoản", process.env.CLIENT_URL + "active/" + activeCode)
                         .then(response => {
                             console.log(response)
                             return res.status(200).json(ResponseData(200, { message: "Đã gửi mail kích hoạt" }))
@@ -186,10 +201,46 @@ export const AuthController = {
                 res.status(400).json(ResponseDetail(400, { message: "Thiếu email" }));
             }
         } catch (error) {
-            res.status(500).json("Lỗi xác thực")
+            res.status(500).json(ResponseDetail(400, { message: "Lỗi xác thực" }))
         }
     }
     ,
+    Forgotpassword: async (req, res) => {
+        try {
+            const email = req.body.email;
+            var password = generator.generate({
+                length: 12,
+                numbers: true,
+            });
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(password, salt);
+            if (email) {
+                const user = await User.findOne({ email: email })
+                if (user) {
+                    const newUser = await User.findOneAndUpdate({email: email },{password:hash},{new:true})
+                    
+                    sendMail(email, "Mật khẩu mới", "Mật khẩu mới của tài khoản:"+password)
+                        .then(response => {
+                            console.log(response)
+                            return res.status(200).json(ResponseData(200, { message: "Đã gửi mật khẩu mới" }))
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            return res.status(500).json(ResponseDetail(400, { message: "Lỗi gửi mail" }))
+                        })
+
+                }
+                else {
+                    return res.status(400).json(ResponseDetail(400, { message: "Tài khoản không tồn tại" }))
+                }
+
+            } else {
+                res.status(400).json(ResponseDetail(400, { message: "Thiếu email" }));
+            }
+        } catch (error) {
+            res.status(500).json("Lỗi xác thực")
+        }
+    },
     Active: async (req, res) => {
         try {
             const key = req.query.key;
@@ -259,6 +310,33 @@ export const AuthController = {
         catch (error) {
             console.log(error)
             return res.status(500).json(ResponseDetail(500, { message: "Lỗi cập nhật quyền tài khoản" }))
+        }
+    },
+
+    checkUsername: async (req, res) => {
+        try {
+            const username = req.body.username;
+            const user = await User.findOne({ username:username })
+            if (user)
+                return res.status(200).json(ResponseData(200, {message:"Tên đăng nhập đã tồn tại trong hệ thống",valid: false}))
+            return res.status(200).json(ResponseData(200, {message:"Tên đăng nhập hợp lý",valid: true}))
+        }
+        catch (error) {
+            console.log(error)
+            return res.status(500).json(ResponseDetail(500, { message: "Lỗi",valid: false }))
+        }
+    },
+    checkEmail: async (req, res) => {
+        try {
+            const email = req.body.email;
+            const user = await User.findOne({ email:email })
+            if (user)
+                return res.status(200).json(ResponseData(200, {message:"Email đã tồn tại trong hệ thống",valid: false}))
+            return res.status(200).json(ResponseData(200, {message:"Email hợp lý",valid: true}))
+        }
+        catch (error) {
+            console.log(error)
+            return res.status(500).json(ResponseDetail(500, { message: "Lỗi",valid: false }))
         }
     }
 

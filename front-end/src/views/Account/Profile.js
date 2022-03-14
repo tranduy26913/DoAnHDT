@@ -28,7 +28,7 @@ function Profile({userInfo,changeUserInfo}) {
   useEffect(async() => {
     if (userInfo) {
       setName(userInfo?.tenhienthi)
-      setBirthDate(new Date(userInfo?.birthdate))
+      setBirthDate(userInfo?.birthdate?new Date(userInfo?.birthdate):new Date())
       setPreview(userInfo?.image)
       setLoadingUser(false)
     }
@@ -56,11 +56,12 @@ function Profile({userInfo,changeUserInfo}) {
   const handleSubmitSaveProfile = async (data) => {
     try {
       dispatch(setLoading(true))
-      await apiMain.updateUserInfo(user, dispatch, loginSuccess, data)
+      const update = await apiMain.updateUserInfo(user, dispatch, loginSuccess, data)
       dispatch(setLoading(false))
       toast.success("Cập nhật thông tin thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
-      const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
-      changeUserInfo(res.userInfo)
+      const newUser ={...user, image:update.image,tenhienthi:update.tenhienthi}
+      dispatch(loginSuccess(newUser))
+      changeUserInfo(update.userInfo)
     } catch (error) {
       console.log(error)
       toast.error("Lỗi cập nhật thông tin", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
@@ -118,7 +119,7 @@ function Profile({userInfo,changeUserInfo}) {
             <div className="col-5 profile__avt">
 
               <img src={preview} alt="" />
-              <input type={"file"} name={"avatar"} onChange={onChangeImage} />
+              <input type={"file"} accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name={"avatar"} onChange={onChangeImage} />
               <button onClick={upload}>Upload</button>
             </div>
             <div className="col-7 ">

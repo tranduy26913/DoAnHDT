@@ -6,14 +6,21 @@
             padding: 10px 0;
         }
     }
-    &__form {}
+    &__form {
+        margin-bottom: 20px;
+    }
     &__input {
         position: relative;
         width: 100%;
-        span {
-            position: absolute;
-            top: 0;
-            right: 10px;
+    }
+    &__icon {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        height: 100%;
+        align-items: center;
+        &>span:hover {
+            color: $main-color;
         }
     }
     &__body {

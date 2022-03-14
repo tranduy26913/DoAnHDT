@@ -9,7 +9,7 @@ import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'react-toastify'
-
+import getData from '../../api/getData'
 import avt from '../../assets/img/avt.png'
 import { storage } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -100,28 +100,35 @@ const StoryCreate = ({ userInfo }) => {
   const dispatch = useDispatch()
   const [url, setUrl] = useState('')
   useEffect(async () => {
-    apiMain.getStorysByUserId({ id: userInfo?._id })
-      .then(res => {
-        setStorys(res)
-      })
-      .catch(err => {
-        console.log(err)
-      }
-      )
+    getStorys()
   }, [userInfo])
+
+  const getStorys = async()=>{
+    apiMain.getStorysByUserId({ id: userInfo?._id })
+    .then(res => {
+      setStorys(res)
+    })
+    .catch(err => {
+      console.log(err)
+    }
+    )
+  }
 
   const onClickUpdateStory = (e) => {
     setEditNovel(true)
     setUrl(e.target.name)
   }
   const onClickDeleteStory = (e) => {
-    if (!e.target.name) {
-      apiMain.deleteChapter({ url, chapnumber: e.target.name }, user, dispatch, loginSuccess)
+    console.log(e.target.name)
+    if(e.target.name) {
+      apiMain.deleteNovel({url: e.target.name }, user, dispatch, loginSuccess)
         .then(res => {
+          console.log(res)
+          getStorys()
           toast.success(res.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
         })
         .catch(err => {
-          toast.error(err.response.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+          toast.error(getData(err.response)?.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
         })
     }
   }
@@ -267,21 +274,30 @@ const AddChapter = ({ url, chapnumber, user, dispatch,onClickBackFromAddChap,get
 
   const onClickAddChapter = async (e) => {
     const params = { content, tenchap: tenchuong, url }
+    if(content.length<=10){
+      toast.warning("Nội dung chương phải dài hơn 10 kí tự");
+      return
+    }
     apiMain.createChapter(params, user, dispatch, loginSuccess)
       .then(res => {
         getChapters()
-        toast.success("Thêm chương thành công", { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+        toast.success("Thêm chương thành công")
       })
-      .catch(err => { toast.error(err.response.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false }) })
+      .catch(err => { toast.error(getData(err.response)?.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false }) })
   }
 
   const onClickEditChapter = async (e) => {
     const params = { content, tenchap: tenchuong, url, chapnumber }
+    if(content.length<=10){
+      toast.warning("Nội dung chương phải dài hơn 10 kí tự");
+      return
+    }
     apiMain.updateChapter(params, user, dispatch, loginSuccess)
       .then(res => {
-        toast.success("Sửa truyện thành công", { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+        getChapters()
+        toast.success("Sửa truyện thành công")
       })
-      .catch(err => { toast.error(err.response.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false }) })
+      .catch(err => { toast.error(getData(err.response)?.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false }) })
   }
   const labelStyle = { 'minWidth': '100px', 'margin': '5px 0px', 'display': 'inline-block' }
   return (<>
