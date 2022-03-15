@@ -42,7 +42,11 @@ const apiMain = {
         return getData(res);
 
     },
+    getStorysByName: async (params) => {
+        const res = await axiosClient.get(`/novels/search`, { params: params });
+        return getData(res);
 
+    },
     getStorysByUserId: async (params) => {
         const res = await axiosClient.get(`/novels/created`, { params: params });
         return getData(res);

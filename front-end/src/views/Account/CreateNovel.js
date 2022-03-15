@@ -60,7 +60,7 @@ function CreateNovel({userInfo}) {
         if (image == null)
             return;
         dispatch(setLoading(true))
-        const url = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(' ').filter(i=>i!==' ').join('-').toLowerCase()
+        const url = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(' ').filter(i=>i!=='').join('-').toLowerCase()
         const storageRef = ref(storage, `/images/truyen/${url}`);
         uploadBytes(storageRef, image).then((result) => {
             getDownloadURL(result.ref).then(async (urlImage) => {//lấy liên kết tới ảnh

@@ -10,6 +10,7 @@ import PrivateRoute from './views/PrivateRoute';
 import StoryDetail from './views/StoryDetail/StoryDetail';
 import Active from './views/Active/Active';
 import Chapter from './views/Chapter/Chapter';
+import Search from './views/Search/Search';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           </Route></Route>
         <Route path='active/:token' element={<Active />}></Route>
         <Route path='truyen/:url/:chapnum' element={<Chapter />}></Route>
+        <Route path='tim-kiem' element={<Search/>}/>
       </Routes>
       <ToastContainer autoClose={1000}
         hideProgressBar
