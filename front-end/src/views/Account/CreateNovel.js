@@ -46,9 +46,6 @@ function CreateNovel({userInfo}) {
                     dispatch(setLoading(false))
                     toast.error(getData(err.response)?.details.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
                 })
-            
-            
-
         } catch (error) {
             console.log(error)
             toast.error("Lỗi cập nhật thông tin", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
@@ -98,7 +95,6 @@ function CreateNovel({userInfo}) {
                     :
                     <div className="profile__wrap d-flex">
                         <div className="col-5 profile__avt">
-
                             <img src={preview} alt="" />
                             <input type={"file"} accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name={"avatar"} onChange={onChangeImage} />
                         </div>
@@ -129,7 +125,6 @@ function CreateNovel({userInfo}) {
                                         <button onClick={handleCreate}>{loading ? <Loading /> : ''} Đăng truyện</button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>

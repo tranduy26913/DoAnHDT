@@ -15,10 +15,7 @@ function Comment(props) {
 
     const onClickCreateComment = async (e) => {
         if (user) {
-            const params = {
-                url,
-                content
-            }
+            const params = { url, content }
             apiMain.createComment(user, params, dispatch, loginSuccess)
                 .then(res => {
                     setComments(pre => [res, ...pre])
@@ -28,66 +25,69 @@ function Comment(props) {
                     console.log(err)
                 })
         }
-        else{
-            toast.warning("Vui lòng đăng nhập trước khi bình luận",{
-                hideProgressBar:true,
-                pauseOnHover:false,
-                autoClose:1200
+        else {
+            toast.warning("Vui lòng đăng nhập trước khi bình luận", {
+                hideProgressBar: true,
+                pauseOnHover: false,
+                autoClose: 1200
             })
         }
     }
 
-    useEffect(async () => {
-        const data = await getComments()
-        console.log(data)
-        setCount(data?.length||0)
-        setComments(data)
-    }, [])
-
-    const getComments = async()=>{
+    const getComments = async () => {
         try {
-            const res = await apiMain.getCommentsByUrl({url:url})
-            if(res)
+            const res = await apiMain.getCommentsByUrl({ url: url })
+            if (res)
                 return res
             return []
         } catch (error) {
             return []
         }
-        
-        
     }
 
-    const onClickDeleteComment = async(e)=>{
-        if(user){
-            apiMain.deleteComment(user,{id:e.target.name},dispatch,loginSuccess)
-                .then(async (res) =>{
-                    toast.success(res.message,{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+    useEffect(() => {
+        const loadComment = async () => {
+            const data = await getComments()
+            console.log(data)
+            setCount(data?.length || 0)
+            setComments(data)
+        }
+        loadComment();
+    }, [])
+
+    
+
+    const onClickDeleteComment = async (e) => {
+        if (user) {
+            apiMain.deleteComment(user, { id: e.target.name }, dispatch, loginSuccess)
+                .then(async (res) => {
+                    toast.success(res.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
                     const data = await getComments()
                     setComments(data)
                 })
-                .catch(err=>{
-                    toast.error(err.response.data.detail.message,{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+                .catch(err => {
+                    toast.error(err.response.data.detail.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
                 }
-                    )
+                )
         }
     }
 
-    const calDate = (createdAt) => {
+    const calDate = (createdAt) => {//xử lý thời gian
         let newDate = new Date()
         let createDate = new Date(createdAt)
-                let diff = (newDate.getTime() - createDate.getTime()) / 60000
+        let diff = (newDate.getTime() - createDate.getTime()) / 60000
 
         if (diff / 60 >= 1) {
             if (diff / (60 * 24) >= 1) {
                 if (diff / (60 * 24 * 30) >= 1) {
-                    if (diff / (60 * 24 * 30*365)>=1){
-                        return `${ (diff / (60 * 24 * 30*365)).toFixed(0)} năm trước`
+                    if (diff / (60 * 24 * 30 * 365) >= 1) {
+                        return `${(diff / (60 * 24 * 30 * 365)).toFixed(0)} năm trước`
                     }
                     return `${(diff / (60 * 24 * 30)).toFixed(0)} tháng trước`
                 }
-                return `${(diff / (60 * 24 )).toFixed(0)} ngày trước`
+                return `${(diff / (60 * 24)).toFixed(0)} ngày trước`
             }
-            return `${(diff/60).toFixed(0)} giờ trước`
+            return `${(diff / 60).toFixed(0)} giờ trước`
         }
         return `${diff.toFixed(0)} phút trước`
 
@@ -100,23 +100,22 @@ function Comment(props) {
                     <img src={user?.image || avt} alt="" />
                 </div>
                 <div className="comment__input">
-                    <textarea  style={{'height':'100%','padding':'5px 20px 5px 5px'}} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
+                    <textarea style={{ 'height': '100%', 'padding': '5px 20px 5px 5px' }} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
                     <div className='d-flex comment__icon' ><span onClick={onClickCreateComment} className=" fs-20 "><i className="fa-solid fa-comment"></i></span></div>
                 </div>
 
             </div>
             <hr />
-            <ul>
+            <div>
                 {
                     comments.map((item, index) => {
                         return (
-                            <div key={item.id}>
-                                <li className='d-flex'>
+                            <div key={item.id} >
+                                <div className='d-flex'>
                                     <div className="comment__avatar ">
                                         <div className="avatar--45 mr-1">
                                             <img src={item.image || avt} alt="" />
                                         </div>
-
                                     </div>
                                     <div className="comment__body">
                                         <div className="comment__author__info">
@@ -130,22 +129,22 @@ function Comment(props) {
                                         <div className="comment__content mb-1">
                                             {item.content}
                                         </div>
-                                        <div className="comment__nav">
+                                        <ul className="comment__nav">
                                             {item.username === user?.username ?
-                                            <a name={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className="fa-solid fa-trash"></i> Xoá</a>:''
+                                                <li name={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className="fa-solid fa-trash"></i> Xoá</li> : ''
                                             }
-                                            <a className='fs-14 text-secondary'><i className="fa-solid fa-reply"></i> Trả lời</a>
-                                            <a className='fs-14 text-secondary'><i className="fa-solid fa-flag"></i> Báo xấu</a>
-                                            
-                                        </div>
+                                            <li className='fs-14 text-secondary'><i className="fa-solid fa-reply"></i> Trả lời</li>
+                                            <li className='fs-14 text-secondary'><i className="fa-solid fa-flag"></i> Báo xấu</li>
+
+                                        </ul>
 
                                     </div>
-                                </li>
+                                    </div>
                                 <hr />
                             </div>)
                     })
                 }
-            </ul>
+            </div>
         </div>
     )
 }

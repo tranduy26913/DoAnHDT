@@ -20,7 +20,7 @@ function Users(props) {
     setRoles(role.length===0?[]:role.split(', '))
   }
   const onClickShow = (e)=>{
-    if(choose==e.target.id){
+    if(choose===e.target.id){
       setChoose(null)
       setId(null)
     }
@@ -78,23 +78,24 @@ function Users(props) {
     setChoose(null)
   }
 
-  useEffect(async() => {
-    
-    apiMain.getAllUser(user, props.dispatch, loginSuccess)
+  useEffect(() => {
+    const loadUsers = async()=>{
+      apiMain.getAllUser(user, props.dispatch, loginSuccess)
       .then(res=>{
         setListUser(res)
       })
       .catch(err=>{
         console.log(err)
       })
-    
+    }
+    loadUsers();   
   }, [])
 
   return (
     <>
       <h1>All Users</h1>
 
-      <table style={{ "width": "90%" }}>
+      <table className='user-table' style={{ "width": "90%" }}>
         <thead>
         <tr>
           <th>Tên đăng nhập</th>

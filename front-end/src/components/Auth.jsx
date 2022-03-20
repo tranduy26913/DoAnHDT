@@ -77,7 +77,7 @@ const Login = props => {
       props.dispatch(clearMessageLogin())
   }, [])
 
-  const onLogin = async (e) => {
+  const onLogin = async (e) => {//xử lý đăng nhập
     e.preventDefault();
     const user = { username, password };
     await handleLogin(user, props.dispatch, props.navigate);
@@ -126,7 +126,7 @@ const Login = props => {
   )
 }
 
-const ReActive = props => {
+const ReActive = props => { 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false)
 
@@ -134,7 +134,7 @@ const ReActive = props => {
     setEmail(e.target.value)
   }
 
-  const onReActive = async (e) => {
+  const onReActive = async (e) => {//xử lý gọi api gửi mail kích hoạt
     e.preventDefault()
     setLoading(true)
     const data = { email }
@@ -179,10 +179,10 @@ const ForgetPassword = props => {
     setLoading(true)
     apiMain.forgetPassword({ email: email })
       .then(res => {
-        toast.success("Đã gửi mật khẩu mới vào email", { autoClose: 1200, pauseOnHover: false, hideProgressBar: true });
+        toast.success("Đã gửi mật khẩu mới vào email");
       })
       .catch(err => {
-        toast.error(err.response.data.details.message, { autoClose: 1200, pauseOnHover: false, hideProgressBar: true });
+        toast.error(err?.response?.data?.details?.message);
       })
       .finally(() => { setLoading(false) })
 
@@ -390,4 +390,6 @@ const Register = props => {
     </div>
   )
 }
+
+
 export default Auth

@@ -94,7 +94,6 @@ export default function Header() {
     }
 
     const onClickLogout = () => {
-        console.log("Logout")
         handleLogout(dispatch, navigate, location)
     }
 
@@ -155,7 +154,7 @@ export default function Header() {
                         </ul>
                         <div className='navbar-nav__list__search'>
                             <div className='form-group'>
-                                <input placeholder='Tìm truyện' onChange={e => { setSearch(e.target.value) }} value={search}></input>
+                                <input placeholder='Tìm truyện' onChange={e => { setSearch(e.target.value);console.log(e.target.value) }} value={search}></input>
                                 <button onClick={onClickSearch}><i className="fa-solid fa-magnifying-glass"></i></button>
                             </div>
                         </div>
@@ -165,14 +164,14 @@ export default function Header() {
                             </Link>
                             {
                                 user ? <div className='navbar-nav__profile'>
-                                    <div onClick={handleDropdownProfile} className="navbar-nav__profile__name">
+                                    <div  tabIndex={"1"} onBlur={hideProfileDropdown} onClick={handleDropdownProfile} className="navbar-nav__profile__name">
                                         {user.image ?
                                             <div className='navbar-nav__avatar'><img src={user.image} alt="" /></div>
                                             : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                         }
                                         <a>{user.name || user.tenhienthi || user.username}</a>
                                     </div>
-                                    <div tabIndex={1} onBlur={hideProfileDropdown} ref={profileDropdownRef} className="navbar-nav__profile__menu">
+                                    <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
                                         <ul>
                                             {
                                                 menu[user?.roles[0] || 'USER'].map((item, i) => {

@@ -18,7 +18,6 @@ export const handleLogin =async(user, dispatch,navigate)=>{
     apiMain.login(user)
       .then(res=>{
         dispatch(loginSuccess(getData(res))); //lấy thông tin user
-        dispatch(setLoading(false));
         toast.success("Đăng nhập thành công",{autoClose: 1200,pauseOnHover: false,hideProgressBar:true});//hiển thị toast thông báo
         dispatch(authInactive()) //hành động tắt modal login
         }
@@ -28,6 +27,8 @@ export const handleLogin =async(user, dispatch,navigate)=>{
       const msg=error.response?.data?.details
       let _ = msg.username||msg.password||msg.active||msg.toString()
       dispatch(setMessageLogin(_))
+    }).finally(()=>{
+      dispatch(setLoading(false));
     })
 }
 
