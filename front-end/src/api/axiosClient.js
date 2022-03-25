@@ -3,11 +3,13 @@ import axios from 'axios';
 import queryString from 'query-string';
 import jwt_decode from 'jwt-decode';
 import getData from './getData';
-const baseURL='https://thichtruyenchu.herokuapp.com/api'
-//const baseURL='http://localhost:5000/api'
+import { toast } from 'react-toastify';
+import { logoutSuccess } from '../redux/authSlice';
+//const baseURL='https://thichtruyenchu.herokuapp.com/api'
+const baseURL = 'http://localhost:5000/api'
 export const axiosClient = axios.create({
     baseURL: baseURL,
-    
+
     headers: {
         "Content-Type": "application/json"
     },
@@ -18,7 +20,7 @@ export const axiosClient = axios.create({
 
 
 const refreshToken = async (user) => {
-    const res = await axiosClient.post('/auth/refreshtoken', { refreshToken: user.refreshToken  }, { headers: { Authorization: `Bearer ${user.accessToken}` }, })
+    const res = await axiosClient.post('/auth/refreshtoken', { refreshToken: user.refreshToken }, { headers: { Authorization: `Bearer ${user.accessToken}` }, })
     console.log(res)
     return res.data
 }
@@ -36,19 +38,24 @@ export const axiosInstance = (user, dispatch, stateSuccess) => {
             let date = new Date();
             const decodeToken = jwt_decode(user?.accessToken);
             if (decodeToken.exp < date.getTime() / 1000) {
-                const newAccessToken = getData(await refreshToken(user));
-                console.log(newAccessToken.accessToken)
-                const newUser = {
-                    ...user,
-                    accessToken: newAccessToken.accessToken
+                try {
+                    const newAccessToken = getData(await refreshToken(user));
+                    const newUser = {
+                        ...user,
+                        accessToken: newAccessToken.accessToken
+                    }
+                    dispatch(stateSuccess(newUser))
+                    config.headers['Authorization'] = `Bearer ${newAccessToken.accessToken}`;
+                } catch (error) {
+                    let msg = error?.response?.data?.details?.message || "Hết phiên đăng nhập"
+                    toast.error(msg);
+                    dispatch(logoutSuccess())
                 }
-                dispatch(stateSuccess(newUser))
-                config.headers['Authorization'] = `Bearer ${newAccessToken.accessToken}`;
 
-            }else{
+            } else {
                 config.headers['Authorization'] = `Bearer ${user.accessToken}`;
             }
-            
+
             return config;
         },
         err => {

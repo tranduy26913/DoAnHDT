@@ -143,12 +143,6 @@ select {
     top: 4rem !important
 }
 
-td,
-th {
-    border: 1px solid black;
-    padding: 5px;
-}
-
 .text-overflow-1-lines {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -176,13 +170,4 @@ th {
 
 .ma {
     margin: auto;
-}
-
-ul {
-    & li {
-        cursor: pointer;
-        &:hover {
-            color: $main-color;
-        }
-    }
 }

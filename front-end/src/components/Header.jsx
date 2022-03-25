@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,11 +69,22 @@ export default function Header() {
 
     const dispatch = useDispatch();
 
+    useEffect(()=>{
+        const hideDropdown = ()=>{
+            profileDropdownRef?.current?.classList.remove("active")
+        }
+        document.addEventListener("click",hideDropdown)
+        return ()=>{
+            document.removeEventListener("click",hideDropdown)
+        }
+    },[])
+
     const handleExpand = () => {
         expandRef.current.classList.toggle('active')
     }
 
-    const handleDropdownProfile = () => {
+    const handleDropdownProfile = (e) => {
+        e.stopPropagation();
         profileDropdownRef?.current.classList.toggle('active')
     }
 
@@ -164,14 +175,14 @@ export default function Header() {
                             </Link>
                             {
                                 user ? <div className='navbar-nav__profile'>
-                                    <div  tabIndex={"1"} onBlur={hideProfileDropdown} onClick={handleDropdownProfile} className="navbar-nav__profile__name">
+                                    <div  onClick={handleDropdownProfile} className="navbar-nav__profile__name">
                                         {user.image ?
                                             <div className='navbar-nav__avatar'><img src={user.image} alt="" /></div>
                                             : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                         }
                                         <a>{user.name || user.tenhienthi || user.username}</a>
                                     </div>
-                                    <div ref={profileDropdownRef} className="navbar-nav__profile__menu">
+                                    <div ref={profileDropdownRef}  tabIndex={"1"} onBlur={hideProfileDropdown} className="navbar-nav__profile__menu">
                                         <ul>
                                             {
                                                 menu[user?.roles[0] || 'USER'].map((item, i) => {

@@ -203,10 +203,10 @@ export const NovelController = {
         try {
             const status = req.query.status || 'None'
             const sort = req.query.sort || 'tentruyen'
-            const page = req.query.page || 0
+            const page = req.query.page - 1 || 0
             const size = req.query.size || 6
 
-            Novel.find().limit(size).skip(size * page).sort({ tentruyen: -1 })
+            Novel.find().limit(size).skip(size * (page)).sort({ tentruyen: -1 })
                 .then(result => {
                     res.status(200).json(ResponseData(200, result))
                 }).
@@ -225,6 +225,7 @@ export const NovelController = {
             const url = req.params.url;
             Novel.findOne({ url: url }).then(
                 result => {
+                    
                     res.status(200).json(ResponseData(200, result))
                 }
             ).
@@ -248,7 +249,6 @@ export const NovelController = {
                 Chapter.findOne({ dautruyenId: novel.id, chapnumber: chapNumber })
                     .then(
                         result => {
-                            console.log(result)
                             return res.status(200).json(ResponseData(200, result))
                         }
                     ).
@@ -275,7 +275,7 @@ export const NovelController = {
             if (novel) {
                 Chapter.find({ dautruyenId: novel.id })
                     .limit(size)
-                    .skip(page * size)
+                    .skip((page - 1) * size)
                     .sort({ chapnumber: 1 })
                     .select({ chapnumber: 1, tenchap: 1 }).then(
                         result => {
@@ -361,6 +361,7 @@ export const NovelController = {
             console.log(error)
             return res.status(500).json(ResponseDetail(500, { message: "Lỗi lấy thông tin chap" }))
         }
-    }
+    },
+    
 
 }

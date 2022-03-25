@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import './_StoryDetail.scss'
 import { useParams, Link, useLocation } from 'react-router-dom'
@@ -6,6 +6,7 @@ import apiMain from '../../api/apiMain'
 import LoadingData from '../../components/LoadingData'
 import Grid from '../../components/Grid'
 import Comment from '../../components/Comment'
+import Pagination from '../../components/Pagination'
 
 const nav = [
   {
@@ -58,7 +59,7 @@ function StoryDetail() {
         break
       case 'chapter':
         console.log(truyen.url)
-        setMain(<Chapter key={'chapter'} url={truyen.url} />)
+        setMain(<ListChapter key={'chapter'} url={truyen.url} />)
         break
       case 'comment':
         console.log(truyen.url)
@@ -170,36 +171,47 @@ const Rate = props => {
   )
 }
 
-const Chapter = props => {
+export const ListChapter = props => {
   const [chapters, setChapters] = useState([])
   const [loadingData, setLoadingData] = useState(true)
+  const [currentPage,setCurrentPage] = useState(1)
   const location = useLocation()
+  console.log(window.location)
   const url = props.url
   useEffect(async () => {
     const params = {
-      page: 0,
-      size: 1000
+      page: currentPage,
+      size: 20
     }
 
     apiMain.getNameChapters(props.url, params).then(res => {
       setChapters(res)
       setLoadingData(false)
     })
-  }, [props.url])
+  }, [props.url,currentPage])
+
+  const handleSetPage = useCallback((value)=>{
+        setCurrentPage(Number(value))
+  })
+
+  
 
   return (
     <>
       <h3>Danh sách chương</h3>
       {
         loadingData ? <LoadingData /> :
-          <Grid gap={15} col={3} snCol={1}>
+          <Grid gap={15} col={props.col||3} snCol={1}>
             {
               chapters.map((item, index) => {
-                return <Link to={`${location.pathname}/${item.chapnumber}`} key={index} className='text-overflow-1-lines'>{item.tenchap}</Link>
+                return <Link to={`/truyen/${url}/${item.chapnumber}`}
+                 key={index} className='text-overflow-1-lines'
+                 style={{"fontSize":`${props.fontsize||16}px`}}>{item.tenchap}</Link>
               })
             }
           </Grid>
       }
+      <Pagination totalPage={10} currentPage={currentPage} handleSetPage={handleSetPage} />
 
     </>
   )

@@ -5,6 +5,7 @@ import Section, {SectionHeading,SectionBody} from '../../components/section';
 import Story from '../../components/Story';
 import getData from '../../api/getData';
 import { useDispatch,useSelector } from 'react-redux';
+import {Link} from 'react-router-dom'
 import {loginSuccess} from '../../redux/authSlice'
 import './ListStory.scss'
 
@@ -42,7 +43,7 @@ function ListStory() {
           <Section>
              <SectionHeading>
               <h4 className='section-title'>Biên tập viên đề cử</h4>
-              <a>Xem tất cả</a>
+              <Link to='tat-ca'>Xem tất cả</Link>
             </SectionHeading>
             <SectionBody>
               <div className='list-story'>
