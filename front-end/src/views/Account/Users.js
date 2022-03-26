@@ -49,10 +49,10 @@ function Users(props) {
       .then(res=>{
         const newList = listUser.map(item =>{return item._id===res?._id?res:item})
         setListUser(newList)
-        toast.success("Kích hoạt thành công",{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+        toast.success("Kích hoạt thành công")
       })
       .catch(err=>{
-        toast.error("Kích hoạt thất bại",{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+        toast.error("Kích hoạt thất bại")
       })
     }
   }

@@ -1,10 +1,10 @@
 
-function Layout(props) {
+function Layout(props) {//Layout chung cho toàn web
   return (
     <>
-    <a><span 
+    <span 
       className='imgHero'>
-        </span></a>
+        </span>
     
       <div className="main">
         <div className="container">

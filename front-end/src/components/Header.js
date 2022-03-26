@@ -9,7 +9,7 @@ import { authLoginActive, authRegisterActive, authInactive } from '../redux/moda
 import { handleLogout } from '../handle/handleAuth';
 import { setQuery } from '../redux/messageSlice';
 
-const menu = {
+const menu = {//menu hiển thị cho từng loại tài khoản admin và user thường
     ADMIN: [
         {
             path: 'admin/profile',
@@ -69,7 +69,7 @@ export default function Header() {
 
     const dispatch = useDispatch();
 
-    useEffect(()=>{
+    useEffect(()=>{//xử lý dropdown của account
         const hideDropdown = ()=>{
             profileDropdownRef?.current?.classList.remove("active")
         }
@@ -108,7 +108,7 @@ export default function Header() {
         handleLogout(dispatch, navigate, location)
     }
 
-    const onClickSearch = () => {
+    const onClickSearch = () => {//xử lý tìm kiếm 
         dispatch(setQuery(search))
         if (navigate.pathname != '/tim-kiem') {
             navigate('/tim-kiem')

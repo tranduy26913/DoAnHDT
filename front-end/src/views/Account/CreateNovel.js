@@ -25,43 +25,44 @@ function CreateNovel({userInfo}) {
     const dispatch = useDispatch()
 
     
-
-
-    useEffect(async() => {
-        if (userInfo) {
-          setLoadingUser(false)
+    useEffect(() => {
+        const loadUser = async() => {
+            if (userInfo) {
+              setLoadingUser(false)
+            }
         }
+        loadUser();
       }, [userInfo])
 
 
-    const handleCreateNovel = async (data) => {
+    const handleCreateNovel = async (data) => {//xử lý gọi tạo truyện mới
         try {
             apiMain.createNovel(data,user, dispatch, loginSuccess )
                 .then(res =>{
-                    toast.success("Đăng truyện thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+                    toast.success("Đăng truyện thành công")
                     dispatch(setLoading(false))
                 })
                 .catch(err=>{
                     
                     dispatch(setLoading(false))
-                    toast.error(getData(err.response)?.details.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+                    toast.error(getData(err.response)?.details.message)
                 })
         } catch (error) {
             console.log(error)
-            toast.error("Lỗi cập nhật thông tin", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+            toast.error("Lỗi cập nhật thông tin")
         }
     }
 
-    const handleCreate = async (e) => {
+    const handleCreate = async (e) => {//xử lý tạo truyện
         e.preventDefault()
         if (image == null)
             return;
         dispatch(setLoading(true))
         const url = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(' ').filter(i=>i!=='').join('-').toLowerCase()
         const storageRef = ref(storage, `/images/truyen/${url}`);
-        uploadBytes(storageRef, image).then((result) => {
+        uploadBytes(storageRef, image).then((result) => {//upload ảnh
             getDownloadURL(result.ref).then(async (urlImage) => {//lấy liên kết tới ảnh
-                const data = {
+                const data = {//payload
                     tentruyen: name,
                     hinhanh: urlImage,
                     tacgia,
@@ -69,7 +70,7 @@ function CreateNovel({userInfo}) {
                     url,
                     nguoidangtruyen:userInfo?._id
                 }
-                await handleCreateNovel(data)
+                await handleCreateNovel(data)//gọi API
             })
         })
 

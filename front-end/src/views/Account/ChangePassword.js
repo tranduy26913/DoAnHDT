@@ -15,13 +15,12 @@ function ChangePassword() {
     const [valid, setValid] = useState({ new: false, cf: false });
     const user = useSelector(state => state.auth.login?.user)
     const dispatch = useDispatch();
-    const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+    const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");//regex kiểm tra mật khẩu hợp lệ
 
-    const onChangeCurrentPW = (e) => {
+    const onChangeCurrentPW = (e) => {//xử lý khi nhập mật khẩu
         setCurrentPW(e.target.value)
-
     }
-    const onChangeNewPW = (e) => {
+    const onChangeNewPW = (e) => {//xử lý khi nhập mật khẩu mới
         setNewPW(e.target.value)
         if (strongRegex.test(e.target.value)) {
             setMsgNewPW("Mật khẩu hợp lý")
@@ -31,7 +30,7 @@ function ChangePassword() {
             setValid(pre => { return { ...pre, new: false } })
         }
     }
-    const onChangeNewCfPW = (e) => {
+    const onChangeNewCfPW = (e) => {//xử lý nhập mật khẩu xác nhận
         setNewCfPW(e.target.value)
         if (newPW.localeCompare(e.target.value) == 0) {
             setMsgCfNewPW("Trùng khớp")
@@ -45,14 +44,14 @@ function ChangePassword() {
 
     //handle
 
-    const onClickChangePassword = async (e) => {
+    const onClickChangePassword = async (e) => {//xử lý gọi API đổi mật khẩu
         e.preventDefault()
-        if (valid.new && valid.cf) {
-            const params = {
+        if (valid.new && valid.cf) {//kiểm tra dữ liệu đầu vào
+            const params = {//payload
                 newPassword: newPW,
                 password: currentPW
             }
-            handleChangePassword(user,dispatch,loginSuccess,params);
+            handleChangePassword(user,dispatch,loginSuccess,params);//gọi hàm xử lý
         }
     }
 

@@ -54,11 +54,11 @@ function Account() {
   const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
 
   useEffect(() => {
-    const getUsers = async () => {
+    const getUser = async () => {
       const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
       setUserInfo(res.userInfo)
     }
-    getUsers()
+    getUser()
   }, [])
 
 

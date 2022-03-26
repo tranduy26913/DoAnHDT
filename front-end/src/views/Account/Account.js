@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { Link, useLocation, Route, Routes, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import apiMain from '../../api/apiMain';
 import { loginSuccess, logoutSuccess } from '../../redux/authSlice';
 import { useSelector, useDispatch } from 'react-redux'
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import CreateNovel from './CreateNovel';
 
 function Account() {
-  const menu = [
+  const menu = [//menu dựa trên từng loại tài khoản
     {
       path: "profile",
       display: "Hồ sơ",
@@ -38,36 +38,35 @@ function Account() {
     },
   ]
 
-  const [userInfo ,setUserInfo]=useState(null)
+  const [userInfo, setUserInfo] = useState(null)
   const user = useSelector(state => state.auth.login?.user);
   const { pathname } = useLocation();
   const dispatch = useDispatch();
-  const navigate = useNavigate()
   const active = menu.findIndex(e => e.path === pathname.split('/')[2]);
 
-useEffect(()=>{
-  const getUsers = async () => {
-    try{
-      const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
-      setUserInfo(res.userInfo)
-    }catch(err){
-      if(err.response.status === 403 || err.response.status === 401){
-        //toast.warning("Phiên đăng nhập của bạn đã hết. Vui lòng đăng nhập lại",
-        //  {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
-        dispatch(logoutSuccess())
-        //navigate('/')
+  useEffect(() => {
+    const getUser = async () => {//xử lý load thông tin user
+      try {
+        const res = getData(await apiMain.getUserInfo(user, dispatch, loginSuccess));
+        setUserInfo(res.userInfo)
+      } catch (err) {
+        if (err.response.status === 403 || err.response.status === 401) {
+          //toast.warning("Phiên đăng nhập của bạn đã hết. Vui lòng đăng nhập lại",
+          //  {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
+          dispatch(logoutSuccess())
+          //navigate('/')
+        }
+        else {
+          toast.error("Lỗi thông tin",
+            { autoClose: 800, pauseOnHover: false, hideProgressBar: true })
+        }
       }
-      else{
-      toast.error("Lỗi thông tin",
-          {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
-      }
-    }
-    
-  }
-  getUsers()
-},[])
 
-  const changeUserInfo=useCallback((data)=>{
+    }
+    getUser()
+  }, [])
+
+  const changeUserInfo = useCallback((data) => {
     setUserInfo(data)
   })
 
@@ -85,12 +84,12 @@ useEffect(()=>{
             </ul>
 
           </div>
-          <div className="col-9 "  style={{'minHeight':'500px'}}>
+          <div className="col-9 " style={{ 'minHeight': '500px' }}>
             <Routes>
-              <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo}/>}></Route>
+              <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo} />}></Route>
               <Route path='change-password' element={<ChangePassword />}></Route>
-              <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo}/>}></Route>
-              <Route path='dang-truyen' element={<CreateNovel  userInfo={userInfo}  />}></Route>
+              <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo} />}></Route>
+              <Route path='dang-truyen' element={<CreateNovel userInfo={userInfo} />}></Route>
             </Routes>
           </div>
         </div>

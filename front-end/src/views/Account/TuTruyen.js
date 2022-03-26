@@ -178,11 +178,10 @@ const ListChap = ({ url, user, dispatch,onClickBackFromListChap }) => {
   const location = useLocation()
   const [addChap, setAddChap] = useState(false)
   const [chapnumber, setChapnumber] = useState(null)
+  
   const onClickUpdateChap = (e) => {
-    console.log(e.target.name)
     setChapnumber(e.target.name)
     setAddChap(true)
-    console.log(user)
   }
   const onClickDeleteChap = (e) => {
     if (e.target.name) {

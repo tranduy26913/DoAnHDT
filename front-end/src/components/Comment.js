@@ -13,10 +13,10 @@ function Comment(props) {
     const url = props.url
     const dispatch = useDispatch()
 
-    const onClickCreateComment = async (e) => {
+    const onClickCreateComment = async (e) => { //xử lý đăng bình luận mới
         if (user) {
-            const params = { url, content }
-            apiMain.createComment(user, params, dispatch, loginSuccess)
+            const params = { url, content }//payload
+            apiMain.createComment(user, params, dispatch, loginSuccess)//gọi API đăng comment
                 .then(res => {
                     setComments(pre => [res, ...pre])
                     setContent("")
@@ -34,7 +34,7 @@ function Comment(props) {
         }
     }
 
-    const getComments = async () => {
+    const getComments = async () => {//hàm gọi data comments
         try {
             const res = await apiMain.getCommentsByUrl({ url: url })
             if (res)
@@ -45,7 +45,7 @@ function Comment(props) {
         }
     }
 
-    useEffect(() => {
+    useEffect(() => {//load comment khi component đc render
         const loadComment = async () => {
             const data = await getComments()
             console.log(data)
@@ -57,8 +57,8 @@ function Comment(props) {
 
     
 
-    const onClickDeleteComment = async (e) => {
-        if (user) {
+    const onClickDeleteComment = async (e) => {//xử lý xoá comment
+        if (user) {//Nếu đã đăng nhập thì mới đc phép xoá
             apiMain.deleteComment(user, { id: e.target.name }, dispatch, loginSuccess)
                 .then(async (res) => {
                     toast.success(res.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
@@ -72,7 +72,7 @@ function Comment(props) {
         }
     }
 
-    const calDate = (createdAt) => {//xử lý thời gian
+    const calDate = (createdAt) => {//xử lý thời gian đăng comment
         let newDate = new Date()
         let createDate = new Date(createdAt)
         let diff = (newDate.getTime() - createDate.getTime()) / 60000

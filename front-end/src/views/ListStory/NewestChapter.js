@@ -2,10 +2,7 @@ import React, { useEffect } from 'react'
 import Section, { SectionBody, SectionHeading } from '../../components/section'
 
 function NewestChapter() {
-  
-    useEffect(()=>{
-
-    },[])
+  //chưa viết xong
   return (
     <div className='d-flex'>
         <Section>

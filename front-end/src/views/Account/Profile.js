@@ -11,7 +11,6 @@ import { toast } from 'react-toastify';
 import { setLoading } from '../../redux/messageSlice'
 import Loading from '../../components/Loading';
 import LoadingData from '../../components/LoadingData';
-import getData from '../../api/getData';
 
 function Profile({userInfo,changeUserInfo}) {
   const user = useSelector(state => state.auth.login?.user);
@@ -23,18 +22,16 @@ function Profile({userInfo,changeUserInfo}) {
   const [loadingUser, setLoadingUser] = useState(true)
   const dispatch = useDispatch()
 
-  
-
-  useEffect(async() => {
-    if (userInfo) {
-      setName(userInfo?.tenhienthi)
-      setBirthDate(userInfo?.birthdate?new Date(userInfo?.birthdate):new Date())
-      setPreview(userInfo?.image)
-      setLoadingUser(false)
+  useEffect(() => {
+    const loadUserInfo = async() => {//load thông tin của user
+      if (userInfo) {
+        setName(userInfo?.tenhienthi)
+        setBirthDate(userInfo?.birthdate?new Date(userInfo?.birthdate):new Date())
+        setPreview(userInfo?.image)
+        setLoadingUser(false)
+      }
     }
-    return () => {
-      console.log("clear")
-    }
+    loadUserInfo();
   }, [userInfo])
 
   const upload = async () => { //upload ảnh lên firebase
@@ -53,7 +50,7 @@ function Profile({userInfo,changeUserInfo}) {
     })
   }
 
-  const handleSubmitSaveProfile = async (data) => {
+  const handleSubmitSaveProfile = async (data) => {//xử lý submit lưu thông tin
     try {
       dispatch(setLoading(true))
       const update = await apiMain.updateUserInfo(user, dispatch, loginSuccess, data)
@@ -82,26 +79,23 @@ function Profile({userInfo,changeUserInfo}) {
   const onChangeName = (e) => {
     setName(e.target.value)
   }
-  const onChangeBirthDate = (e) => {
+  const onChangeBirthDate = (e) => {//xử lý khi thay đổi ngày sinh
     try{
       const date=new Date(e.target.value)
       const regex = new RegExp("([0-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")
-      if(regex.test(date.toISOString().substring(0,10))){
-        console.log(true)
+      if(regex.test(date.toISOString().substring(0,10))){//nếu ngày hợp lệ
         setBirthDate(date)
       }
-      else
+      else//nếu ngày không hợp lệ thì mặc định là ngày hôm nay
         setBirthDate(new Date())
-      
     }
     catch(err){
-      //console.log(err)
       setBirthDate(new Date())
     }
     
   }
 
-  const onChangeImage = (e) => {
+  const onChangeImage = (e) => {//xử lý chọn ảnh
     if (e.target.files.lenght !== 0) {
       setImage(e.target.files[0]);
       setPreview(URL.createObjectURL(e.target.files[0]))

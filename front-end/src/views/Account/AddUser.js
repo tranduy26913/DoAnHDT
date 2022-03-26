@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleLogin, handleRegister } from '../handle/handleAuth';
 
 function AddUser() {
-  
+  //component chưa dùng
     const [emailRegister, setEmailRegister] = useState("");
     const [usernameRegister, setUsernameRegister] = useState("");
     const [passwordRegister, setPasswordRegister] = useState("");
     const [passwordCfRegister, setPasswordCfRegister] = useState("");
     const msgRegister = useSelector(state => state.message.register?.msg)
+
     const onRegister = async (e) => {
       e.preventDefault();
       const user = {

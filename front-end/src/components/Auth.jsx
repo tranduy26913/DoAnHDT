@@ -17,7 +17,6 @@ function Auth(props) { //component đăng nhập và đăng ký
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   useEffect(() => {
     setLogin(props.choose);
     dispatch(setLoading(false))
@@ -79,8 +78,8 @@ const Login = props => {
 
   const onLogin = async (e) => {//xử lý đăng nhập
     e.preventDefault();
-    const user = { username, password };
-    await handleLogin(user, props.dispatch, props.navigate);
+    const user = { username, password };//payload
+    await handleLogin(user, props.dispatch, props.navigate);//gọi hàm handle 
   }
   return (
     <div className="form-wrap">
@@ -168,13 +167,15 @@ const ReActive = props => {
   )
 }
 
-const ForgetPassword = props => {
+const ForgetPassword = props => { ///Quên mật khẩu
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
+
   const onChangeEmail = (e) => {
     setEmail(e.target.value)
   }
-  const onForgetPassword = async (e) => {
+
+  const onForgetPassword = async (e) => { //xử lý gọi API gửi mail quên mật khẩu
     e.preventDefault()
     setLoading(true)
     apiMain.forgetPassword({ email: email })
@@ -213,28 +214,31 @@ const Register = props => {
   const [usernameRegister, setUsernameRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
   const [passwordCfRegister, setPasswordCfRegister] = useState("");
+
   const [valid, setValid] = useState([false, false, true, true])
   const [msgUsername, setMsgUsername] = useState("")
   const [msgEmail, setMsgEmail] = useState("")
   const [msgPassword, setMsgPassword] = useState("")
   const [msgCfPassword, setMsgCfPassword] = useState("")
   const msgRegister = useSelector(state => state.message.register?.msg)
-  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-  const onRegister = async (e) => {
+
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ ///regex validate email
+
+  const onRegister = async (e) => {//Xử lý gọi API Sign up
     e.preventDefault();
     if (!valid.every(item => item)) {
       toast.warning("Vui lòng điền các thông tin phù hợp")
       return
     }
-    const user = {
+    const user = {//payload
       username: usernameRegister,
       password: passwordRegister,
       email: emailRegister
     };
-    await handleRegister(user, props.dispatch, props.navigate);
+    await handleRegister(user, props.dispatch, props.navigate); //gọi hàm sign up
   }
 
-  const onChangeEmail = (e) => {
+  const onChangeEmail = (e) => {//validate email
     let email = e.target.value
     setEmailRegister(e.target.value)
     if (regex.test(email)) {
@@ -268,7 +272,7 @@ const Register = props => {
     }
   }
 
-  const onChangeUsername = (e) => {
+  const onChangeUsername = (e) => {//validate username
     let username = e.target.value
     setUsernameRegister(e.target.value)
     if (username.length > 5) {
@@ -299,7 +303,7 @@ const Register = props => {
     }
   }
 
-  const onChangePassword = (e) => {
+  const onChangePassword = (e) => {//validate password
     let password = e.target.value
     setPasswordRegister(e.target.value)
     let newValid = [...valid]
@@ -327,7 +331,7 @@ const Register = props => {
     setValid(newValid)
   }
 
-  const onChangePasswordCf = (e) => {
+  const onChangePasswordCf = (e) => {//validate password confirm
     let password = e.target.value
     setPasswordCfRegister(e.target.value)
     let newValid = [...valid]

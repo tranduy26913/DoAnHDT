@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import './_StoryDetail.scss'
-import { useParams, Link, useLocation } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
 import LoadingData from '../../components/LoadingData'
 import Grid from '../../components/Grid'
 import Comment from '../../components/Comment'
 import Pagination from '../../components/Pagination'
 
-const nav = [
+const nav = [//navigate
   {
     path: 'about',
     display: 'Giới thiệu'
@@ -40,16 +40,19 @@ function StoryDetail() {
   const active = nav.findIndex(e => e.path === tab)
   const [loadingData, setLoadingData] = useState(true)
 
-  useEffect(async () => {
-    let params = { url }
-    apiMain.getStory(params).then(res => {
-      setTruyen(res)
-      setTab('about')
-      setLoadingData(false)
-    })
+  useEffect(() => {//load truyện
+    const getStory = async () => {
+      let params = { url }
+      apiMain.getStory(params).then(res => {
+        setTruyen(res)
+        setTab('about')//set tab mặc định là About
+        setLoadingData(false)
+      })
+    }
+    getStory()
   }, [url])
-  
-  useEffect(() => {
+
+  useEffect(() => {//xử lý đổi tab
     switch (tab) {
       case 'about':
         setMain(<About key={'about'} truyen={truyen} />)
@@ -58,17 +61,14 @@ function StoryDetail() {
         setMain(<Rate key={'rate'} />)
         break
       case 'chapter':
-        console.log(truyen.url)
         setMain(<ListChapter key={'chapter'} url={truyen.url} />)
         break
       case 'comment':
-        console.log(truyen.url)
         setMain(<Comment key={'comment'} url={truyen.url} />)
         break
       default:
         setMain(<Donate key={'donate'} />)
     }
-
   }, [tab])
 
 
@@ -174,39 +174,39 @@ const Rate = props => {
 export const ListChapter = props => {
   const [chapters, setChapters] = useState([])
   const [loadingData, setLoadingData] = useState(true)
-  const [currentPage,setCurrentPage] = useState(1)
-  const location = useLocation()
-  console.log(window.location)
+  const [currentPage, setCurrentPage] = useState(1)
+
   const url = props.url
-  useEffect(async () => {
-    const params = {
-      page: currentPage,
-      size: 20
+  useEffect(() => {
+    const loadList = async () => {//xử lý gọi API danh sách truyện
+      const params = {//payload
+        page: currentPage,
+        size: 20
+      }
+
+      apiMain.getNameChapters(props.url, params).then(res => {
+        setChapters(res)
+        setLoadingData(false)
+      })
     }
+    loadList()//gọi hàm
+  }, [props.url, currentPage])
 
-    apiMain.getNameChapters(props.url, params).then(res => {
-      setChapters(res)
-      setLoadingData(false)
-    })
-  }, [props.url,currentPage])
-
-  const handleSetPage = useCallback((value)=>{
-        setCurrentPage(Number(value))
+  const handleSetPage = useCallback((value) => {//hàm xử lý set lại trang hiện tại trong phân trang
+    setCurrentPage(Number(value))
   })
-
-  
 
   return (
     <>
       <h3>Danh sách chương</h3>
       {
         loadingData ? <LoadingData /> :
-          <Grid gap={15} col={props.col||3} snCol={1}>
+          <Grid gap={15} col={props.col || 3} snCol={1}>
             {
               chapters.map((item, index) => {
                 return <Link to={`/truyen/${url}/${item.chapnumber}`}
-                 key={index} className='text-overflow-1-lines'
-                 style={{"fontSize":`${props.fontsize||16}px`}}>{item.tenchap}</Link>
+                  key={index} className='text-overflow-1-lines'
+                  style={{ "fontSize": `${props.fontsize || 16}px` }}>{item.tenchap}</Link>
               })
             }
           </Grid>

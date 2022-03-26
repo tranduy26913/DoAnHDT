@@ -5,8 +5,8 @@ function Reading(props) {
   const location = useLocation()
   const navigate = useNavigate()
   console.log(navigate)
-const onClickTruyen=(e)=>{
-  navigate('/truyen/'+e.target.name)
+const onClickTruyen=(e)=>{//xử lý click vào tên truyện để đọc
+  navigate('/truyen/'+e.target.name)//điều hướng web
 }
 
   return (

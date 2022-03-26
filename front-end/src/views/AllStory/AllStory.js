@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import apiMain from '../../api/apiMain'
 import Story from '../../components/Story'
-import ListStory from '../ListStory/ListStory'
 import Section, { SectionHeading, SectionBody } from '../../components/section'
 
 
 function AllStory() {
     const [datas, setDatas] = useState([])
+
     useEffect(() => {
-        const loadData = async () => {
+        const loadData = async () => {//hàm gọi API load tất cả truyện có phân trang
             try {
                 const response = await apiMain.getStorys({ page: 1, size: 20 })
                 if (response) {
@@ -21,6 +20,8 @@ function AllStory() {
         }
         loadData();
     }, [])
+
+    //còn thiếu phần phân trang
     return (
         <>
             <a><span
