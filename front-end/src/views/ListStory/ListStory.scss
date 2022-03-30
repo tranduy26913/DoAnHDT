@@ -1,4 +1,5 @@
-@use '../../scss/abstract/' as *;
+@use '../../scss/abstract/variables' as *;
+@use '../../scss/abstract/breakpoint' as *;
 .section {
     padding: 15px;
     &-title {

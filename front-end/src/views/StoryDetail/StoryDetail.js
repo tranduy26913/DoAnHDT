@@ -200,18 +200,18 @@ useEffect(()=>{
             </div>
 
             <div className="story-detail">
-              <div className="navigate">
+              <ul className="navigate">
                 {
                   nav.map((item, index) => {
                     return (
-                      <a className={`navigate__tab fs-20 bold ${active === index ? 'tab_active' : ''}`}
+                      <li className={`navigate__tab fs-20 bold ${active === index ? 'tab_active' : ''}`}
                         key={index}
                         name={item.path}
                         onClick={onClickTab}
-                      >{item.display}</a>)
+                      >{item.display}</li>)
                   })
                 }
-              </div>
+              </ul>
             </div>
 
             <div className="story-detail__tab__main">

@@ -1,4 +1,5 @@
-@use '../../scss/abstract/' as *;
+@use '../../scss/abstract/variables' as *;
+@use '../../scss/abstract/breakpoint' as *;
 .form-wrap {
     display: flex;
     flex-direction: column;

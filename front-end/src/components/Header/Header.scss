@@ -1,4 +1,6 @@
-@use '../../scss/abstract/' as *;
+@use '../../scss/abstract/variables' as *;
+@use '../../scss/abstract/breakpoint' as *;
+@use '../../scss/abstract/mixin' as *;
 .logo {
     font-size: 2.5rem;
     font-weight: 600;
