@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
-import Layout from '../../components/Layout'
-import LoadingData from '../../components/LoadingData'
+import Layout from '../../components/Layout/Layout'
+import LoadingData from '../../components/LoadingData/LoadingData'
 
 function Active(props) {
     const { token } = useParams()

@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import logo from '../assets/img/logo.png';
-import Auth from './Auth';
-import Modal, { ModalContent } from './modal';
-import { authLoginActive, authRegisterActive, authInactive } from '../redux/modalSlice';
-import { handleLogout } from '../handle/handleAuth';
-import { setQuery } from '../redux/messageSlice';
+import logo from '../../assets/img/logo.png';
+import Auth from '../Auth/Auth';
+import Modal, { ModalContent } from '../Modal/Modal';
+import { authLoginActive, authRegisterActive, authInactive } from '../../redux/modalSlice';
+import { handleLogout } from '../../handle/handleAuth';
+import { setQuery } from '../../redux/messageSlice';
+import './Header.scss'
 
 const menu = {//menu hiển thị cho từng loại tài khoản admin và user thường
     ADMIN: [

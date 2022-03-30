@@ -18,27 +18,27 @@ function Chapter(props) {
     const dispatch = useDispatch()
     const contentRef = useRef(null)
 
-    useEffect(() => {//xử lý đánh dấu truyện đang đọc
-        const handleSetReading = async () => {//tạo hàm
-            if (user) {
-                const params = {
-                    url, chapNumber: chapnum
-                }
-                apiMain.setReading(params, user, dispatch, loginSuccess)
-            }
-        }
-        handleSetReading();//gọi hàm
-    }, [])
+
 
     useEffect(() => {//Xử lý load dữ liệu chương truyện
         const getChapter = async () => {//tạo hàm
-            apiMain.getChapterByNumber(url, chapnum)
-                .then(res => {
-                    setChapter(getData(res))
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            if (user) {
+                apiMain.getChapterByNumberAndSetReading(url, chapnum, user, dispatch, loginSuccess)
+                    .then(res => {
+                        setChapter(getData(res))
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            else
+                apiMain.getChapterByNumber(url, chapnum)
+                    .then(res => {
+                        setChapter(getData(res))
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
         }
         getChapter()//gọi hàm
     }, [chapnum])
@@ -64,7 +64,7 @@ function Chapter(props) {
                     <ul className='chapter-manual fs-24'>
                         <li className={`chapter-manual__item ${manual === 'list-chap' ? 'active' : ''}`} onClick={(e) => {
                             e.stopPropagation();
-                            if(manual==='list-chap')
+                            if (manual === 'list-chap')
                                 setChapter("")
                             else
                                 setManual("list-chap")
@@ -79,7 +79,7 @@ function Chapter(props) {
                         </li>
                         <li className={`chapter-manual__item ${manual === 'setting' ? 'active' : ''}`} onClick={(e) => {
                             e.stopPropagation();
-                            if(manual==="setting")
+                            if (manual === "setting")
                                 setManual("")
                             else
                                 setManual("setting")

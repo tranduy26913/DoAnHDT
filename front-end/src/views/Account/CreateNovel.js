@@ -7,8 +7,8 @@ import { storage } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-toastify';
 import { setLoading } from '../../redux/messageSlice'
-import Loading from '../../components/Loading';
-import LoadingData from '../../components/LoadingData';
+import Loading from '../../components/Loading/Loading';
+import LoadingData from '../../components/LoadingData/LoadingData';
 import getData from '../../api/getData';
 
 function CreateNovel({userInfo}) {

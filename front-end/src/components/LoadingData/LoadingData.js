@@ -1,4 +1,5 @@
 import React from 'react'
+import './LoadingData.scss'
 
 function LoadingData(props) {//component loading khi đang load dữ liệu
   return (

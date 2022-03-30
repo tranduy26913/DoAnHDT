@@ -1,5 +1,5 @@
-import React from 'react'
 import {Link } from 'react-router-dom'
+import './Story.scss'
 function Story(props) {
     const data=props.data;
   return (
@@ -12,8 +12,8 @@ function Story(props) {
             <h2 className='story-card__tilte'><Link to={`truyen/${data.url}`}>{data['tentruyen']}</Link></h2>
             <div className='story-card__description'>{data.noidung}</div>
             <div className='story-card__info'>
-              <span className='story-card__author'>{data.tacgia}</span>
-              <span className='story-card__type border border-primary color-primary fs-12' style={{padding:4+'px'}}>{data.theloai}</span>
+              <div className='story-card__author text-overflow-1-lines '>{data.tacgia}</div>
+              <span className='story-card__type border border-primary color-primary fs-12 text-overflow-1-lines' style={{padding:4+'px'}}>{data.theloai}</span>
             </div>
         </div>
     </div>

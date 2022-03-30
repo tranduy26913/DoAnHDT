@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import apiMain from '../api/apiMain';
-import avt from '../assets/img/avt.png'
-import { loginSuccess } from '../redux/authSlice';
+import apiMain from '../../api/apiMain';
+import avt from '../../assets/img/avt.png'
+import { loginSuccess } from '../../redux/authSlice';
+import "./Comment.scss"
 
 function Comment(props) {
     const [count, setCount] = useState(0);

@@ -9,8 +9,8 @@ import { storage } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-toastify';
 import { setLoading } from '../../redux/messageSlice'
-import Loading from '../../components/Loading';
-import LoadingData from '../../components/LoadingData';
+import Loading from '../../components/Loading/Loading';
+import LoadingData from '../../components/LoadingData/LoadingData';
 
 function Profile({userInfo,changeUserInfo}) {
   const user = useSelector(state => state.auth.login?.user);

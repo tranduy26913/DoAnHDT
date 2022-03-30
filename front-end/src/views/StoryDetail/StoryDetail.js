@@ -1,12 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
-import Layout from '../../components/Layout'
-import './_StoryDetail.scss'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import Layout from '../../components/Layout/Layout'
+import './StoryDetail.scss'
 import { useParams, Link } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
-import LoadingData from '../../components/LoadingData'
-import Grid from '../../components/Grid'
-import Comment from '../../components/Comment'
-import Pagination from '../../components/Pagination'
+import LoadingData from '../../components/LoadingData/LoadingData'
+import Grid from '../../components/Grid/Grid'
+import Comment from '../../components/Comment/Comment'
+import Pagination from '../../components/Pagination/Pagination'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginSuccess } from '../../redux/authSlice'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading/Loading'
 
 const nav = [//navigate
   {
@@ -39,6 +43,10 @@ function StoryDetail() {
   const [tab, setTab] = useState('')
   const active = nav.findIndex(e => e.path === tab)
   const [loadingData, setLoadingData] = useState(true)
+  const [handling, setHandling] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const user = useSelector(state=>state.auth.login?.user)
+  const dispatch = useDispatch();
 
   useEffect(() => {//load truyện
     const getStory = async () => {
@@ -72,8 +80,53 @@ function StoryDetail() {
   }, [tab])
 
 
+useEffect(()=>{
+  const checkSaved = async()=>{
+    setHandling(true)
+    if(user){
+      apiMain.checkSaved(user,dispatch,loginSuccess, {url})
+        .then(res=>{
+          setSaved(res.saved || false)  
+        })
+        .finally(()=>{setHandling(false)})
+    }
+  }
+  checkSaved();
+},[user])
   const onClickTab = async (e) => {
     setTab(e.target.name)
+  }
+  const onClickSaved = async(e)=>{
+    if(user){
+      setHandling(true)
+      
+      apiMain.savedStory(user,dispatch,loginSuccess,{url})
+        .then(res=>{
+          setSaved(true)
+        })
+        .finally(()=>{setHandling(false)})
+    }else{
+      toast.warning("Vui lòng đăng nhập để lưu truyện")
+    }
+  }
+
+
+  const onClickUnsaved = async(e)=>{
+    if(user){
+      setHandling(true)
+      try {
+        const response = await apiMain.unsavedStory(user,dispatch,loginSuccess,{url})
+        if(response){
+          setSaved(false)
+        }
+      } catch (error) {
+        
+      }
+      finally{setHandling(false)}
+      
+    }else{
+      toast.warning("Vui lòng đăng nhập để lưu truyện")
+    }
   }
   //style
   const liClass = "border-primary rounded-2 color-primary"
@@ -84,9 +137,12 @@ function StoryDetail() {
           :
           <>
             <div className="heroSide d-flex">
-              <div className="img-wrap">
+              <div className='heroSide__img'>
+                <div className="img-wrap">
                 <img src={truyen?.hinhanh} alt="" />
               </div>
+              </div>
+              
               <div className="heroSide__main">
                 <h2 className='mb-1'>{truyen?.tentruyen}</h2>
                 <ul className=''>
@@ -124,7 +180,19 @@ function StoryDetail() {
                 </div>
                 <div className=''>
                   <button className='btn-primary mr-1'>Đọc truyện</button>
-                  <button className='btn-outline mr-1'>Đánh dấu</button>
+                  {
+                    saved?
+                    <button onClick={onClickUnsaved} className='btn-outline mr-1'>
+                      {
+                        handling?<Loading/>:<><i className="fa-solid fa-bookmark" style={{"marginRight":"4px"}}></i> Đã lưu</>
+                      }
+                      </button>
+                    :
+                    <button onClick={onClickSaved} className='btn-outline mr-1'>
+                      {
+                        handling?<Loading/> : <><i className="fa-regular fa-bookmark" style={{"marginRight":"4px"}}></i> Đánh dấu</>
+                      }</button>
+}
                   <button className='btn-outline'>Đề cử</button>
                 </div>
 
@@ -180,7 +248,7 @@ export const ListChapter = props => {
   useEffect(() => {
     const loadList = async () => {//xử lý gọi API danh sách truyện
       const params = {//payload
-        page: currentPage,
+        page: currentPage - 1,
         size: 20
       }
 

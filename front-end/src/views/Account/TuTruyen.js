@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import apiMain from '../../api/apiMain'
 import { loginSuccess } from '../../redux/authSlice'
-import Reading from '../../components/Reading'
-import Grid from '../../components/Grid'
-import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom'
+import Reading from '../../components/Reading/Reading'
+import Grid from '../../components/Grid/Grid'
+import { Route, Routes, Link, useLocation } from 'react-router-dom'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'react-toastify'
@@ -14,8 +14,8 @@ import avt from '../../assets/img/avt.png'
 import { storage } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { setLoading } from '../../redux/messageSlice'
-import Loading from '../../components/Loading';
-import LoadingData from '../../components/LoadingData'
+import Loading from '../../components/Loading/Loading';
+import LoadingData from '../../components/LoadingData/LoadingData'
 const nav = [
   {
     path: 'reading',
@@ -81,11 +81,11 @@ const Readings = ({ dispatch,user }) => {
       {
         readings.map((item, i) => <div key={item._id} >
           <Reading  data={{
-            tentruyen: item.dautruyenId.tentruyen,
-            hinhanh: item.dautruyenId.hinhanh,
+            tentruyen: item.tentruyen,
+            hinhanh: item.hinhanh,
             dadoc: item.chapNumber,
-            total: item.dautruyenId?.sochap,
-            url: item.dautruyenId.url
+            total: item.sochap,
+            url: item.url
           }} />
             <hr /></div>)
         
@@ -104,7 +104,7 @@ const StoryCreate = ({ userInfo }) => {
   }, [userInfo])
 
   const getStorys = async()=>{
-    apiMain.getStorysByUserId({ id: userInfo?._id })
+    apiMain.getStorysByUsername({ username: user?.username })
     .then(res => {
       setStorys(res)
     })
@@ -123,12 +123,11 @@ const StoryCreate = ({ userInfo }) => {
     if(e.target.name) {
       apiMain.deleteNovel({url: e.target.name }, user, dispatch, loginSuccess)
         .then(res => {
-          console.log(res)
           getStorys()
-          toast.success(res.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+          toast.success(res.message)
         })
         .catch(err => {
-          toast.error(getData(err.response)?.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+          toast.error(getData(err.response)?.details.message)
         })
     }
   }
@@ -188,11 +187,11 @@ const ListChap = ({ url, user, dispatch,onClickBackFromListChap }) => {
       apiMain.deleteChapter({ url, chapnumber: e.target.name }, user, dispatch, loginSuccess)
         .then(res => {
           getChapter()
-          toast.success(res.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+          toast.success(res.message)
         })
         .catch(err => {
           console.log(err)
-          toast.error(err.response.details.message, { hideProgressBar: true, autoClose: 1000, pauseOnHover: false })
+          toast.error(err.response.details.message)
         })
     }
   }

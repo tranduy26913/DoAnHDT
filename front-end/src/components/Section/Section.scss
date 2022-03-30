@@ -1,8 +1,8 @@
+@use '../../scss/abstract/' as *;
 .section {
     &:hover .section__heading a {
         display: block;
     }
-    margin-bottom: 80px;
     &__title {
         font-size: 2rem;
         text-transform: capitalize;
@@ -10,7 +10,7 @@
     }
     &__heading {
         display: flex;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         justify-content: space-between;
         a {
             margin-top: 5px;

@@ -1,4 +1,4 @@
-
+import './Section.scss'
 const Section = props => {
     return (
         <div className="section">

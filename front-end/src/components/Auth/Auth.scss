@@ -1,3 +1,19 @@
+@use '../../scss/abstract/' as *;
+.auth-wrap {
+    background-color: #fff;
+    ul {
+        display: flex;
+        justify-content: center;
+        li {
+            font-size: 24px;
+            padding: 10px 20px;
+            a {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
 .form-wrap {
     display: flex;
     flex-direction: column;
@@ -16,21 +32,6 @@
         gap: 10px;
         .form-group {
             flex-direction: column;
-        }
-        button {
-            height: 3rem;
-            width: 320px;
-            margin: auto;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            border-radius: 20px;
-            background-color: $main-color;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: $main-color-hover;
         }
     }
 }
@@ -90,5 +91,28 @@
         color: $main-color;
         cursor: pointer;
         opacity: 0.65;
+    }
+}
+
+.field-wrap {
+    position: relative;
+    span {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    & input {
+        border-color: 1px solid rgba(88, 88, 88, 0.726);
+        outline-color: $main-color;
+        border-radius: 1rem;
+        height: 42px;
+        padding: 4px 12px;
+        transition: border-color .2s ease-in-out;
+        font-size: 15px;
+        width: 100%;
+        &:focus {
+            border-color: rgba($main-color, .6);
+        }
     }
 }

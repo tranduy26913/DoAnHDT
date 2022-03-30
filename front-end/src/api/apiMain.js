@@ -47,10 +47,9 @@ const apiMain = {
         return getData(res);
 
     },
-    getStorysByUserId: async (params) => {
+    getStorysByUsername: async (params) => {
         const res = await axiosClient.get(`/novels/created`, { params: params });
         return getData(res);
-
     },
     getStory: async (params) => {
         const res = await axiosClient.get(`/novels/novel/${params.url}`);
@@ -70,10 +69,9 @@ const apiMain = {
         return getData(await axiosClient.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`));
 
     },
-    setReading: async (params, user, dispatch, stateSuccess) => {
-        const url = `/novels/novel/reading`
+    getChapterByNumberAndSetReading: async (tentruyen, chapnum, user, dispatch, stateSuccess) => {
         let axi = axiosInstance(user, dispatch, stateSuccess)
-        return (await axi.post(url, params, { headers: { Authorization: `Bearer ${user.accessToken}` } })).data;
+        return getData(await axi.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`));
     },
     createChapter: async (params, user, dispatch, stateSuccess) => {
         const url = `/novels/novel/chuong/create`
@@ -177,6 +175,20 @@ const apiMain = {
     deleteAccount: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.delete(`/user?id=${params.id}`, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
-    }
+    },
+
+    ///saved
+    checkSaved: async (user, dispatch, stateSuccess, params) => {
+        const axi = await axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.get(`/saved/${params.url}`, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
+    savedStory: async (user, dispatch, stateSuccess, params) => {
+        const axi = await axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.post(`/saved/`, params,{ headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
+    unsavedStory: async (user, dispatch, stateSuccess, params) => {
+        const axi = await axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.delete(`/saved/${params.url}`,{ headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
 }
 export default apiMain;

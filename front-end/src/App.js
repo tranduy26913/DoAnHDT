@@ -1,6 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
-import './App.scss';
+import Header from './components/Header/Header';
+
 import Home from './views/Home/Home';
 import Account from './views/Account/Account';
 import Admin from './views/Account/Admin';
@@ -12,7 +12,7 @@ import Active from './views/Active/Active';
 import Chapter from './views/Chapter/Chapter';
 import Search from './views/Search/Search';
 import AllStory from './views/AllStory/AllStory';
-
+import './scss/App.scss';
 function App() {
   return (
     <HashRouter>

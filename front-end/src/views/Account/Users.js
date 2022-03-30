@@ -1,4 +1,4 @@
-import Modal,{ModalContent} from '../../components/modal'
+import Modal,{ModalContent} from '../../components/Modal/Modal'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import apiMain from '../../api/apiMain'

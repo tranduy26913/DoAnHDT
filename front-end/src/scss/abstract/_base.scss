@@ -1,3 +1,5 @@
+@use "./variables" as *;
+@use "./breakpoint" as *;
 @each $color,
 $val in $colors {
     .color-#{$color} {
@@ -32,9 +34,29 @@ $val in $colors {
 
 @each $val in $numbers {
     .col-#{$val} {
-        width: ($val/12)*100%;
+        width: calc($val/12)*100%;
         padding-left: 10px;
         padding-right: 10px;
+    }
+}
+
+@each $val in $numbers {
+    .col-md-#{$val} {
+        @include tablet {
+            width: calc($val/12)*100%;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+}
+
+@each $val in $numbers {
+    .col-sm-#{$val} {
+        @include mobile {
+            width: calc($val/12)*100%;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
     }
 }
 
@@ -170,4 +192,9 @@ select {
 
 .ma {
     margin: auto;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
 }

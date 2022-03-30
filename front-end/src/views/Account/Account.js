@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react'
 
-import { Link, useLocation, Route, Routes, useNavigate } from 'react-router-dom';
-import Layout from '../../components/Layout';
-
+import { Link, useLocation, Route, Routes } from 'react-router-dom';
+import Layout from '../../components/Layout/Layout';
 import { useEffect, useState } from 'react';
 import apiMain from '../../api/apiMain';
 import { loginSuccess, logoutSuccess } from '../../redux/authSlice';
@@ -13,7 +12,8 @@ import Profile from './Profile';
 import TuTruyen from './TuTruyen';
 import { toast } from 'react-toastify';
 import CreateNovel from './CreateNovel';
-
+import './Account.scss'
+import './Profile.scss'
 function Account() {
   const menu = [//menu dựa trên từng loại tài khoản
     {

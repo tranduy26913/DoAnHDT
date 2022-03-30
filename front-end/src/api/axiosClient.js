@@ -6,7 +6,7 @@ import getData from './getData';
 import { toast } from 'react-toastify';
 import { logoutSuccess } from '../redux/authSlice';
 //const baseURL='https://thichtruyenchu.herokuapp.com/api'
-const baseURL = 'http://localhost:5000/api'
+const baseURL = 'http://localhost:8080/api'
 export const axiosClient = axios.create({
     baseURL: baseURL,
 

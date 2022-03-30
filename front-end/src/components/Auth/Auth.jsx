@@ -1,11 +1,13 @@
-import Loading from '../components/Loading'
+import Loading from '../Loading/Loading'
 import { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
-import apiMain from '../api/apiMain';
-import { handleLogin, handleRegister } from '../handle/handleAuth';
-import { clearMessageLogin, setLoading } from '../redux/messageSlice';
+import apiMain from '../../api/apiMain';
+import { handleLogin, handleRegister } from '../../handle/handleAuth';
+import { clearMessageLogin, setLoading } from '../../redux/messageSlice';
 import { toast } from 'react-toastify';
+import './Auth.scss'
+import './Login.scss'
 
 function Auth(props) { //component đăng nhập và đăng ký
   const [login, setLogin] = useState(props.choose)

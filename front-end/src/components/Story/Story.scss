@@ -1,3 +1,4 @@
+@use '../../scss/abstract/' as *;
 .story-card {
     display: flex;
     padding: 6px;
@@ -6,7 +7,7 @@
     margin-bottom: 48px;
     &__tilte {
         display: -webkit-box;
-        font-size: 15px;
+        font-size: 1rem;
         font-weight: 600;
         overflow: hidden;
         -webkit-line-clamp: 1;
@@ -29,7 +30,7 @@
         text-overflow: ellipsis;
     }
     &__info {
-        @include flex(unset, space-between);
+        @include flex(center, space-between);
     }
     &__img-wrap {
         width: 100px;

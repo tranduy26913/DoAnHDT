@@ -1,5 +1,6 @@
 
-import {Link, useLocation, useNavigate} from 'react-router-dom'
+import { useLocation, useNavigate} from 'react-router-dom'
+import './ListReading.scss'
 function Reading(props) {
   const data=props.data
   const location = useLocation()

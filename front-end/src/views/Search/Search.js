@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import apiMain from '../../api/apiMain'
-import Story from '../../components/Story'
-import Section, { SectionHeading, SectionBody } from '../../components/section'
+import Story from '../../components/Story/Story'
+import Section, { SectionHeading, SectionBody } from '../../components/Section/Section'
 
 
 function Search(props) {

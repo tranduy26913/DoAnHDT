@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
+import './Modal.scss'
 
 const Modal = props => {
     const [active, setActive] = useState(false);

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import  { useEffect, useState } from 'react'
+import './Pagination.scss'
 
 function Pagination({ totalPage, currentPage, handleSetPage }) {//Component phân trang
     const [item, setItem] = useState([])

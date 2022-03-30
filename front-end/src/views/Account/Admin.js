@@ -1,6 +1,6 @@
 
 import { Link, useLocation, Route, Routes } from 'react-router-dom';
-import Layout from '../../components/Layout';
+import Layout from '../../components/Layout/Layout';
 
 import { useEffect,useState } from 'react';
 import apiMain from '../../api/apiMain';
@@ -12,6 +12,8 @@ import Profile from './Profile';
 import Users from './Users'
 import TuTruyen from './TuTruyen';
 import CreateNovel from './CreateNovel';
+import './Account.scss'
+import './Profile.scss'
 
 function Account() {
   const menu = [
