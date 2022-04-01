@@ -67,15 +67,16 @@ $val in $colors {
 }
 
 @each $val in $fontw {
-    .fw-#{$val/100} {
+    .fw-#{calc($val/100)} {
         font-weight: $val;
     }
 }
 
 .container {
     width: 100%;
-    max-width: 1620px;
-    padding: 0 50px;
+    max-width: 1200px;
+    padding-left: 15px;
+    padding-right: 15px;
     margin: auto;
     position: relative;
     @include tablet {
@@ -98,6 +99,8 @@ $val in $colors {
 
 form {
     button {
+        display: inline-flex;
+        align-items: center;
         min-width: 120px;
         margin: 10px auto;
         padding: 10px 20px;
@@ -117,9 +120,12 @@ form {
 
 .btn-primary {
     min-width: 120px;
-    margin: 10px auto;
+    display: inline-flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    margin: 0px auto;
     padding: 10px 20px;
-    margin: auto;
     color: #fff;
     font-size: 16px;
     font-weight: 600;
@@ -132,9 +138,17 @@ form {
     }
 }
 
+.bx {
+    margin: auto 0px !important;
+}
+
 .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     min-width: 120px;
-    margin: 10px auto;
+    margin: 0px auto;
     padding: 10px 20px;
     color: #333;
     font-size: 16px;

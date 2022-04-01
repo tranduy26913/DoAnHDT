@@ -7,11 +7,11 @@ const Modal = props => {
 
     useEffect(() => {
         setActive(props.active);
-    },[props.active]);
+    }, [props.active]);
 
     return (
-        <div className={`modal ${props.active ? 'active' : ''}`}>
-           {props.children}
+        <div className={`modal ${props.active ? 'active' : ''}`} style={props.style}>
+            {props.children}
         </div>
     )
 }
@@ -25,20 +25,22 @@ export const ModalContent = props => {
 
     const closeModal = () => {
         contentRef.current.parentNode.classList.remove('active');
-        if(props.onClose) props.onClose()
+        if (props.onClose) props.onClose()
     }
     return (
-        <div ref={contentRef} className="modal__content active">
-            {props.children}
-            <div className="modal__content__close" onClick={closeModal}>
-                <i className="fa-solid fa-xmark"></i>
+        <div ref={contentRef} className="modal__body active">
+            <div className="modal__body__close" onClick={closeModal}>
+                <i className='bx bx-x fs-26'></i>
+            </div>
+            <div className="modal__content">
+                {props.children}
             </div>
         </div>
     )
 }
 
 ModalContent.propTypes = {
-    onClose : PropTypes.func
+    onClose: PropTypes.func
 }
 
 export default Modal

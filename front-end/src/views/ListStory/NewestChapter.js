@@ -5,19 +5,19 @@ function NewestChapter() {
   //chưa viết xong
   return (
     <div className='d-flex'>
-        <Section>
-            <SectionHeading>
-            <h4 className='section-title'>Mới cập nhật</h4>
-              <a>Xem tất cả</a>
-            </SectionHeading>
-            <SectionBody>
-                <table>
-                  <tbody>
-                    
-                  </tbody>
-                </table>
-            </SectionBody>
-        </Section>
+      <Section>
+        <SectionHeading>
+          <h4 className='section-title'>Mới cập nhật</h4>
+          <Link to="tat-ca">Xem tất cả</Link>
+        </SectionHeading>
+        <SectionBody>
+          <table>
+            <tbody>
+
+            </tbody>
+          </table>
+        </SectionBody>
+      </Section>
     </div>
   )
 }

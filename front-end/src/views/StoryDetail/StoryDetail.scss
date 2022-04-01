@@ -1,30 +1,76 @@
 @use '../../scss/abstract/variables' as *;
+@use '../../scss/abstract/breakpoint' as *;
+@use '../../scss/abstract/mixin' as *;
 .heroSide {
-    height: 300px;
+    //height: 300px;
     margin-bottom: 50px;
     &__img {
-        width: 22%;
-        margin-right: 20px;
+        max-width: 210px;
         .img-wrap {
-            width: 100%;
-            max-height: 100%;
             img {
-                width: 100%;
-                max-height: 100%;
+                width: 210px;
+                height: 280px;
                 box-shadow: 2px 3px 12px 0px rgb(180, 180, 180);
+            }
+        }
+        @include mobile {
+            width: 100%;
+            @include flex(center, center);
+            margin: 0px auto;
+            .img-wrap {
+                img {
+                    width: 140px;
+                    height: 183px;
+                }
             }
         }
     }
     &__main {
+        padding: 0 15px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        width: 100%;
-        ul {
+        &__statistic {
             li {
-                display: inline-block;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        @include mobile {
+            gap: 15px;
+            ul {
+                display: flex;
+                justify-content: space-evenly;
+            }
+            width: 100%;
+            //flex-direction: column-reverse;
+            &__statistic {
+                order: 4
+            }
+            &__rate {
+                &-wrap {
+                    margin: auto;
+                }
+                order: 2
+            }
+            &__handle {
+                order: 3
+            }
+            &__info {
+                order: 5
+            }
+            &__title {
+                h2 {
+                    text-align: center;
+                }
+            }
+        }
+        ul {
+            gap: 15px;
+            li {
                 padding: 5px 20px;
-                margin-right: 1rem;
             }
         }
     }
@@ -33,7 +79,9 @@
     }
 }
 
-.navigate {
+.listchapter {
+    color: $main-color;
+    cursor: pointer;
     position: relative;
     margin-bottom: 2rem;
     &::after {
@@ -45,13 +93,32 @@
         bottom: -5px;
         left: 0;
     }
+}
+
+.navigate {
+    position: relative;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 20px;
+    &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: rgb(235, 235, 235);
+        bottom: -5px;
+        left: 0;
+    }
+    @include mobile {
+        justify-content: space-between;
+    }
     &__tab {
-        margin-right: 20px;
         position: relative;
         cursor: pointer;
         &::after {
             content: "";
             position: absolute;
+            z-index: 1;
             width: 0;
             transform: translateX(-55%);
             height: 2px;
@@ -67,7 +134,17 @@
         &:hover::after {
             width: 110%;
         }
+        @include mobile {
+            &.mobileHide {
+                display: none;
+            }
+        }
     }
 }
 
-.story-detail {}
+.listchapter {
+    display: none;
+    @include mobile {
+        display: block;
+    }
+}

@@ -29,10 +29,9 @@ function ListStory() {
       }
     }
     getReadings();//gọi hàm
-  }, [])
+  }, [user, dispatch])
 
   useEffect(() => {
-    
     const getStory = async () => {//xử lý gọi hàm load truyện
       const res = getData(await apiMain.getStorys({ size: 6 }));
       setData(res);
@@ -61,7 +60,7 @@ function ListStory() {
           <Section>
             <SectionHeading>
               <h4 className='section-title'>Đang đọc</h4>
-              <a>Xem tất cả</a>
+              <Link to="tat-ca">Xem tất cả</Link>
             </SectionHeading>
             <SectionBody>
               <div className='list-reading'>

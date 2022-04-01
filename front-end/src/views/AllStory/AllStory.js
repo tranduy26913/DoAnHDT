@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import apiMain from '../../api/apiMain'
 import Story from '../../components/Story/Story'
 import Section, { SectionHeading, SectionBody } from '../../components/Section/Section'
+import Layout from '../../components/Layout/Layout'
 
 
 function AllStory() {
@@ -24,29 +25,23 @@ function AllStory() {
     //còn thiếu phần phân trang
     return (
         <>
-            <a><span
-                className='imgHero'>
-            </span></a>
+            <Layout>
+                <div className="main-content">
+                    <div className='d-flex'>
+                        <Section>
+                            <SectionHeading>
+                                <h4 className='section-title'>Tất cả</h4>
+                            </SectionHeading>
+                            <SectionBody>
+                                <div className='list-story'>
+                                    {datas.map((data, index) => <Story key={index} data={data} />)}
+                                </div>
+                            </SectionBody>
+                        </Section>
 
-            <div className="main">
-                <div className="container">
-                    <div className="main-content">
-                        <div className='d-flex'>
-                            <Section>
-                                <SectionHeading>
-                                    <h4 className='section-title'>Tất cả</h4>
-                                </SectionHeading>
-                                <SectionBody>
-                                    <div className='list-story'>
-                                        {datas.map((data, index) => <Story key={index} data={data} />)}
-                                    </div>
-                                </SectionBody>
-                            </Section>
-
-                        </div>
                     </div>
                 </div>
-            </div>
+            </Layout>
 
         </>
 

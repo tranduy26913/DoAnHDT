@@ -57,14 +57,13 @@ function Account() {
           //navigate('/')
         }
         else {
-          toast.error("Lỗi thông tin",
-            { autoClose: 800, pauseOnHover: false, hideProgressBar: true })
+          toast.error("Lỗi thông tin")
         }
       }
 
     }
     getUser()
-  }, [])
+  }, [user, dispatch])
 
   const changeUserInfo = useCallback((data) => {
     setUserInfo(data)

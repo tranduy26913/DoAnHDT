@@ -30,7 +30,6 @@ function Active(props) {
 
     useEffect(() => {
         const countDown = async () => {//hàm xử lý đếm ngược 5s sau khi kích hoạt xong
-
             if (loadingData)
                 return
             setTimeout(() => {
