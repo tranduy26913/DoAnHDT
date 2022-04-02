@@ -48,7 +48,7 @@ function ListStory() {
               <Link to='tat-ca'>Xem tất cả</Link>
             </SectionHeading>
             <SectionBody>
-              <div className='list-story'>
+              <div className='list-story' style={{marginTop:-24}}>
                 {datas.map((data, index) => <Story key={index} data={data} />)}
               </div>
             </SectionBody>

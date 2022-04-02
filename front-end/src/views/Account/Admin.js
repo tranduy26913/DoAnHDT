@@ -69,7 +69,7 @@ function Account() {
     <Layout >
       <div className="main-content">
         <div className="d-flex">
-          <div className="col-3">
+          <div className="row">
             <ul className="list-group">
               {
                 menu.map((item, index) => {

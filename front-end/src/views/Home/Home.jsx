@@ -8,7 +8,7 @@ function Home() {
     <Layout>
       <div className="main-content">
              <ListStory/>
-          </div>
+      </div>
     </Layout>
     
            

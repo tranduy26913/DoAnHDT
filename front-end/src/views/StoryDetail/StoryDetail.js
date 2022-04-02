@@ -183,7 +183,7 @@ function StoryDetail() {
 
                 </ul>
 
-                <div className="heroSide__main__rate d-flex">
+                <div className="heroSide__main__rate">
                   <div className="heroSide__main__rate-wrap fs-16 d-flex">
                     <span className={`bx ${truyen?.danhgia >= 1 ? 'bxs-star' : 'bx-star'}`}></span>
                     <span className={`bx ${truyen?.danhgia >= 2 ? 'bxs-star' : 'bx-star'}`}></span>

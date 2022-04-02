@@ -72,7 +72,7 @@ function Account() {
   return (
     <Layout >
       <div className="main-content">
-        <div className="d-flex">
+        <div className="row">
           <div className="col-3">
             <ul className="list-group">
               {

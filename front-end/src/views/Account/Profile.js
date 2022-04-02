@@ -109,7 +109,7 @@ function Profile({userInfo,changeUserInfo}) {
       {
         loadingUser ? <LoadingData />
           :
-          <div className="profile__wrap d-flex">
+          <div className="profile__wrap row">
             <div className="col-5 profile__avt">
 
               <img src={preview} alt="" />

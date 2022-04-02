@@ -1,5 +1,3 @@
-import { logoutSuccess } from "../redux/authSlice";
-import ChangePassword from "../views/Account/ChangePassword";
 import { axiosClient, axiosInstance } from "./axiosClient";
 import getData from './getData'
 const apiMain = {

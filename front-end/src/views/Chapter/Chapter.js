@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { loginSuccess } from '../../redux/authSlice'
 import "./Chapter.scss"
 import { ListChapter } from '../StoryDetail/StoryDetail'
+
 
 function Chapter(props) {
     const { chapnum, url } = useParams()
@@ -17,7 +18,37 @@ function Chapter(props) {
     const user = useSelector(state => state.auth.login?.user)
     const dispatch = useDispatch()
     const contentRef = useRef(null)
+    const mainContentRef = useRef(null)
+    const [styleManual, setStyleManual] = useState(null)
+    //let styleManual = {}
 
+    useEffect(() => {//xử lý dropdown của account
+        const hideManual = () => {
+            setManual('');
+        }
+
+        document.addEventListener("click", hideManual)
+        return () => {
+            document.removeEventListener("click", hideManual)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (styleManual === null) {
+            let tmp = (window.innerWidth - mainContentRef.current?.clientWidth) / 2
+            tmp = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth - 95}px` }
+            setStyleManual(tmp)
+        }
+        const changeStyleManual = () => {
+            let tmp = (window.innerWidth - mainContentRef.current?.clientWidth) / 2
+            tmp = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth - 95}px` }
+            setStyleManual(tmp)
+        }
+        window.addEventListener('resize', changeStyleManual)
+        return () => {
+            window.removeEventListener('resize', changeStyleManual)
+        }
+    }, [])
 
 
     useEffect(() => {//Xử lý load dữ liệu chương truyện
@@ -47,45 +78,60 @@ function Chapter(props) {
         contentRef.current.innerHTML = chapter?.content || ""
     }, [chapter])
 
-    useEffect(() => {//xử lý sự kiện click khi đọc truyện
-        const handleClick = () => {//khi click sẽ set manual về "" để ẩn manual
-            setManual("")
+    const onClickSetting = (e) => {
+        e.stopPropagation()
+    }
+
+    const onClickToggleManual=()=>{
+        let list = document.getElementById('chapter-manual__list');
+        let icon = document.getElementById('icon-manual');
+        if(list){
+            list.classList.toggle('active');
+            if(icon.classList.contains('bx-arrow-from-top'))
+                icon.classList.replace('bx-arrow-from-top','bx-arrow-from-bottom')
+            else
+                icon.classList.replace('bx-arrow-from-bottom','bx-arrow-from-top')
         }
-        document.addEventListener("click", handleClick)
-        return () => { document.removeEventListener("click", handleClick) }
-    }, [])
+    }
 
     return (<>
-
         <div className="main" style={{ backgroundColor: "#ced9d9", paddingTop: "30px" }}>
             <div className="container">
+                <div ref={mainContentRef} className="main-content main-content--chapter">
+                    <div className="d-lex" >
+                        <h1 className='chapter-name'>{chapter?.tenchap}</h1>
+                        <div className={`fs-${fontsize}`} style={{ "lineHeight": `${lineHeight}` }}>
+                            <div ref={contentRef} id="chapter-content"></div>
+                        </div>
 
-                <div className="main-content" style={{ "position": "relative", margin: "0 80px", backgroundColor: "#e1e8e8" }}>
-                    <ul className='chapter-manual fs-24'>
+                    </div>
+                </div>
+                <div className='chapter-manual fs-24' style={styleManual}>
+                    <span onClick={onClickToggleManual} className='chapter-manual__item chapter-manual__item--dropdown'><i id='icon-manual' className='bx bx-arrow-from-top'></i></span>
+                    <ul className='chapter-manual__list' id='chapter-manual__list'>
                         <li className={`chapter-manual__item ${manual === 'list-chap' ? 'active' : ''}`} onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation()
                             if (manual === 'list-chap')
-                                setChapter("")
+                                setManual("")
                             else
                                 setManual("list-chap")
                         }}>
-                            <a><i className="fa-solid fa-bars"></i></a>
-                            <div className="chapter-manual__popup" >
+                            <span><i className='bx bx-list-ul'></i></span>
+                            <div onClick={onClickSetting} className="chapter-manual__popup" >
                                 <div className="list-chapter" style={{ width: "700px", "maxHeight": "500px", "overflow": "scroll" }}>
                                     <ListChapter url={url} col={2} fontsize={15} />
                                 </div>
                             </div>
-
                         </li>
                         <li className={`chapter-manual__item ${manual === 'setting' ? 'active' : ''}`} onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation()
                             if (manual === "setting")
                                 setManual("")
                             else
                                 setManual("setting")
                         }}>
-                            <a><i className="fa-solid fa-gear"></i></a>
-                            <div className="chapter-manual__popup">
+                            <span><i className='bx bx-cog'></i></span>
+                            <div onClick={onClickSetting} className="chapter-manual__popup">
                                 <h4>Cài đặt</h4>
                                 <div className="chapter-setting">
                                     <table className='chapter-setting__body fs-18'>
@@ -93,15 +139,15 @@ function Chapter(props) {
                                             <tr>
                                                 <td className='col-4'>
                                                     <div className='chapter-setting__label'>
-                                                        <i className="fa-solid fa-font"></i>
+                                                        <i className='bx bx-font-size'></i>
                                                         Cỡ chữ
                                                     </div>
                                                 </td>
                                                 <td className='col-8'>
                                                     <div className='d-flex chapter-setting__input'>
-                                                        <button onClick={() => { setFontsize(pre => pre - 1) }}><i className="fa-solid fa-minus"></i></button>
+                                                        <button onClick={(e) => { e.stopPropagation(); setFontsize(pre => pre - 1) }}><i className='bx bx-minus'></i></button>
                                                         <div>{`${fontsize}px`}</div>
-                                                        <button onClick={() => { setFontsize(pre => pre + 1) }}><i className="fa-solid fa-plus"></i></button>
+                                                        <button onClick={(e) => { e.stopPropagation(); setFontsize(pre => pre + 1) }}><i className="bx bx-plus"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -114,33 +160,24 @@ function Chapter(props) {
                                                 </td>
                                                 <td className='col-8'>
                                                     <div className='d-flex chapter-setting__input'>
-                                                        <button onClick={() => { setLineHeight(pre => { return Number((pre - 0.1).toFixed(1)) }) }}><i className="fa-solid fa-minus"></i></button>
+                                                        <button onClick={() => { setLineHeight(pre => { return Number((pre - 0.1).toFixed(1)) }) }}><i className="bx bx-minus"></i></button>
                                                         <div>{`${lineHeight}`}</div>
-                                                        <button onClick={() => { setLineHeight(pre => { return Number((pre + 0.1).toFixed(1)) }) }}><i className="fa-solid fa-plus"></i></button>
+                                                        <button onClick={() => { setLineHeight(pre => { return Number((pre + 0.1).toFixed(1)) }) }}><i className="bx bx-plus"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
                         </li>
-                        <li className='chapter-manual__item'><Link to={`/truyen/${url}`}><i className="fa-solid fa-arrow-left"></i></Link></li>
-                        <li className='chapter-manual__item'><a><i className="fa-solid fa-comments"></i></a> </li>
+                        <li className='chapter-manual__item'><span><Link to={`/truyen/${url}`}><i className='bx bx-left-arrow-alt'></i></Link></span></li>
+                        <li className='chapter-manual__item'><span><i className='bx bx-info-circle'></i></span> </li>
 
                     </ul>
-                    <div className="d-lex" >
-                        <h1 className='chapter-name'>{chapter?.tenchap}</h1>
-                        <div className={`fs-${fontsize}`} style={{ "lineHeight": `${lineHeight}` }}>
-                            <div ref={contentRef} id="chapter-content"></div>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>
-
 
     </>)
 }
