@@ -110,14 +110,12 @@ function Profile({userInfo,changeUserInfo}) {
         loadingUser ? <LoadingData />
           :
           <div className="profile__wrap row">
-            <div className="col-5 profile__avt">
-
+            <div className="col-5 col-md-12 col-sm-12 profile__avt">
               <img src={preview} alt="" />
               <input type={"file"} accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name={"avatar"} onChange={onChangeImage} />
-              <button onClick={upload}>Upload</button>
+              <button className='btn-primary' onClick={upload}>Upload</button>
             </div>
-            <div className="col-7 ">
-              <div className="profile__main">
+            <div className="col-7 col-md-12 col-sm-12 profile__main">
                 <form>
                   <div className="group-info">
                     <label htmlFor="" style={labelStyle}>Tên hiển thị</label>
@@ -137,7 +135,6 @@ function Profile({userInfo,changeUserInfo}) {
                 </form>
 
               </div>
-            </div>
           </div>
       }</>
 

@@ -92,17 +92,17 @@ const apiMain = {
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
     },
-    createNovel: async (params, user, dispatch, stateSuccess) => {
+    createStory: async (params, user, dispatch, stateSuccess) => {
         const url = `/novels/novel/create`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return (await axi.post(url, params)).data;
     },
-    updateNovel: async (params, user, dispatch, stateSuccess) => {
+    updateStory: async (params, user, dispatch, stateSuccess) => {
         const url = `/novels/novel/edit`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.put(url, params));
     },
-    deleteNovel: async (params, user, dispatch, stateSuccess) => {
+    deleteStory: async (params, user, dispatch, stateSuccess) => {
         const url = `/novels/novel`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.delete(url, {params}));

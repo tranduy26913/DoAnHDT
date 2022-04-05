@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 
-import { Link, useLocation, Route, Routes } from 'react-router-dom';
-import Layout from '../../components/Layout/Layout';
+import {   useLocation, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import apiMain from '../../api/apiMain';
 import { loginSuccess, logoutSuccess } from '../../redux/authSlice';
@@ -9,13 +8,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import getData from '../../api/getData';
 import ChangePassword from './ChangePassword'
 import Profile from './Profile';
-import TuTruyen from './TuTruyen';
+import TuTruyen from './TuTruyen/TuTruyen';
 import { toast } from 'react-toastify';
 import CreateNovel from './CreateNovel';
 import './Account.scss'
 import './Profile.scss'
-function Account() {
-  const menu = [//menu dựa trên từng loại tài khoản
+import Panel from './Panel'
+const menu = [//menu dựa trên từng loại tài khoản
     {
       path: "profile",
       display: "Hồ sơ",
@@ -37,7 +36,9 @@ function Account() {
       icon: ""
     },
   ]
-
+function Account() {
+  
+  
   const [userInfo, setUserInfo] = useState(null)
   const user = useSelector(state => state.auth.login?.user);
   const { pathname } = useLocation();
@@ -51,49 +52,29 @@ function Account() {
         setUserInfo(res.userInfo)
       } catch (err) {
         if (err.response.status === 403 || err.response.status === 401) {
-          //toast.warning("Phiên đăng nhập của bạn đã hết. Vui lòng đăng nhập lại",
-          //  {autoClose: 800,pauseOnHover: false,hideProgressBar: true})
           dispatch(logoutSuccess())
-          //navigate('/')
         }
         else {
           toast.error("Lỗi thông tin")
         }
       }
-
     }
     getUser()
   }, [user, dispatch])
 
   const changeUserInfo = useCallback((data) => {
     setUserInfo(data)
-  })
-
+  },[])
   return (
-    <Layout >
-      <div className="main-content">
-        <div className="row">
-          <div className="col-3">
-            <ul className="list-group">
-              {
-                menu.map((item, index) => {
-                  return <li key={index} className={`list-group__item ${index === active ? 'active' : ''}`} ><Link to={item.path}>{item.display}</Link></li>
-                })
-              }
-            </ul>
+    <Panel menu={menu}>
+      <Routes>
+        <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo} />}></Route>
+        <Route path='change-password' element={<ChangePassword />}></Route>
+        <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo} />}></Route>
+        <Route path='dang-truyen' element={<CreateNovel userInfo={userInfo} />}></Route>
+      </Routes>
+    </Panel>
 
-          </div>
-          <div className="col-9 " style={{ 'minHeight': '500px' }}>
-            <Routes>
-              <Route path='profile' element={<Profile userInfo={userInfo} changeUserInfo={changeUserInfo} />}></Route>
-              <Route path='change-password' element={<ChangePassword />}></Route>
-              <Route path='tu-truyen/*' element={<TuTruyen userInfo={userInfo} />}></Route>
-              <Route path='dang-truyen' element={<CreateNovel userInfo={userInfo} />}></Route>
-            </Routes>
-          </div>
-        </div>
-      </div>
-    </Layout>
   )
 }
 

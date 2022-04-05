@@ -1,6 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
-
+import Footer from './components/Footer/Footer';
 import Home from './views/Home/Home';
 import Account from './views/Account/Account';
 import Admin from './views/Account/Admin';
@@ -31,6 +31,7 @@ function App() {
         <Route path='tim-kiem' element={<Search/>}/>
         <Route path='tat-ca' element={<AllStory/>}/>
       </Routes>
+      <Footer/>
       <ToastContainer autoClose={1000}
         hideProgressBar
         newestOnTop={false}

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import apiMain from '../../api/apiMain';
-import Reading from '../../components/Reading/Reading';
-import Section, { SectionHeading, SectionBody } from '../../components/Section/Section';
-import Story from '../../components/Story/Story';
-import getData from '../../api/getData';
+import apiMain from '../../../api/apiMain';
+import Reading from '../../../components/Reading/Reading';
+import Section, { SectionHeading, SectionBody } from '../../../components/Section/Section';
+import Story from '../../../components/Story/Story';
+import getData from '../../../api/getData';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
-import { loginSuccess } from '../../redux/authSlice'
+import { loginSuccess } from '../../../redux/authSlice'
 import './ListStory.scss'
 
 function ListStory() {

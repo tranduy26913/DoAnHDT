@@ -1,7 +1,6 @@
-@use '../../scss/abstract/variables' as *;
-@use '../../scss/abstract/breakpoint' as *;
+@use '../../../scss/abstract/variables' as *;
+@use '../../../scss/abstract/breakpoint' as *;
 .section {
-    padding: 15px;
     &-title {
         font-size: 1.25rem;
         font-weight: 600;

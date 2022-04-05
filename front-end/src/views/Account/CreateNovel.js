@@ -94,20 +94,20 @@ function CreateNovel({userInfo}) {
             {
                 loadingUser ? <LoadingData />
                     :
-                    <div className="profile__wrap d-flex">
-                        <div className="col-5 profile__avt">
+                    <div className="profile__wrap row">
+                        <div className="col-5 col-md-12 col-sm-12 profile__avt">
                             <img src={preview} alt="" />
                             <input type={"file"} accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name={"avatar"} onChange={onChangeImage} />
                         </div>
-                        <div className="col-7 ">
-                            <div className="profile__main">
+                        <div className="col-7 col-md-12 col-sm-12 profile__main">
+                            
                                 <form>
                                     <div className="group-info">
-                                        <label htmlFor="" style={labelStyle}>Tên truyện</label>
+                                        <label style={labelStyle}>Tên truyện</label>
                                         <input onChange={onChangeName} value={name || ""} />
                                     </div>
                                     <div className="group-info">
-                                        <label htmlFor="" style={labelStyle}>Mô tả</label>
+                                        <label  style={labelStyle}>Mô tả</label>
                                         <input onChange={e => { setDescription(e.target.value) }} value={description}></input>
                                     </div>
                                     <div className="group-info">
@@ -115,7 +115,7 @@ function CreateNovel({userInfo}) {
                                         <input required onChange={e => { setTacgia(e.target.value) }} value={tacgia}></input>
                                     </div>
                                     <div className="group-info">
-                                        <label for="types">Thể loại</label>
+                                        <label htmlFor="types">Thể loại</label>
                                         <select style={labelStyle} onChange={e => { console.log(e.target.value); setTheloai(e.target.value) }} value={theloai} id="types" name="types">
                                             {
                                                 types.map(item => { return (<option value={item}>{item}</option>) })
@@ -127,7 +127,7 @@ function CreateNovel({userInfo}) {
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        
                     </div>
             }</>
 

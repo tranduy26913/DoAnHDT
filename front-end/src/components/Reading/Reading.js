@@ -9,7 +9,7 @@ function Reading(props) {
         <img src={data.hinhanh} alt="" />
       </div>
       <div className="reading-card__content">
-        <Link to={`/truyen/${data?.url}`} className="reading-card__title">
+        <Link to={`/truyen/${data?.url}`} className="reading-card__title fs-15">
           {data.tentruyen}
         </Link>
         <div className="reading-card__chap">

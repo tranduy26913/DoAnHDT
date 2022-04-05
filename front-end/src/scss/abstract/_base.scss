@@ -204,6 +204,18 @@ select {
     width: 100%;
 }
 
+.w-75 {
+    width: 75% !important;
+}
+
+.w-50 {
+    width: 50% !important;
+}
+
+.w-25 {
+    width: 25% !important;
+}
+
 .ma {
     margin: auto;
 }
@@ -213,4 +225,15 @@ select {
     flex-wrap: wrap;
     margin-left: -15px;
     margin-right: -15px;
+}
+
+.text-with-icon {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: $main-color;
+    i {
+        font-size: 1rem;
+        margin-right: 4px;
+    }
 }
