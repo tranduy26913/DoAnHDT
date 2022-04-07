@@ -82,30 +82,57 @@ function Chapter(props) {
         e.stopPropagation()
     }
 
-    const onClickToggleManual=()=>{
+    const onClickToggleManual = () => {
         let list = document.getElementById('chapter-manual__list');
         let icon = document.getElementById('icon-manual');
-        if(list){
+        if (list) {
             list.classList.toggle('active');
-            if(icon.classList.contains('bx-arrow-from-top'))
-                icon.classList.replace('bx-arrow-from-top','bx-arrow-from-bottom')
+            if (icon.classList.contains('bx-arrow-from-top'))
+                icon.classList.replace('bx-arrow-from-top', 'bx-arrow-from-bottom')
             else
-                icon.classList.replace('bx-arrow-from-bottom','bx-arrow-from-top')
+                icon.classList.replace('bx-arrow-from-bottom', 'bx-arrow-from-top')
         }
     }
 
     return (<>
         <div className="main" style={{ backgroundColor: "#ced9d9", paddingTop: "30px" }}>
             <div className="container">
-                <div ref={mainContentRef} className="main-content main-content--chapter">
+                <div ref={mainContentRef} className="main-content--chapter">
                     <div className="d-lex" >
-                        <h1 className='chapter-name'>{chapter?.tenchap}</h1>
+                        <div className="chapter__heading">
+                            <button className='btn btn-primary'>
+                                <i className='bx bx-arrow-back' ></i>Chương trước
+                            </button>
+                            <button className='btn btn-primary'>
+                                Chương sau<i className='bx bx-arrow-back bx-flip-horizontal' ></i>
+                            </button>
+                        </div>
+                        <h1 className='chapter__name'>{chapter?.tenchap}</h1>
+                        <ul className='chapter__info'>
+                            <li className='text-with-icon'><i className='bx bx-book' ></i>{chapter.tentruyen || "Tên truyện"}</li>
+                            <li className='text-with-icon'><i className='bx bx-edit'></i>{chapter.nguoidangtruyen || "Người đăng"}</li>
+                            <li className='text-with-icon'><i className='bx bx-text'></i>{chapter.content.split(" ").length || 0} chữ</li>
+                            <li className='text-with-icon'><i className='bx bx-time'></i>{chapter.createAt || Date()}</li>
+                        </ul>
                         <div className={`fs-${fontsize}`} style={{ "lineHeight": `${lineHeight}` }}>
-                            <div ref={contentRef} id="chapter-content"></div>
+                            <div ref={contentRef} id="chapter__content"></div>
                         </div>
 
                     </div>
                 </div>
+                <div className="chapter__nav">
+                    <div>
+                        <span  className='text-with-icon'>
+                            <i className='bx bx-arrow-back' ></i>Chương trước
+                        </span>
+                    </div>
+                    <div>
+                        <span className='text-with-icon'>
+                            Chương sau<i className='bx bx-arrow-back bx-flip-horizontal' ></i>
+                        </span>
+                    </div>
+                </div>
+
                 <div className='chapter-manual fs-24' style={styleManual}>
                     <span onClick={onClickToggleManual} className='chapter-manual__item chapter-manual__item--dropdown'><i id='icon-manual' className='bx bx-arrow-from-top'></i></span>
                     <ul className='chapter-manual__list' id='chapter-manual__list'>

@@ -1,10 +1,23 @@
 
+import { useEffect,useState } from 'react'
 import { Link } from 'react-router-dom'
+import apiMain from '../../../api/apiMain'
+import moment from 'moment'
 import Section, { SectionBody, SectionHeading } from '../../../components/Section/Section'
 import './NewestChapter.scss'
 
 function NewestChapter() {
-  //chưa viết xong
+const [newUpdate,setNewUpdate]  = useState([])
+  useEffect(()=>{
+    apiMain.getChapterNewUpdate({size:10})
+      .then(res=>{
+        setNewUpdate(res)
+      })
+      .catch(()=>{
+        setNewUpdate([])
+      })
+  },[])
+
   return (
     <div className='row'>
       <div className="col-12">
@@ -18,13 +31,14 @@ function NewestChapter() {
             <table className='newest-chapter'>
               <tbody>
                 {
-                  newestChapter.map(item => <tr key={item.url}>
+                  newUpdate.map((item,i) => <tr key={i}>
                     <td><span className='text-overflow-1-lines text-secondary'>{item.theloai}</span></td>
                     <td className='w-25'><span className='text-overflow-1-lines fw-6'>{item.tentruyen}</span></td>
                     <td className='w-25'><span className='text-overflow-1-lines'>{item.tenchap}</span></td>
                     <td><span className='text-overflow-1-lines'>{item.tacgia}</span></td>
-                    <td><span className='text-overflow-1-lines text-secondary'>{item.tennguoidang}</span></td>
-                    <td><span className='text-overflow-1-lines text-secondary'>{item.createAt}</span></td>
+                    <td><span className='text-overflow-1-lines text-secondary'>{item.nguoinguoidang}</span></td>
+                    <td><span className='text-overflow-1-lines text-secondary'>
+                      {moment(item.createAt).fromNow()}</span></td>
                   </tr>)
                 }
               </tbody>

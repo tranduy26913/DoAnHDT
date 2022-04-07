@@ -12,6 +12,7 @@ import Active from './views/Active/Active';
 import Chapter from './views/Chapter/Chapter';
 import Search from './views/Search/Search';
 import AllStory from './views/AllStory/AllStory';
+import 'react-loading-skeleton/dist/skeleton.css'
 import './scss/App.scss';
 function App() {
   return (

@@ -1,13 +1,15 @@
 @use '../../scss/abstract/breakpoint' as *;
 .main-content--chapter {
-    position: "relative";
-    margin: 0 80px;
+    width: 1000px;
+    margin: 0 auto;
     background-color: #d6f0e6;
+    padding: 1.5rem 4rem;
     @include mobile {
         margin: 0 0;
         box-shadow: 0 0 0 0;
         background-color: transparent;
     }
+    border-radius: 1rem;
 }
 
 .chapter-manual {
@@ -115,5 +117,36 @@
         button {
             border: none;
         }
+    }
+}
+
+.chapter {
+    &__heading,
+    &__nav {
+        display: flex;
+        justify-content: space-between;
+        button {
+            font-size: 1rem;
+            padding: 0.5rem 1.5rem;
+            margin: 0;
+        }
+    }
+    &__nav {
+        width: 1000px;
+        margin: 2rem auto;
+        div {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+    }
+    &__name {
+        margin: 2.5rem 0 1.5rem;
+    }
+    &__info {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.25rem;
     }
 }

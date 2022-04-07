@@ -11,11 +11,11 @@ import './ListStory.scss'
 
 function ListStory() {
 
-  const [datas, setData] = useState([]);
-  const [readings, setReadings] = useState([])
+  const [datas, setData] = useState(Array.from(Array(6).keys(), i=>{return {}}));
+  const [readings, setReadings] = useState(Array.from(Array(6).keys(), i=>{return {}}))
   const user = useSelector(state => state.auth.login.user)
   const dispatch = useDispatch()
-
+console.log(datas)
   useEffect(() => {
     const getReadings = async () => {//Xử lý gọi API thông tin đang đọc
       if (user) {

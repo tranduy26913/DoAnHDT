@@ -54,7 +54,7 @@ function EditStory({ url, user, dispatch, onClickBackFromEditNovel }) {
                 .catch(err => {
                     console.log(err)
                     dispatch(setLoading(false))
-                    toast.error(err.response?.details.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+                    toast.error(err.response?.details?.message, { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
                 })
         } catch (error) {
             console.log(error)
@@ -74,6 +74,7 @@ function EditStory({ url, user, dispatch, onClickBackFromEditNovel }) {
                     const data = {
                         tentruyen: name,
                         hinhanh: urlImage,
+                        noidung:description,
                         tacgia,
                         theloai,
                         url,

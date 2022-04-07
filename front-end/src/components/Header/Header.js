@@ -72,6 +72,7 @@ export default function Header() {
     const user = useSelector(state => state.auth.login?.user);
     const modalAuth = useSelector(state => state.modal.auth.active);
     const modalLogin = useSelector(state => state.modal.auth.login);
+    const [expand, setExpand] = useState(false)
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
 
@@ -83,14 +84,21 @@ export default function Header() {
         const hideDropdown = () => {
             profileDropdownRef?.current?.classList.remove("active")
         }
+        const collapseMenu = ()=>{
+            setExpand(false)
+        }
         document.addEventListener("click", hideDropdown)
+        document.addEventListener("click", collapseMenu)
         return () => {
             document.removeEventListener("click", hideDropdown)
+            document.removeEventListener("click", collapseMenu)
         }
     }, [])
 
-    const handleExpand = () => {
-        expandRef.current.classList.toggle('active')
+    const handleExpand = (e) => {
+        //expandRef.current.classList.toggle('active')
+        e.stopPropagation()
+        setExpand(pre=>!pre)
     }
 
     const handleDropdownProfile = (e) => {
@@ -130,9 +138,11 @@ export default function Header() {
             <nav ref={headerRef} className="header">
                 <div className="header__wrap">
                     <div className='collapse'>
-                        <button onClick={handleExpand} className='navbar__collapse'><i className='bx bx-list-ul fs-40'></i></button>
+                        <button onClick={handleExpand} className='navbar__collapse'>
+                            {expand?<i className='bx bx-x fs-40'></i>:
+                            <i className='bx bx-list-ul fs-40'></i>}</button>
                     </div>
-                    <div className="navbar-expand" ref={expandRef}>
+                    <div className={`navbar-expand ${expand?'active':''}`} ref={expandRef}>
                         <ul className='navbar-expand__wrap'>
                             {
                                 user ?
@@ -227,7 +237,7 @@ export default function Header() {
                                                     }
                                                     )
                                                 }
-                                                <li ><span onClick={onClickLogout}>Đăng xuất</span></li>
+                                                <li ><span onClick={onClickLogout}><i className='bx bx-log-out'></i>Đăng xuất</span></li>
                                             </ul>
                                         </div>
                                     </div>

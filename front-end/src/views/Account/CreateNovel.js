@@ -37,7 +37,7 @@ function CreateNovel({userInfo}) {
 
     const handleCreateNovel = async (data) => {//xử lý gọi tạo truyện mới
         try {
-            apiMain.createNovel(data,user, dispatch, loginSuccess )
+            apiMain.createStory(data,user, dispatch, loginSuccess )
                 .then(res =>{
                     toast.success("Đăng truyện thành công")
                     dispatch(setLoading(false))
@@ -66,6 +66,7 @@ function CreateNovel({userInfo}) {
                     tentruyen: name,
                     hinhanh: urlImage,
                     tacgia,
+                    noidung:description,
                     theloai,
                     url,
                     nguoidangtruyen:userInfo?._id

@@ -4,7 +4,8 @@ function Layout(props) {//Layout chung cho toàn web
     <>
     <span 
       className='imgHero'>
-        </span>
+        <div></div>
+      </span>
     
       <div className="main">
         <div className="container">

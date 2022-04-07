@@ -18,22 +18,22 @@ const menu = [//menu dựa trên từng loại tài khoản
     {
       path: "profile",
       display: "Hồ sơ",
-      icon: ""
+      icon: "bx bx-user"
     },
     {
       path: "change-password",
       display: "Đổi mật khẩu",
-      icon: ""
+      icon: "bx bxs-key"
     },
     {
       path: "tu-truyen/reading",
       display: "Tủ truyện",
-      icon: ""
+      icon: "bx bx-library"
     },
     {
       path: "dang-truyen",
       display: "Đăng truyện",
-      icon: ""
+      icon: "bx bx-up-arrow-circle"
     },
   ]
 function Account() {

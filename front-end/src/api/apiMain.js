@@ -65,7 +65,6 @@ const apiMain = {
     },
     getChapterByNumber: async (tentruyen, chapnum) => {
         return getData(await axiosClient.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`));
-
     },
     getChapterByNumberAndSetReading: async (tentruyen, chapnum, user, dispatch, stateSuccess) => {
         let axi = axiosInstance(user, dispatch, stateSuccess)
@@ -106,6 +105,9 @@ const apiMain = {
         const url = `/novels/novel`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.delete(url, {params}));
+    },
+    getChapterNewUpdate: async (param) => {
+        return getData(await axiosClient.get(`/novels/novel/newupdate`,{param}));
     },
     ///Comment
 

@@ -38,13 +38,13 @@ const menu = [
   {
     path: "admin/add-user",
     display: "Thêm thành viên",
-    icon: ""
+    icon: "bx bx-user-plus"
   },
 
   {
     path: "admin/dang-truyen",
     display: "Đăng truyện",
-    icon: ""
+    icon: "bx bx-up-arrow-circle"
   },
 ]
 function Account() {

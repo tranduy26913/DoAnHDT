@@ -231,7 +231,9 @@ select {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    color: $main-color;
+    &:hover {
+        color: $main-color;
+    }
     i {
         font-size: 1rem;
         margin-right: 4px;
