@@ -6,6 +6,7 @@ import { loginSuccess } from '../../../redux/authSlice'
 import Reading from '../../../components/Reading/Reading'
 import StoryCreated from './Story/StoryCreated'
 import { Route, Routes, Link, useLocation } from 'react-router-dom'
+import Saveds from './Saved/Saveds'
 const nav = [
   {
     path: 'reading',
@@ -41,7 +42,7 @@ function TuTruyen({ userInfo }) {
 
       <Routes>
         <Route key={'reading'} path='reading' element={<Readings key={'reading'} dispatch={dispatch} user={user} />} />
-        <Route key={'saved'} path='saved' element={<Readings key={'reading'}  />} />
+        <Route key={'saved'} path='saved' element={<Saveds key={'saved'}  dispatch={dispatch} user={user} />} />
         <Route key={'created'} path='created' element={<StoryCreated key={'created'} userInfo={userInfo} />} />
       </Routes>
 

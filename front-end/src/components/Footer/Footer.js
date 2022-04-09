@@ -35,7 +35,7 @@ function Footer() {
             </div>
             <ul className="row" style={{justifyContent:"center"}}>
                 {
-                    menu.map(item=><li className='col-sm-6' style={{padding:"0.5rem 1rem",textAlign:"center"}}>
+                    menu.map((item,i)=><li key={item.path} className='col-sm-6' style={{padding:"0.5rem 1rem",textAlign:"center"}}>
                     <Link to={item.path}>
                         {item.display}
                     </Link>

@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom'
 import apiMain from '../../../api/apiMain'
 import moment from 'moment'
 import Section, { SectionBody, SectionHeading } from '../../../components/Section/Section'
+import Skeleton from 'react-loading-skeleton'
 import './NewestChapter.scss'
 
 function NewestChapter() {
-const [newUpdate,setNewUpdate]  = useState([])
+const [newUpdate,setNewUpdate]  = useState(Array.from(Array(10).keys(),i=>undefined))
   useEffect(()=>{
     apiMain.getChapterNewUpdate({size:10})
       .then(res=>{
@@ -18,6 +19,7 @@ const [newUpdate,setNewUpdate]  = useState([])
       })
   },[])
 
+  
   return (
     <div className='row'>
       <div className="col-12">
@@ -31,14 +33,25 @@ const [newUpdate,setNewUpdate]  = useState([])
             <table className='newest-chapter'>
               <tbody>
                 {
-                  newUpdate.map((item,i) => <tr key={i}>
+                  newUpdate.map((item,i) =>
+                   <tr key={i}>
+                     {
+                        item?<>
                     <td><span className='text-overflow-1-lines text-secondary'>{item.theloai}</span></td>
-                    <td className='w-25'><span className='text-overflow-1-lines fw-6'>{item.tentruyen}</span></td>
-                    <td className='w-25'><span className='text-overflow-1-lines'>{item.tenchap}</span></td>
+                    <td className='w-25'>
+                      <Link to={`truyen/${item.url}`}>
+                      <span className='text-overflow-1-lines fw-6'>{item.tentruyen}</span>
+                      </Link></td>
+                    <td className='w-25'>
+                      <Link to={`truyen/${item.url}/${item.chapnumber}`}><span className='text-overflow-1-lines'>{item.tenchap}</span></Link>
+                    </td>
                     <td><span className='text-overflow-1-lines'>{item.tacgia}</span></td>
                     <td><span className='text-overflow-1-lines text-secondary'>{item.nguoinguoidang}</span></td>
                     <td><span className='text-overflow-1-lines text-secondary'>
-                      {moment(item.createAt).fromNow()}</span></td>
+                      {moment(item.updateAt).fromNow()}</span></td></>
+                      :<td>
+                        <Skeleton height={16}/></td>
+}
                   </tr>)
                 }
               </tbody>
@@ -49,68 +62,24 @@ const [newUpdate,setNewUpdate]  = useState([])
     </div>
   )
 }
-const newestChapter = [{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 1
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 2
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 3
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 4
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 5
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 6
-},
-{
-  theloai: "Đô thị",
-  tentruyen: "Tên truyện",
-  tenchap: "Chương 375: Chúng ta chính là Tần Hoài 8 kiều diễm ướt át ",
-  tacgia: "Giang Công Tử A Bảo",
-  tennguoidang: "Nhuyễn Manh Đích Kelly",
-  createAt: "3 phút trước",
-  url: 7
-}]
-
+moment.updateLocale('en', {
+  relativeTime : {
+      future: "in %s",
+      past:   "%s trước",
+      s  : 'vài giây',
+      ss : '%d giây',
+      m:  "1 phút",
+      mm: "%d phút",
+      h:  "1 giờ",
+      hh: "%d giờ",
+      d:  "1 ngày",
+      dd: "%d ngày",
+      w:  "1 tuần",
+      ww: "%d tuần",
+      M:  "1 tháng",
+      MM: "%d tháng",
+      y:  "1 năm",
+      yy: "%d năm"
+  }
+});
 export default NewestChapter

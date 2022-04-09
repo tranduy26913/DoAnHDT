@@ -9,9 +9,9 @@ function Home() {
     <>
     <Layout>
       <div className="main-content">
-             <ListStory/>
-             <NewestChapter/>
-             <StoryTopRate/>
+             <ListStory key={"list"}/>
+             <NewestChapter key={"list2"}/>
+            <StoryTopRate key={"list3"}/>
       </div>
       
     </Layout>

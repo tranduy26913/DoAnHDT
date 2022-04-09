@@ -62,7 +62,7 @@ $val in $colors {
 
 @for $i from 1 through 48 {
     .fs-#{$i} {
-        font-size: #{calc($i/16)}rem;
+        font-size: #{calc($i/16)}rem !important;
     }
 }
 

@@ -1,5 +1,8 @@
 @use '../../scss/abstract/variables' as *;
 .btn-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 6px;
     border-radius: 50%;
     height: 36px;

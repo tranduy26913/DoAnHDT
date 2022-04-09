@@ -45,7 +45,10 @@
             padding: 0 15px;
         }
         &__rate {
-            @include flex(center, unset)
+            @include flex(center, unset);
+            &-wrap {
+                align-items: center;
+            }
         }
         @include mobile {
             gap: 15px;

@@ -56,7 +56,9 @@ function Profile({userInfo,changeUserInfo}) {
       const update = await apiMain.updateUserInfo(user, dispatch, loginSuccess, data)
       dispatch(setLoading(false))
       toast.success("Cập nhật thông tin thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
-      const newUser ={...user, image:update.image,tenhienthi:update.tenhienthi}
+      
+      const newUser ={...user, image:update?.userInfo?.image,tenhienthi:update?.userInfo?.tenhienthi}
+      console.log(newUser)
       dispatch(loginSuccess(newUser))
       changeUserInfo(update.userInfo)
     } catch (error) {

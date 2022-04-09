@@ -77,7 +77,7 @@ function StoryDetail() {
         setMain(<Rate key={'rate'} />)
         break
       case 'chapter':
-        setMain(<ListChapter key={'chapter'} url={truyen.url} />)
+        setMain(<ListChapter key={'chapter'} url={truyen.url} totalPage={truyen.sochap} />)
         break
       case 'comment':
         setMain(<Comment key={'comment'} url={truyen.url} />)
@@ -269,7 +269,7 @@ export const ListChapter = props => {
   const [chapters, setChapters] = useState([])
   const [loadingData, setLoadingData] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-
+  const size = 20;
   const url = props.url
   useEffect(() => {
     const loadList = async () => {//xử lý gọi API danh sách truyện
@@ -305,7 +305,7 @@ export const ListChapter = props => {
             
           </Grid>
       }
-      <Pagination totalPage={10} currentPage={currentPage} handleSetPage={setCurrentPage} />
+      <Pagination totalPage={props.totalPage/size} currentPage={currentPage} handleSetPage={setCurrentPage} />
 
     </>
   )

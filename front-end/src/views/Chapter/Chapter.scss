@@ -1,7 +1,6 @@
 @use '../../scss/abstract/breakpoint' as *;
 .main-content--chapter {
-    width: 1000px;
-    margin: 0 auto;
+    margin: 0 85px;
     background-color: #d6f0e6;
     padding: 1.5rem 4rem;
     @include mobile {
@@ -9,7 +8,7 @@
         box-shadow: 0 0 0 0;
         background-color: transparent;
     }
-    border-radius: 1rem;
+    border-radius: 0.5rem;
 }
 
 .chapter-manual {
@@ -19,6 +18,9 @@
     right: 40px;
     // margin: initial;
     border-radius: 4px;
+    @include mobile {
+        transform: translateX(30px)
+    }
     &__list {
         box-shadow: 0 6px 6px 0 rgba($color: #000000, $alpha: .2);
         transition: transform 0.4s ease-in-out;
@@ -132,8 +134,9 @@
         }
     }
     &__nav {
-        width: 1000px;
-        margin: 2rem auto;
+        margin: 2rem 85px 1rem;
+        background-color: #d6f0e6;
+        border-radius: 0.5rem;
         div {
             flex: 1;
             display: flex;

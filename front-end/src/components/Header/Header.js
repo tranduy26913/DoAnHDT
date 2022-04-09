@@ -216,7 +216,7 @@ export default function Header() {
                         </div>
                         <ul className='navbar__list navbar__list--right'>
                             <li><Link to={user?.roles[0] === 'ADMIN' ? '/admin/dang-truyen' : '/user/dang-truyen'}
-                                    className='d-flex'>
+                                    className='text-with-icon'>
                                 <i style={{ marginRight: '4px'}} className="bx bx-up-arrow-circle fs-28"></i> Đăng truyện
                             </Link></li>
                             {

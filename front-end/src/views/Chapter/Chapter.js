@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import apiMain from '../../api/apiMain'
 import getData from '../../api/getData'
 import { Link } from 'react-router-dom'
 import { loginSuccess } from '../../redux/authSlice'
 import "./Chapter.scss"
 import { ListChapter } from '../StoryDetail/StoryDetail'
-
+import Skeleton from 'react-loading-skeleton';
 
 function Chapter(props) {
     const { chapnum, url } = useParams()
@@ -20,7 +20,9 @@ function Chapter(props) {
     const contentRef = useRef(null)
     const mainContentRef = useRef(null)
     const [styleManual, setStyleManual] = useState(null)
-    //let styleManual = {}
+    //let styleManual = {} \
+    const [truyen, setTruyen] = useState(null);
+    const navigate = useNavigate()
 
     useEffect(() => {//xử lý dropdown của account
         const hideManual = () => {
@@ -62,7 +64,7 @@ function Chapter(props) {
                         console.log(err)
                     })
             }
-            else
+            else{
                 apiMain.getChapterByNumber(url, chapnum)
                     .then(res => {
                         setChapter(getData(res))
@@ -70,9 +72,55 @@ function Chapter(props) {
                     .catch(err => {
                         console.log(err)
                     })
+            }
         }
         getChapter()//gọi hàm
+        setManual("")
     }, [chapnum])
+
+    useEffect(()=>{
+        if(truyen){
+            let readings = localStorage.getItem("readings");
+            readings = JSON.parse(readings)
+            console.log(readings)
+            if(Array.isArray(readings)){
+                if(Number(chapnum)){
+                
+                    let index = readings.findIndex(item=>item.url===url)
+                    const newReading = {
+                        tentruyen:truyen.tentruyen,
+                        url,
+                        hinhanh:truyen.hinhanh,
+                        chapnumber:Number(chapnum),
+                        sochap:truyen.sochap
+                    }
+                    if(index!==-1){
+                        readings[index] = newReading
+                    }
+                    else{
+                        readings = [newReading,...readings]
+                        readings.pop()
+                    }
+                
+                }
+                localStorage.setItem("readings",JSON.stringify(readings))
+            }
+        }
+    },[truyen])
+
+    useEffect(()=>{
+        const getStory =async()=>{
+            apiMain.getStory({url})
+            .then(res=>{
+                setTruyen(res)
+                console.log(res)
+            })
+        } 
+        getStory()
+        console.log(url)
+    },[url])
+
+
 
     useEffect(() => {//xử lý hiển thị nội dung truyện
         contentRef.current.innerHTML = chapter?.content || ""
@@ -94,28 +142,44 @@ function Chapter(props) {
         }
     }
 
+    const onClickNextChap = ()=>{
+        navigate(`/truyen/${url}/${Number(chapnum)+1}`)
+        setChapter({})
+    }
+    const onClickPreviousChap = ()=>{
+        if(Number(chapnum)>1){
+            navigate(`/truyen/${url}/${Number(chapnum)-1}`)
+            setChapter({})
+        }
+            
+    }
+
     return (<>
         <div className="main" style={{ backgroundColor: "#ced9d9", paddingTop: "30px" }}>
-            <div className="container">
+            <div className="container" style={{paddingBottom:"3rem"}}>
                 <div ref={mainContentRef} className="main-content--chapter">
                     <div className="d-lex" >
                         <div className="chapter__heading">
-                            <button className='btn btn-primary'>
+                            <button onClick={onClickPreviousChap} className='btn btn-primary'>
                                 <i className='bx bx-arrow-back' ></i>Chương trước
                             </button>
-                            <button className='btn btn-primary'>
+                            <button onClick={onClickNextChap} className='btn btn-primary'>
                                 Chương sau<i className='bx bx-arrow-back bx-flip-horizontal' ></i>
                             </button>
                         </div>
                         <h1 className='chapter__name'>{chapter?.tenchap}</h1>
                         <ul className='chapter__info'>
-                            <li className='text-with-icon'><i className='bx bx-book' ></i>{chapter.tentruyen || "Tên truyện"}</li>
-                            <li className='text-with-icon'><i className='bx bx-edit'></i>{chapter.nguoidangtruyen || "Người đăng"}</li>
-                            <li className='text-with-icon'><i className='bx bx-text'></i>{chapter.content.split(" ").length || 0} chữ</li>
-                            <li className='text-with-icon'><i className='bx bx-time'></i>{chapter.createAt || Date()}</li>
+                            <li className='text-with-icon'><i className='bx bx-book' ></i>{chapter?.tentruyen || "Tên truyện"}</li>
+                            <li className='text-with-icon'><i className='bx bx-edit'></i>{chapter?.nguoidangtruyen || "Người đăng"}</li>
+                            <li className='text-with-icon'><i className='bx bx-text'></i>{chapter?.content?.split(" ").length || 0} chữ</li>
+                            <li className='text-with-icon'><i className='bx bx-time'></i>{chapter?.createAt || Date()}</li>
                         </ul>
                         <div className={`fs-${fontsize}`} style={{ "lineHeight": `${lineHeight}` }}>
-                            <div ref={contentRef} id="chapter__content"></div>
+                           
+                                <div ref={contentRef} id="chapter__content"> </div>{chapter?.content?"":<Skeleton count={20}/>
+                            }
+                                
+                            
                         </div>
 
                     </div>

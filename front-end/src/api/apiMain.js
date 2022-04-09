@@ -25,11 +25,11 @@ const apiMain = {
         return (await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` } })).data;
     },
     checkUsername:async (params) => {
-        const res = await axiosClient.post('/auth/checkusername', params)
+        const res = await axiosClient.get('/auth/checkusername', {params})
         return getData(res);
     },
     checkEmail:async (params) => {
-        const res = await axiosClient.post('/auth/checkemail', params)
+        const res = await axiosClient.get('/auth/checkemail', {params:params})
         return getData(res);
     },
 
@@ -88,6 +88,15 @@ const apiMain = {
     },
     getReadings: async (user, dispatch, stateSuccess) => {
         const url = `/novels/readings`
+        let axi = axiosInstance(user, dispatch, stateSuccess)
+        return getData(await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
+    },
+    getReadingDefault: async (params) => {
+        const url = `/novels/readingsdefault`
+        return getData(await axiosClient.get(url, {params} ));
+    },
+    getSaveds: async (user, dispatch, stateSuccess) => {
+        const url = `/saved/`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
     },

@@ -45,13 +45,13 @@ function Pagination({ totalPage, currentPage, handleSetPage }) {//Component phâ
 
     return (
         <div className='d-flex' style={{"margin":"20px auto","justifyContent":"center"}}>
-            <button data={item} name={item} onClick={onClickPre} className={`btn-pagination btn-pagination__page `} ><i class="fa-solid fa-angle-left"></i></button>
+            <button data={item} name={item} onClick={onClickPre} className={`btn-pagination btn-pagination__page `} ><i className='bx bx-chevron-left fs-28'></i></button>
             {
                 item.map((item, index) => {
                     return <button data={item} name={item} onClick={onClickPage} className={`btn-pagination ${item !== '...' ? 'btn-pagination__page' : ''} ${currentPage === item ? 'page-active' : ''}`} key={index}>{item}</button>
                 })
             }
-            <button data={item} name={item} onClick={onClickNext} className={`btn-pagination btn-pagination__page`} ><i class="fa-solid fa-angle-right"></i></button>
+            <button data={item} name={item} onClick={onClickNext} className={`btn-pagination btn-pagination__page`} ><i class='bx bx-chevron-right fs-28'></i></button>
         </div>
     )
 }
