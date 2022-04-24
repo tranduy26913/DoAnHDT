@@ -69,7 +69,7 @@ const Readings = ({ dispatch,user }) => {
   return (
     <div>
       {
-        readings.map((item, i) => <div key={item._id} >
+        readings.map((item, i) => <div key={i} >
           <Reading  data={{
             tentruyen: item.tentruyen,
             hinhanh: item.hinhanh,

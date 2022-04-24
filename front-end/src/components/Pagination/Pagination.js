@@ -51,7 +51,7 @@ function Pagination({ totalPage, currentPage, handleSetPage }) {//Component phâ
                     return <button data={item} name={item} onClick={onClickPage} className={`btn-pagination ${item !== '...' ? 'btn-pagination__page' : ''} ${currentPage === item ? 'page-active' : ''}`} key={index}>{item}</button>
                 })
             }
-            <button data={item} name={item} onClick={onClickNext} className={`btn-pagination btn-pagination__page`} ><i class='bx bx-chevron-right fs-28'></i></button>
+            <button data={item} name={item} onClick={onClickNext} className={`btn-pagination btn-pagination__page`} ><i className='bx bx-chevron-right fs-28'></i></button>
         </div>
     )
 }

@@ -54,8 +54,6 @@ function StoryDetail() {
   const [listchapter, setListchapter] = useState(false)
   const user = useSelector(state => state.auth.login?.user)
   const dispatch = useDispatch();
-
-  console.log(listchapter)
   useEffect(() => {//load truyện
     const getStory = async () => {
       let params = { url }

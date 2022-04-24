@@ -82,7 +82,6 @@ function Chapter(props) {
         if(truyen){
             let readings = localStorage.getItem("readings");
             readings = JSON.parse(readings)
-            console.log(readings)
             if(Array.isArray(readings)){
                 if(Number(chapnum)){
                 
@@ -113,7 +112,6 @@ function Chapter(props) {
             apiMain.getStory({url})
             .then(res=>{
                 setTruyen(res)
-                console.log(res)
             })
         } 
         getStory()
@@ -151,7 +149,6 @@ function Chapter(props) {
             navigate(`/truyen/${url}/${Number(chapnum)-1}`)
             setChapter({})
         }
-            
     }
 
     return (<>
