@@ -16,22 +16,22 @@ import './Profile.scss'
 import Panel from './Panel'
 const menu = [//menu dựa trên từng loại tài khoản
     {
-      path: "profile",
+      path: "user/profile",
       display: "Hồ sơ",
       icon: "bx bx-user"
     },
     {
-      path: "change-password",
+      path: "user/change-password",
       display: "Đổi mật khẩu",
       icon: "bx bxs-key"
     },
     {
-      path: "tu-truyen/reading",
+      path: "user/tu-truyen/reading",
       display: "Tủ truyện",
       icon: "bx bx-library"
     },
     {
-      path: "dang-truyen",
+      path: "user/dang-truyen",
       display: "Đăng truyện",
       icon: "bx bx-up-arrow-circle"
     },

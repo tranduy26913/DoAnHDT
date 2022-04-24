@@ -39,7 +39,6 @@ function TuTruyen({ userInfo }) {
           })
         }
       </div>
-
       <Routes>
         <Route key={'reading'} path='reading' element={<Readings key={'reading'} dispatch={dispatch} user={user} />} />
         <Route key={'saved'} path='saved' element={<Saveds key={'saved'}  dispatch={dispatch} user={user} />} />

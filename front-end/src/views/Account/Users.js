@@ -10,7 +10,7 @@ function Users(props) {
   const [listUser, setListUser] = useState([])
   const [choose, setChoose]=useState(null)
   const [roles,setRoles]=useState([])
-  const [id,setId] = useState("")
+  const [username,setUsername] = useState("")
   const [modalRole,setModalRole]=useState(false)
   const dispatch = useDispatch()
 
@@ -22,32 +22,33 @@ function Users(props) {
   const onClickShow = (e)=>{
     if(choose===e.target.id){
       setChoose(null)
-      setId(null)
+      setUsername(null)
     }
     else{
       setChoose(e.target.id)
-      setId(e.target.id)
+      setUsername(e.target.id)
     }
   }
 
   const onClickDelete =async(e)=>{
-    if(id){
-      console.log(id)
-      apiMain.deleteAccount(user,dispatch,loginSuccess,{id:id})
+    if(username){
+      console.log(username)
+      apiMain.deleteAccount(user,dispatch,loginSuccess,{username})
       .then(res=>{
-        console.log(res)
+        toast.success("Xoá thành công")
       })
       .catch(err=>{
         console.log(err)
+        toast.error("Xoá thất bại")
       })
     }
   }
 
   const onClickActive=async(e)=>{
-    if(id){
-      apiMain.activeByAdmin(user,dispatch,loginSuccess,{id})
+    if(username){
+      apiMain.activeByAdmin(user,dispatch,loginSuccess,{username})
       .then(res=>{
-        const newList = listUser.map(item =>{return item._id===res?._id?res:item})
+        const newList = listUser.map(item =>{return item.username===res?.username?res:item})
         setListUser(newList)
         toast.success("Kích hoạt thành công")
       })
@@ -58,15 +59,15 @@ function Users(props) {
   }
 
   const onClickInActive=async(e)=>{
-    if(id){
-      apiMain.inactiveByAdmin(user,dispatch,loginSuccess,{id})
+    if(username){
+      apiMain.inactiveByAdmin(user,dispatch,loginSuccess,{username})
       .then(res=>{
-        const newList = listUser.map(item =>{return item._id===res?._id?res:item})
+        const newList = listUser.map(item =>{return item.username===res?.username?res:item})
         setListUser(newList)
-        toast.success("Khoá thành công",{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+        toast.success("Khoá thành công")
       })
       .catch(err=>{
-        toast.error("Khoá thất bại",{hideProgressBar:true,pauseOnHover:false,autoClose:1000})
+        toast.error("Khoá thất bại")
       })
     }
   }
@@ -107,37 +108,42 @@ function Users(props) {
         <tbody>
           {
             listUser.map((item, index) => {
-              return (
-                <tr key={item._id}>
+              return <>
+                {
+                  item.username!==user.username
+                  ?
+                <tr key={item.username}>
                   <td>{item.username}</td>
                   <td>{item.email}</td>
                   <td key={item.active}>{item.active ? "Đã kích hoạt" : "Chưa kích hoạt"}</td>
-                  <td id={`roles-${item._id}`}>{item.roles?.map(e=>e.name).join(', ') || ""}</td>
+                  <td id={`roles-${item.username}`}>{item.roles?.map(e=>e.name).join(', ') || ""}</td>
                   <td tabIndex={index} onBlur={hideMenu}>
                     <div  className='d-flex user__item' >
-                      <a className='ma' id={item._id}  onClick={onClickShow} >
-                        <i id={item._id} name={item._id}  className="ma fs-20 fa-solid fa-ellipsis"></i>
+                      <a className='ma' id={item.username}  onClick={onClickShow} >
+                        <i id={item.username} name={item.username}  className="ma fs-20 bx bx-dots-horizontal-rounded"></i>
                         </a>
                     </div>
-                    <div className={`user__menu ${choose===item._id?'active':''}`}>
+                    <div className={`user__menu ${choose===item.username?'active':''}`}>
                       <ul>
-                        <li><a key={item.active} name={item._id} onClick={item.active?onClickInActive:onClickActive}>
+                        <li><a key={item.active} name={item.username} onClick={item.active?onClickInActive:onClickActive}>
                           {item.active?'Khoá tài khoản':'Kích hoạt'}</a></li>
-                        <li><a name={item._id} onClick={onClickRole}>Cấp quyền</a></li>
-                        <li><a name={item._id} onClick={onClickDelete}>Xoá</a></li>
+                        <li><a name={item.username} onClick={onClickRole}>Cấp quyền</a></li>
+                        <li><a name={item.username} onClick={onClickDelete}>Xoá</a></li>
                       </ul>
                     </div>
                   
                   </td>
                 </tr>
-              )
+                :<></>
+                }
+              </>
             })
           }
         </tbody>
       </table>
       {modalRole&&<Modal active={modalRole}>
           <ModalContent onClose={closeModalRole}>
-                <ChooseRoles roles={roles} userId={id}/>
+                <ChooseRoles roles={roles} username={username}/>
           </ModalContent>
       </Modal>}
 
@@ -156,15 +162,15 @@ const ChooseRoles = (props)=>{
   
   const  onClickUpdateRole =async(e)=>{
     e.preventDefault();
-    const params = {roles,id:props.userId}
+    const params = {roles,username:props.username}
     if(user)
     apiMain.updateRole(user,dispatch,loginSuccess,params)
       .then(res => {
-        toast.success("Cập nhật quyền thành công",{hideProgressBar:true,autoClose:1200,pauseOnHover:false})
+        toast.success("Cập nhật quyền thành công")
       })
       .catch(err=>{
-        let _=err.response?.details?.message
-        toast.error(_,{hideProgressBar:true,autoClose:1200,pauseOnHover:false})
+        let _=err.response?.message
+        toast.error(_)
       })
 
 
@@ -180,7 +186,7 @@ const ChooseRoles = (props)=>{
           return item !==role
         })
         if(newRoles.length===0){
-          toast.warning("Phải chọn ít nhất một quyền",{hideProgressBar:true,autoClose:1200})
+          toast.warning("Phải chọn ít nhất một quyền")
           return
         }
         setRoles(newRoles)

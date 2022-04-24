@@ -28,10 +28,13 @@ const ListChap = ({ url, user, dispatch,onClickBackFromListChap }) => {
           })
       }
     }
-  
+    
+
     const getChapter = useCallback(async () => {
-      apiMain.getNameChapters(url, {})
-        .then(res => setChapters(res))},[url])
+      apiMain.getNameChapters(url, {size:20})
+        .then(res => {
+          setChapters(res)
+        })},[url])
 
     
     useEffect(()=>{

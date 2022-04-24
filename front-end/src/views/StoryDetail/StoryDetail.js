@@ -195,7 +195,7 @@ function StoryDetail() {
 
                 </div>
                 <div className='heroSide__main__handle row' style={{ gap: '15px' }}>
-                  <button className='btn-primary'><i className='bx bx-glasses'></i>Đọc truyện</button>
+                  <Link to={`/truyen/${url}/${1}`}><button className='btn-primary'><i className='bx bx-glasses'></i>Đọc truyện</button></Link>
                   {
                     saved ?
                       <button onClick={onClickUnsaved} className='btn-outline'>

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import apiMain from '../../api/apiMain';
 import avt from '../../assets/img/avt.png'
 import { loginSuccess } from '../../redux/authSlice';
+import moment from 'moment';
 import "./Comment.scss"
 
 function Comment(props) {
@@ -16,10 +17,11 @@ function Comment(props) {
 
     const onClickCreateComment = async (e) => { //xử lý đăng bình luận mới
         if (user) {
-            const params = { url, content }//payload
+            const params = { urltruyen:url, content,parentId:"" }//payload
             apiMain.createComment(user, params, dispatch, loginSuccess)//gọi API đăng comment
                 .then(res => {
-                    setComments(pre => [res, ...pre])
+                    console.log(res)
+                    setComments(pre => [res.comment||res, ...pre])
                     setContent("")
                 })
                 .catch(err => {
@@ -37,9 +39,9 @@ function Comment(props) {
 
     const getComments = async () => {//hàm gọi data comments
         try {
-            const res = await apiMain.getCommentsByUrl({ url: url })
+            const res = await apiMain.getCommentsByUrl(url,{size:20})
             if (res)
-                return res
+                return res.reverse()
             return []
         } catch (error) {
             return []
@@ -60,7 +62,8 @@ function Comment(props) {
 
     const onClickDeleteComment = async (e) => {//xử lý xoá comment
         if (user) {//Nếu đã đăng nhập thì mới đc phép xoá
-            apiMain.deleteComment(user, { id: e.target.name }, dispatch, loginSuccess)
+            console.log(e.target.id)
+            apiMain.deleteComment(user, { id: e.target.id }, dispatch, loginSuccess)
                 .then(async (res) => {
                     toast.success(res.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
                     const data = await getComments()
@@ -73,26 +76,6 @@ function Comment(props) {
         }
     }
 
-    const calDate = (createdAt) => {//xử lý thời gian đăng comment
-        let newDate = new Date()
-        let createDate = new Date(createdAt)
-        let diff = (newDate.getTime() - createDate.getTime()) / 60000
-
-        if (diff / 60 >= 1) {
-            if (diff / (60 * 24) >= 1) {
-                if (diff / (60 * 24 * 30) >= 1) {
-                    if (diff / (60 * 24 * 30 * 365) >= 1) {
-                        return `${(diff / (60 * 24 * 30 * 365)).toFixed(0)} năm trước`
-                    }
-                    return `${(diff / (60 * 24 * 30)).toFixed(0)} tháng trước`
-                }
-                return `${(diff / (60 * 24)).toFixed(0)} ngày trước`
-            }
-            return `${(diff / 60).toFixed(0)} giờ trước`
-        }
-        return `${diff.toFixed(0)} phút trước`
-
-    }
     return (
         <div className="comment__wrap">
             <h1>Bình luận {count || 0}</h1>
@@ -102,7 +85,7 @@ function Comment(props) {
                 </div>
                 <div className="comment__input">
                     <textarea style={{ 'height': '100%', 'padding': '5px 20px 5px 5px' }} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
-                    <div className='d-flex comment__icon' ><span onClick={onClickCreateComment} className=" fs-20 "><i className="fa-solid fa-comment"></i></span></div>
+                    <div className='d-flex comment__icon' ><span onClick={onClickCreateComment} className=" fs-20 "><i className='bx bxs-send' ></i></span></div>
                 </div>
 
             </div>
@@ -123,7 +106,8 @@ function Comment(props) {
                                             <h4>{item.tenhienthi}</h4>
                                             <span className='fs-12 fw-4 text-secondary'>
                                                 {
-                                                    calDate(item.createdAt)
+
+                                                    moment(item.date).fromNow()
                                                 }
                                             </span>
                                         </div>
@@ -132,10 +116,10 @@ function Comment(props) {
                                         </div>
                                         <ul className="comment__nav">
                                             {item.username === user?.username ?
-                                                <li name={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className="fa-solid fa-trash"></i> Xoá</li> : ''
+                                                <li id={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className='bx bxs-trash-alt'></i> Xoá</li> : ''
                                             }
-                                            <li className='fs-14 text-secondary'><i className="fa-solid fa-reply"></i> Trả lời</li>
-                                            <li className='fs-14 text-secondary'><i className="fa-solid fa-flag"></i> Báo xấu</li>
+                                            <li className='fs-14 text-secondary'><i className="bx bx-reply"></i> Trả lời</li>
+                                            <li className='fs-14 text-secondary'><i className='bx bxs-flag-alt' ></i> Báo xấu</li>
 
                                         </ul>
 
@@ -150,4 +134,24 @@ function Comment(props) {
     )
 }
 
+moment.updateLocale('en', {
+    relativeTime : {
+        future: "in %s",
+        past:   "%s trước",
+        s  : 'vài giây',
+        ss : '%d giây',
+        m:  "1 phút",
+        mm: "%d phút",
+        h:  "1 giờ",
+        hh: "%d giờ",
+        d:  "1 ngày",
+        dd: "%d ngày",
+        w:  "1 tuần",
+        ww: "%d tuần",
+        M:  "1 tháng",
+        MM: "%d tháng",
+        y:  "1 năm",
+        yy: "%d năm"
+    }
+  });
 export default Comment

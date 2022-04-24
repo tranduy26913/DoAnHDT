@@ -32,6 +32,15 @@
         display: flex;
         gap: 20px;
         justify-content: flex-end;
+        li {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        li:hover {
+            color: $main-color !important;
+            cursor: pointer;
+        }
     }
     &__input {
         textarea {

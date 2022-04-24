@@ -152,7 +152,7 @@ export default function Header() {
                                                 <div className='navbar__avatar'><img src={user.image} alt="" /></div>
                                                 : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                             }
-                                            <span>{user.name || user.tenhienthi || user.username}</span>
+                                            <span>{user.tenhienthi ||user.name ||  user.username}</span>
                                         </div>
                                     </li> :
                                     <>
@@ -227,7 +227,7 @@ export default function Header() {
                                                 <div className='navbar__avatar'><img src={user.image} alt="" /></div>
                                                 : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                             }
-                                            <span>{user.name || user.tenhienthi || user.username}</span>
+                                            <span>{ user.tenhienthi ||user.name || user.username}</span>
                                         </div>
                                         <div  tabIndex={"1"} onBlur={hideProfileDropdown} className="navbar__profile__menu">
                                             <ul>

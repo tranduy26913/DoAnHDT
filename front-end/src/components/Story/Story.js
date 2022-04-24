@@ -10,7 +10,7 @@ function Story(props) {
           {data.hinhanh ? <img src={data.hinhanh} alt="" /> : <Skeleton height={96} width={72} />}
         </div>
         <div className='story-card__content'><h2 className='story-card__tilte'>
-              <Link to={`truyen/${data.url}`}>{data['tentruyen']||<Skeleton />}</Link>
+              <Link to={`/truyen/${data.url}`}>{data['tentruyen']||<Skeleton />}</Link>
             </h2>
           
 

@@ -362,6 +362,29 @@ export const NovelController = {
             return res.status(500).json(ResponseDetail(500, { message: "Lỗi lấy thông tin chap" }))
         }
     },
+
+    GetNewestChapter:async(req,res)=>{
+        try{
+            const page = req.query.page || 0
+            const size = req.query.size || 10
+            let chaps =await Chapter.find().populate('dautruyenId').limit(size).sort({updateAt:-1})
+            chaps = chaps.map(item=>{return {theloai:item.dautruyenId.theloai
+                                        ,tentruyen:item.dautruyenId.tentruyen,
+                                    tenchap:item.tenchap,tacgia:item.dautruyenId.tacgia,
+                                nguoidangtruyen:item.dautruyenId.nguoidangtruyen?.tenhienthi,
+                            updateAt:item.updateAt,
+                        url:item.dautruyenId.url,
+                    chapnumber:item.chapnumber}})
+            if(chaps){
+                return res.status(200).json(ResponseData(200, chaps))
+            }
+            return res.status(200).json(ResponseData(200, []))
+        }
+        catch(err){
+            console.log(err)
+            return res.status(500).json(ResponseDetail(500, { message: "Lỗi lấy thông tin chap" }))
+        }
+    }
     
 
 }

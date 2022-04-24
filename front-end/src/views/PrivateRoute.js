@@ -28,6 +28,7 @@ const PrivateRoute = ({
                     dispatch(logoutSuccess())
                     return
                 }
+                console.log(user)
                 const userHasRequiredRole = roles.includes(user.roles[0]) ? true : false
                 if (!userHasRequiredRole) {
                     toast.warning("Bạn không có quyền truy cập", { autoClose: 1000, pauseOnHover: false, hideProgressBar: true })

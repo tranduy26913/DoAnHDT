@@ -121,24 +121,23 @@ const apiMain = {
     ///Comment
 
     createComment: async (user, params, dispatch, stateSuccess) => {
-        const url = `/comment/create`
+        const url = `/comment`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.post(url, params, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
     },
-    getCommentsByUrl: async (params) => {
-        const url = `/comment/getcomment/${params.url}`;
-        return getData(await axiosClient.get(url));
+    getCommentsByUrl: async (url,params) => {
+        return getData(await axiosClient.get(`/comment/${url}`,{params}));
     },
     deleteComment: async (user, params, dispatch, stateSuccess) => {
-        const url = `/comment/delete`
+        const url = `/comment/${params.id}`
         let axi = axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.post(url, params, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
+        return getData(await axi.delete(url, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
     },
 
     ///user
 
     getAllUser: async (user, dispatch, stateSuccess) => {
-        const url = 'user/getusers'
+        const url = 'admin/users'
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` }, }));
     },
@@ -171,19 +170,19 @@ const apiMain = {
     },
     activeByAdmin: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.put(`/auth/activebyadmin`, params))
+        return getData(await axi.put(`admin/user/active`, params))
     },
     inactiveByAdmin: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.put(`/auth/inactivebyadmin`, params))
+        return getData(await axi.put(`admin/user/inactive`, params))
     },
     updateRole: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.put('/user/updateroles', params));
+        return getData(await axi.put('admin/role/updatetouser', params));
     },
     deleteAccount: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.delete(`/user?id=${params.id}`, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
+        return getData(await axi.delete(`admin/user`, { headers: { Authorization: `Bearer ${user.accessToken}` },data:params }));
     },
 
     ///saved
@@ -197,7 +196,7 @@ const apiMain = {
     },
     unsavedStory: async (user, dispatch, stateSuccess, params) => {
         const axi = await axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.delete(`/saved/${params.url}`,{ headers: { Authorization: `Bearer ${user.accessToken}` } }));
+        return getData(await axi.delete(`/saved`,{ headers: { Authorization: `Bearer ${user.accessToken}` },data:params }));
     },
 }
 export default apiMain;
