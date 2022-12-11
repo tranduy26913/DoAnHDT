@@ -34,6 +34,6 @@ router.put('/novel/edit',verifyToken,NovelController.EditNovel)
 
 router.delete('/novel',verifyToken,NovelController.DeleteNovelByUrl)
 
-
+router.get('/readingsdefault',NovelController.GetReadingsDefault)
 
 export default router;
