@@ -84,7 +84,7 @@ const apiMain = {
     deleteChapter: async (params, user, dispatch, stateSuccess) => {
         const url = `/novels/novel/chuong`
         let axi = axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.delete(url, { params }));
+        return getData(await axi.delete(url, {data:params} ));
     },
     getReadings: async (user, dispatch, stateSuccess) => {
         const url = `/novels/readings`
@@ -96,7 +96,7 @@ const apiMain = {
         return getData(await axiosClient.get(url, {params} ));
     },
     getSaveds: async (user, dispatch, stateSuccess) => {
-        const url = `/saved`
+        const url = `/saved/savedbyuser`
         let axi = axiosInstance(user, dispatch, stateSuccess)
         return getData(await axi.get(url, { headers: { Authorization: `Bearer ${user.accessToken}` } }));
     },
@@ -111,9 +111,9 @@ const apiMain = {
         return getData(await axi.put(url, params));
     },
     deleteStory: async (params, user, dispatch, stateSuccess) => {
-        const url = `/novels/novel`
+        const url = `/novels/${params.url}`
         let axi = axiosInstance(user, dispatch, stateSuccess)
-        return getData(await axi.delete(url, {params}));
+        return getData(await axi.delete(url));
     },
     getChapterNewUpdate: async (param) => {
         return getData(await axiosClient.get(`/novels/novel/newupdate`,{param}));
