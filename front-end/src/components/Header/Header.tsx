@@ -10,33 +10,37 @@ import { handleLogout } from '../../handle/handleAuth';
 import { setQuery } from '../../redux/messageSlice';
 import './Header.scss'
 import { numWithCommas } from 'utils/convertNumber';
+import { userStore } from 'store/userStore';
+import { modalStore } from 'store/modalStore';
+import { ClickEvent } from 'types/react';
+import { authStore } from 'store/authStore';
 
 const menu = {//menu hiển thị cho từng loại tài khoản admin và user thường
     ADMIN: [
         {
             path: 'admin/profile',
             display: 'Hồ sơ',
-            icon:'bx bx-user'
+            icon: 'bx bx-user'
         },
         {
             path: 'admin/change-password',
             display: 'Đổi mật khẩu',
-            icon:'bx bxs-key'
+            icon: 'bx bxs-key'
         },
         {
             path: 'admin/users',
             display: 'Người dùng',
-            icon:'bx bx-group'
+            icon: 'bx bx-group'
         },
         {
             path: 'admin/tu-truyen/reading',
             display: 'Tủ truyện',
-            icon:'bx bx-library'
+            icon: 'bx bx-library'
         },
         {
             path: 'admin/setting',
             display: 'Cài đặt',
-            icon:'bx bx-cog'
+            icon: 'bx bx-cog'
         }
     ]
 
@@ -45,22 +49,22 @@ const menu = {//menu hiển thị cho từng loại tài khoản admin và user 
         {
             path: 'user/profile',
             display: 'Hồ sơ',
-            icon:'bx bx-user'
+            icon: 'bx bx-user'
         },
         {
             path: 'user/change-password',
             display: 'Đổi mật khẩu',
-            icon:'bx bxs-key'
+            icon: 'bx bxs-key'
         },
         {
             path: 'user/tu-truyen/reading',
             display: 'Tủ truyện',
-            icon:'bx bx-library'
+            icon: 'bx bx-library'
         },
         {
             path: 'user/setting',
             display: 'Cài đặt',
-            icon:'bx bx-cog'
+            icon: 'bx bx-cog'
         }
     ]
 
@@ -69,23 +73,27 @@ const menu = {//menu hiển thị cho từng loại tài khoản admin và user 
 export default function Header() {
     const headerRef = useRef(null)
     const expandRef = useRef(null)
-    const profileDropdownRef = useRef(null)
-    const user = useSelector(state => state.user.info);
-    const modalAuth = useSelector(state => state.modal.auth.active);
-    const modalLogin = useSelector(state => state.modal.auth.login);
+    const profileDropdownRef = useRef<HTMLInputElement>(null)
+    const user = userStore(state => state.user)
+    const modalAuth = modalStore(state => state.modal.active)
+    const modalLogin = modalStore(state => state.modal.login);
+    const authLoginActive = modalStore(state => state.authLoginActive);
+    const authRegisterActive = modalStore(state => state.authRegisterActive);
+    const authInactive = modalStore(state => state.authInactive);
+    const clearUserInfo = userStore(state => state.clearUserInfo);
+    const logoutSuccess = authStore(state => state.logoutSuccess);
     const [expand, setExpand] = useState(false)
-    const navigate = useNavigate();
+    const navigate:NavigateFunction = useNavigate();
     const [search, setSearch] = useState("");
 
     let location = useLocation();
 
-    const dispatch = useDispatch();
 
     useEffect(() => {//xử lý dropdown của account
         const hideDropdown = () => {
             profileDropdownRef?.current?.classList.remove("active")
         }
-        const collapseMenu = ()=>{
+        const collapseMenu = () => {
             setExpand(false)
         }
         document.addEventListener("click", hideDropdown)
@@ -96,42 +104,45 @@ export default function Header() {
         }
     }, [])
 
-    const handleExpand = (e) => {
+    const handleExpand = (event: ClickEvent) => {
         //expandRef.current.classList.toggle('active')
-        e.stopPropagation()
-        setExpand(pre=>!pre)
+        event.stopPropagation()
+        setExpand(pre => !pre)
     }
 
-    const handleDropdownProfile = (e) => {
+    const handleDropdownProfile = (e: ClickEvent) => {
         e.stopPropagation();
-        profileDropdownRef?.current.classList.toggle('active')
+        if (profileDropdownRef?.current)
+            profileDropdownRef?.current.classList.toggle('active')
     }
 
     const hideProfileDropdown = () => {
-        profileDropdownRef?.current.classList.remove('active')
+        if (profileDropdownRef?.current)
+            profileDropdownRef?.current.classList.remove('active')
     }
 
     const closeModalAuth = useCallback(() => {
-        dispatch(authInactive());
-    },[dispatch]);
+        authInactive();
+    }, []);
 
     const handleAuthLogin = () => {
-        dispatch(authLoginActive());
+        authLoginActive();
     }
 
     const handleAuthRegister = () => {
-        dispatch(authRegisterActive());
+        authRegisterActive();
     }
 
     const onClickLogout = () => {
-        handleLogout(dispatch, navigate, location)
+        clearUserInfo()
+        logoutSuccess()
     }
 
     const onClickSearch = () => {//xử lý tìm kiếm 
-        dispatch(setQuery(search))
-        if (navigate.pathname !== '/tim-kiem') {
-            navigate('/tim-kiem')
-        }
+        // setQuery(search)
+        // if (navigate.pathname !== '/tim-kiem') {
+        //     navigate('/tim-kiem')
+        // }
 
     }
     return (
@@ -140,10 +151,10 @@ export default function Header() {
                 <div className="header__wrap">
                     <div className='collapse'>
                         <button onClick={handleExpand} className='navbar__collapse'>
-                            {expand?<i className='bx bx-x fs-40'></i>:
-                            <i className='bx bx-list-ul fs-40'></i>}</button>
+                            {expand ? <i className='bx bx-x fs-40'></i> :
+                                <i className='bx bx-list-ul fs-40'></i>}</button>
                     </div>
-                    <div className={`navbar-expand ${expand?'active':''}`} ref={expandRef}>
+                    <div className={`navbar-expand ${expand ? 'active' : ''}`} ref={expandRef}>
                         <ul className='navbar-expand__wrap'>
                             {
                                 user ?
@@ -153,7 +164,7 @@ export default function Header() {
                                                 <div className='navbar__avatar'><img src={user.image} alt="" /></div>
                                                 : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                             }
-                                            <span>{user.tenhienthi ||user.name ||  user.username}</span>
+                                            <span>{user.tenhienthi || user.name || user.username}</span>
                                         </div>
                                     </li> :
                                     <>
@@ -165,7 +176,7 @@ export default function Header() {
                                         </li>
                                         <li className='navbar-expand__item'>
                                             <span onClick={handleAuthRegister}>
-                                            <i className='bx bx-id-card'></i>
+                                                <i className='bx bx-id-card'></i>
                                                 Đăng ký
                                             </span>
                                         </li>
@@ -184,15 +195,15 @@ export default function Header() {
                                 </Link>
                             </li>
                             {
-                                user?<>
-                                {menu['USER'].map((item, i) =>
-                                    <li className='text-bold navbar-expand__item' key={i}>
-                                        <Link to={item.path}><i className={item.icon}></i>{item.display}</Link>
-                                    </li>
-                                )}
-                                <li className='text-bold navbar-expand__item' ><span onClick={onClickLogout}><i className='bx bx-log-out'></i>Đăng xuất</span></li>
+                                user ? <>
+                                    {menu['USER'].map((item, i) =>
+                                        <li className='text-bold navbar-expand__item' key={i}>
+                                            <Link to={item.path}><i className={item.icon}></i>{item.display}</Link>
+                                        </li>
+                                    )}
+                                    <li className='text-bold navbar-expand__item' ><span onClick={onClickLogout}><i className='bx bx-log-out'></i>Đăng xuất</span></li>
                                 </>
-                                :<></>
+                                    : <></>
                             }
                         </ul>
                     </div>
@@ -217,12 +228,12 @@ export default function Header() {
                         </div>
                         <ul className='navbar__list navbar__list--right'>
                             <li><Link to={'/user/dang-truyen'}
-                                    className='text-with-icon'>
-                                <i style={{ marginRight: '4px'}} className="bx bx-up-arrow-circle fs-28"></i> Đăng truyện
+                                className='text-with-icon'>
+                                <i style={{ marginRight: '4px' }} className="bx bx-up-arrow-circle fs-28"></i> Đăng truyện
                             </Link></li>
                             <li><Link to={'/payment'}
-                                    className='text-with-icon'>
-                                <i style={{ marginRight: '4px'}} className="bx bx-up-arrow-circle fs-28"></i> Nạp tiền
+                                className='text-with-icon'>
+                                <i style={{ marginRight: '4px' }} className="bx bx-up-arrow-circle fs-28"></i> Nạp tiền
                             </Link></li>
                             {
                                 user ? <li ref={profileDropdownRef} className='navbar__profile'>
@@ -232,11 +243,11 @@ export default function Header() {
                                                 <div className='navbar__avatar'><img src={user.image} alt="" /></div>
                                                 : <i style={{ marginRight: 4 + 'px' }} className="fa-solid fa-user"></i>
                                             }
-                                            <span>{ user.nickname ||user.name || user.username}</span>
+                                            <span>{user.nickname || user.name || user.username}</span>
                                         </div>
-                                        <div  tabIndex={"1"} onBlur={hideProfileDropdown} className="navbar__profile__menu">
+                                        <div tabIndex={"1"} onBlur={hideProfileDropdown} className="navbar__profile__menu">
                                             <ul>
-                                            <li><Link to={'/payment'}>Số dư: {numWithCommas(user?.balance||0)}<i className='bx bxs-coin-stack'></i></Link></li>
+                                                <li><Link to={'/payment'}>Số dư: {numWithCommas(user?.balance || 0)}<i className='bx bxs-coin-stack'></i></Link></li>
                                                 {
                                                     menu['USER'].map((item, i) => {
                                                         return <li key={i}><Link to={item.path}><i className={item.icon}></i>{item.display}</Link></li>
