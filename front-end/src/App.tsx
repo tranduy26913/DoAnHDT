@@ -6,7 +6,7 @@ import Home from "./views/Home/Home";
 // import Admin from "./views/Account/Admin";
 
 // import PrivateRoute from "./views/PrivateRoute";
-// import StoryDetail from "./views/StoryDetail/StoryDetail";
+ import StoryDetail from "./views/StoryDetail/StoryDetail";
 // import Active from "./views/Active/Active";
 // import Chapter from "./views/Chapter/Chapter";
 // import Search from "./views/Search/Search";
@@ -17,37 +17,38 @@ import "react-toastify/dist/ReactToastify.css";
 import "./scss/App.scss";
 import Payment from "views/Payment/Payment";
 import ResultPayment from "views/ResultPayment/ResultPayment";
-import {useDispatch,useSelector} from 'react-redux'
-import {loginSuccess, logoutSuccess} from './redux/authSlice'
-import {axiosInstance2} from './api/axiosClient'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginSuccess, logoutSuccess } from './redux/authSlice'
+import { axiosInstance } from './api/axiosClient'
 import CheckAuthentication from "components/CheckAuthentication/CheckAuthentication";
 import ScrollToTop from "components/ScrollToTop";
 import { useEffect } from "react";
-import apiMain from "api/apiMain";
+// import apiMain from "api/apiMain";
+import { authStore } from "store/authStore";
 
 function App() {
-  const refreshToken = useSelector((state) => state.auth.refreshToken);
-  const accessToken = useSelector((state) => state.auth.accessToken);
-  const dispatch = useDispatch();
-  
- 
+  const refreshToken = authStore((state) => state.auth?.refreshToken);
+  const accessToken = authStore((state) => state.auth?.accessToken);
+  const loginSuccess = authStore(state => state.loginSuccess)
+  const logoutSuccess = authStore(state => state.logoutSuccess)
+
   if (accessToken && refreshToken) {
-    axiosInstance2(accessToken,refreshToken, dispatch, loginSuccess, logoutSuccess);
+    axiosInstance({ accessToken, refreshToken }, loginSuccess, logoutSuccess);
   }
-  useEffect(()=>{
-    apiMain.updateTraffic()
-  },[])
+  // useEffect(()=>{
+  //   apiMain.updateTraffic()
+  // },[])
   return (
     <BrowserRouter>
-    <CheckAuthentication>
+      <CheckAuthentication>
 
-      <Header />
-      <ScrollToTop>
+        <Header />
+        <ScrollToTop>
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="truyen/:url" element={<StoryDetail />} />
-       
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="truyen/:url" element={<StoryDetail />} />
+       {/* 
         <Route path="/user/*" element={<Account />} />
         {/* <Route element={<PrivateRoute roles={["ADMIN"]} />}>
           <Route path="admin/*" element={<Admin />} />
@@ -58,10 +59,10 @@ function App() {
         <Route path="tat-ca" element={<AllStory />} />
         <Route path="payment" element={<Payment />} />
         <Route path="result-payment" element={<ResultPayment />} /> */}
-      </Routes>
-      </ScrollToTop>
-      <Footer />
-    </CheckAuthentication>
+          </Routes>
+        </ScrollToTop>
+        <Footer />
+      </CheckAuthentication>
       <ToastContainer
         autoClose={1000}
         hideProgressBar

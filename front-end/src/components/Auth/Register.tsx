@@ -2,24 +2,18 @@ import Loading from '../Loading/Loading'
 import { useState, useReducer } from 'react'
 import apiMain from '../../api/apiMain';
 import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleRegister } from '../../handle/handleAuth';
-import { useNavigate } from 'react-router-dom';
+import { ChangeEvent, ClickEvent } from 'types/react';
+import useRegister from 'hooks/useRegister';
 
-function Register(props) {
-    const loading = useSelector(state => state.message.loading)
+function Register(props:any) {
     const [emailRegister, setEmailRegister] = useState("");
     const [usernameRegister, setUsernameRegister] = useState("");
     const [passwordRegister, setPasswordRegister] = useState("");
     const [passwordCfRegister, setPasswordCfRegister] = useState("");
 
-    const msgRegister = useSelector(state => state.message.register?.msg)
-
-const dispatch = useDispatch()
-const navigate = useNavigate()
     const [message, dispatchReg] = useReducer(registerReducer, initialValidate);
-
-    const onRegister = async (e) => {//Xử lý gọi API Sign up
+    const { mutate, isLoading } = useRegister()
+    const onRegister = async (e: ClickEvent) => {//Xử lý gọi API Sign up
         e.preventDefault();
         if (!message.email.valid || !message.username.valid || !message.password.valid || !message.passwordcf.valid) {
             toast.warning("Vui lòng điền các thông tin phù hợp")
@@ -30,35 +24,35 @@ const navigate = useNavigate()
             password: passwordRegister,
             email: emailRegister
         };
-        await handleRegister(user, dispatch, navigate); //gọi hàm sign up
+        mutate(user) 
     }
 
-    const onChangeEmail = debounce(async (e) => {//validate email
+    const onChangeEmail = debounce(async (e: ChangeEvent) => {//validate email
         let email = e.target.value
         setEmailRegister(email)
         const payload = await validateEmail(email)
         dispatchReg({ type: "EMAIL", payload: payload })
     }, 500)
 
-    const onChangeUsername = debounce(async (e) => {//validate username
+    const onChangeUsername = debounce(async (e: ChangeEvent) => {//validate username
         let username = e.target.value
         setUsernameRegister(username)
         console.log(username)
         dispatchReg({ type: "USERNAME", payload: await validateUsername(username) })
     }, 500)
 
-    const onChangePassword = (e) => {//validate password
+    const onChangePassword = (e: ChangeEvent) => {//validate password
         let password = e.target.value
         setPasswordRegister(password)
         dispatchReg({ type: "PASSWORD", payload: validatePassword(password) })
-        dispatchReg({ type: "PASSWORDCONFIRM", payload: validatePasswordCf(password,passwordCfRegister) })
+        dispatchReg({ type: "PASSWORDCONFIRM", payload: validatePasswordCf(password, passwordCfRegister) })
     }
 
-    const onChangePasswordCf = (e) => {//validate password confirm
+    const onChangePasswordCf = (e: ChangeEvent) => {//validate password confirm
         let passwordcf = e.target.value
         setPasswordCfRegister(passwordcf)
         dispatchReg({ type: "PASSWORD", payload: validatePassword(passwordRegister) })
-        dispatchReg({ type: "PASSWORDCONFIRM", payload: validatePasswordCf(passwordRegister,passwordcf) })
+        dispatchReg({ type: "PASSWORDCONFIRM", payload: validatePasswordCf(passwordRegister, passwordcf) })
     }
 
     return (
@@ -102,8 +96,7 @@ const navigate = useNavigate()
                     </div>
                     <span className={`${message.passwordcf.valid ? 'success' : 'error'}`}>{message.passwordcf.message}</span>
                 </div>
-                <span>{msgRegister}</span>
-                <button onClick={onRegister}>{loading ? <Loading /> : ""}Đăng ký</button>
+                <button onClick={onRegister}>{isLoading ? <Loading /> : ""}Đăng ký</button>
 
             </form>
         </div>

@@ -13,26 +13,6 @@ const publicPath = [
   '/ddd/','/truyen/'
 ]
 
-export const handleLogin =async(user, dispatch)=>{
-    dispatch(setLoading(true));
-    apiMain.login(user)
-      .then(res=>{
-        const {refreshToken, accessToken, ...data} = getData(res)
-        dispatch(loginSuccess({refreshToken,accessToken})); //lấy thông tin user
-        dispatch(setUserInfo(data))
-        toast.success("Đăng nhập thành công",{autoClose: 1200,pauseOnHover: false,hideProgressBar:true});//hiển thị toast thông báo
-        
-        dispatch(authInactive()) //hành động tắt modal login
-        }
-      ) //gọi api login
-      .catch (error =>{
-      const msg=error.response?.data?.details
-      let _ = msg.username||msg.password||msg.active||msg.toString()
-      dispatch(setMessageLogin(_))
-    }).finally(()=>{
-      dispatch(setLoading(false));
-    })
-}
 
 export const handleRegister =async(params, dispatch)=>{
   try {
@@ -55,15 +35,15 @@ export const handleRegister =async(params, dispatch)=>{
   }
 }
 
-export const handleLogout = (dispatch,navigate,location)=>{
-  const isPublic = publicPath.findIndex(e=>location.pathname.includes(e))>0?true:false
-  dispatch(logoutSuccess())
-  dispatch(clearUserInfo())
-  toast.success("Đăng xuất thành công",{autoClose: 800,pauseOnHover: false,hideProgressBar: true});//hiển thị toast thông báo
-  console.log(isPublic)
-  if(!isPublic)
-    navigate('/')
-}
+// export const handleLogout = (navigate,location)=>{
+//   const isPublic = publicPath.findIndex(e=>location.pathname.includes(e))>0?true:false
+//   dispatch(logoutSuccess())
+//   dispatch(clearUserInfo())
+//   toast.success("Đăng xuất thành công",{autoClose: 800,pauseOnHover: false,hideProgressBar: true});//hiển thị toast thông báo
+ 
+//   if(!isPublic)
+//     navigate('/')
+// }
 
 export const HandleLogoutWhenError = ()=>{
   const dispatch = useDispatch();

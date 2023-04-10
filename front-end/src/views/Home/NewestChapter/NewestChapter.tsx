@@ -1,23 +1,21 @@
 
 import { useEffect,useState } from 'react'
 import { Link } from 'react-router-dom'
-import apiMain from '../../../api/apiMain'
 import moment from 'moment'
 import Section, { SectionBody, SectionHeading } from '../../../components/Section/Section'
 import Skeleton from 'react-loading-skeleton'
 import './NewestChapter.scss'
+import { useQuery } from 'react-query'
+import { getChapterNewUpdate } from 'api/apiStory'
 
 function NewestChapter() {
 const [newUpdate,setNewUpdate]  = useState(Array.from(Array(10).keys(),i=>undefined))
+const {data, isFetched} = useQuery(['get-newest-chapter',{size:10}],getChapterNewUpdate)
   useEffect(()=>{
-    apiMain.getChapterNewUpdate({size:10})
-      .then(res=>{
-        setNewUpdate(res)
-      })
-      .catch(()=>{
-        setNewUpdate([])
-      })
-  },[])
+    if(isFetched && data) {
+      setNewUpdate(data)
+    }
+  },[data, isFetched])
 
   
   return (

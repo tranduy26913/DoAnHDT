@@ -1,5 +1,6 @@
+import React from 'react'
 import './Section.scss'
-const Section = props => {
+const Section = (props:{children:React.ReactNode}) => {
     return (
         <div className="section">
             {props.children}
@@ -7,7 +8,7 @@ const Section = props => {
     )
 }
 
-export const SectionHeading = props => {
+export const SectionHeading = (props:{children:React.ReactNode}) => {
     return (
         <div className="section__heading">
             {props.children}
@@ -15,7 +16,7 @@ export const SectionHeading = props => {
     )
 }
 
-export const SectionBody = props => {
+export const SectionBody = (props:{children:React.ReactNode}) => {
     return (
         <div className="section__body">
             {props.children}

@@ -6,4 +6,5 @@ export interface User {
     birthdate:string;
     roles:string[];
     nickname?:string | '';
+    [x:string]:any;
 }

@@ -1,26 +1,21 @@
 import { useRef } from 'react'
-import PropTypes from 'prop-types'
 import './Modal.scss'
 
-const Modal = props => {
-    
-
+const Modal = (props: { active: boolean,  children: React.ReactNode }) => {
     return (
-        <div className={`modal ${props.active ? 'active' : ''}`} style={props.style}>
+        <div className={`modal ${props.active ? 'active' : ''}`} >
             {props.children}
         </div>
     )
 }
 
-Modal.propTypes = {
-    active: PropTypes.bool
-}
-
-export const ModalContent = props => {
-    const contentRef = useRef(null);
+export const ModalContent = (props:{onClose:Function,children:React.ReactNode}) => {
+    const contentRef = useRef<HTMLDivElement>(null);
 
     const closeModal = () => {
-        contentRef.current.parentNode.classList.remove('active');
+        if (contentRef.current?.parentNode) {
+            contentRef.current.parentElement?.classList.remove('active');
+        }
         if (props.onClose) props.onClose()
     }
     return (
@@ -35,8 +30,5 @@ export const ModalContent = props => {
     )
 }
 
-ModalContent.propTypes = {
-    onClose: PropTypes.func
-}
 
 export default Modal

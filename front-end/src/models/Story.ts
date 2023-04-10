@@ -3,4 +3,7 @@ export interface Story {
     description: string;
     image: string;
     url:string;
+    name:string;
+    author:string;
+    [x:string]:any;
   }

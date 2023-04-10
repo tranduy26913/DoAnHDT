@@ -7,39 +7,42 @@ import jwt_decode from 'jwt-decode'
 import { clearUserInfo, setUserInfo } from 'redux/userSlice'
 import { useState } from 'react'
 import LoadingData from 'components/LoadingData/LoadingData'
-import apiMain from 'api/apiMain'
+
+import { userStore } from 'store/userStore'
+import { authStore } from 'store/authStore'
+import { getUserInfo } from 'api/apiAuth'
 
 const privatePath = [
-    '/user/', '/admin/', '/payment'
+    '/user/', '/payment'
 ]
 
-function CheckAuthentication(props) {
-    const user = useSelector(state => state.user.info)
-    const refreshToken = useSelector(state => state.auth.refreshToken)
+function CheckAuthentication(props:any) {
+    const user = userStore(state => state.user)
+    const refreshToken = authStore(state => state.auth?.refreshToken)
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
     useEffect(() => {
         const check = () => {
-            const isPrivate = privatePath.findIndex(e => location.pathname.includes(e)) >= 0 ? true : false
+            const isPrivate:boolean = privatePath.findIndex(e => location.pathname.includes(e)) >= 0 ? true : false
             if(isPrivate){
                 setLoading(true)
             }
             if (refreshToken) {
-                const tokenDecode = jwt_decode(refreshToken)
+                const tokenDecode:any = jwt_decode(refreshToken)
                 let date = new Date();
                 if (tokenDecode.exp < date.getTime() / 1000) {
                     toast.warning("Phiên làm việc của bạn đã hết. Vui lòng đăng nhập lại")
-                    dispatch(logoutSuccess())
+                    logoutSuccess()
                     if (isPrivate)
                         navigate('/')
                 }
                 if (!user) {
-                    apiMain.getUserInfo()
-                        .then(res => {
+                    getUserInfo()
+                        .then((res:any) => {
                             console.log(res);
-                            dispatch(setUserInfo(res.data.userInfo))
+                            setUserInfo(res.data.userInfo)
                         })
                         .finally(()=>setLoading(false))
                     // dispatch(logoutSuccess())

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import apiMain from 'api/apiMain';
 import Section, { SectionHeading, SectionBody } from 'components/Section/Section';
-import StoryRate from 'components/Story/StoryRate';
+import StoryRate from 'components/StoryItem/StoryRate';
 import getData from 'api/getData';
 import { Link } from 'react-router-dom'
 

@@ -2,24 +2,26 @@
 import { Link } from 'react-router-dom'
 import Skeleton from 'react-loading-skeleton'
 import './ListReading.scss'
-function Reading(props) {
+import { Reading } from 'models/Reading'
+function ReadingItem(props:{data:Partial<Reading>}) {
   const data = props.data
+
   return (
     <div className="reading-card">
       <div className="reading-card__img-wrap">
-        {data.hinhanh ? <img src={data.hinhanh} alt="" /> : <Skeleton width={32} height={43}/>}
+        {data?.image ? <img src={data?.image} alt="" /> : <Skeleton width={32} height={43}/>}
       </div>
       <div className="reading-card__content">
         {
-          data.tentruyen?<Link to={`/truyen/${data?.url}`} className="reading-card__title fs-15">
-          {data.tentruyen}
+          data?.name?<Link to={`/truyen/${data?.url}`} className="reading-card__title fs-15">
+          {data?.name}
         </Link> :<Skeleton />
         }
         
         {
-          data?.dadoc !== undefined?
+          data?.chapternumber !== undefined?
             <div className="reading-card__chap">
-              Đã đọc: {data.dadoc}/{data?.total}
+              Đã đọc: {data.chapternumber}/{data?.sochap}
             </div> : <Skeleton />
         }
       </div>
@@ -27,4 +29,4 @@ function Reading(props) {
   )
 }
 
-export default Reading
+export default ReadingItem

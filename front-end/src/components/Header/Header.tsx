@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import logo from '../../assets/img/logo.png';
+import logo from 'assets/img/logo.png';
 import Auth from '../Auth/Auth';
 import Modal, { ModalContent } from '../Modal/Modal';
-import { authLoginActive, authRegisterActive, authInactive } from '../../redux/modalSlice';
-import { handleLogout } from '../../handle/handleAuth';
-import { setQuery } from '../../redux/messageSlice';
 import './Header.scss'
 import { numWithCommas } from 'utils/convertNumber';
 import { userStore } from 'store/userStore';
@@ -73,7 +69,7 @@ const menu = {//menu hiển thị cho từng loại tài khoản admin và user 
 export default function Header() {
     const headerRef = useRef(null)
     const expandRef = useRef(null)
-    const profileDropdownRef = useRef<HTMLInputElement>(null)
+    const profileDropdownRef = useRef<HTMLLIElement>(null)
     const user = userStore(state => state.user)
     const modalAuth = modalStore(state => state.modal.active)
     const modalLogin = modalStore(state => state.modal.login);
@@ -83,11 +79,7 @@ export default function Header() {
     const clearUserInfo = userStore(state => state.clearUserInfo);
     const logoutSuccess = authStore(state => state.logoutSuccess);
     const [expand, setExpand] = useState(false)
-    const navigate:NavigateFunction = useNavigate();
     const [search, setSearch] = useState("");
-
-    let location = useLocation();
-
 
     useEffect(() => {//xử lý dropdown của account
         const hideDropdown = () => {
@@ -110,7 +102,7 @@ export default function Header() {
         setExpand(pre => !pre)
     }
 
-    const handleDropdownProfile = (e: ClickEvent) => {
+    const handleDropdownProfile = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         if (profileDropdownRef?.current)
             profileDropdownRef?.current.classList.toggle('active')
@@ -245,7 +237,7 @@ export default function Header() {
                                             }
                                             <span>{user.nickname || user.name || user.username}</span>
                                         </div>
-                                        <div tabIndex={"1"} onBlur={hideProfileDropdown} className="navbar__profile__menu">
+                                        <div tabIndex={1} onBlur={hideProfileDropdown} className="navbar__profile__menu">
                                             <ul>
                                                 <li><Link to={'/payment'}>Số dư: {numWithCommas(user?.balance || 0)}<i className='bx bxs-coin-stack'></i></Link></li>
                                                 {
