@@ -1,7 +1,13 @@
-//Dùng để tạo grid, reponsive cho web
-import PropTypes from 'prop-types'
 
-const Grid = props => {
+
+interface GripProps{
+    gap?:number;
+    col?:number;
+    mdCol?:number;
+    smCol?:number;
+    children:any;
+}
+const Grid:React.FC<GripProps> = props => {
 
     const style = {
         gap: props.gap ? `${props.gap}px` : '0'
@@ -18,11 +24,5 @@ const Grid = props => {
     )
 }
 
-Grid.propTypes = {
-    col: PropTypes.number.isRequired,
-    mdCol: PropTypes.number,
-    smCol: PropTypes.number,
-    gap: PropTypes.number
-}
 
 export default Grid

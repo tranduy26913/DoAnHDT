@@ -1,93 +1,52 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import React, {  useState } from 'react'
 import { toast } from 'react-toastify';
-import apiMain from '../../api/apiMain';
 import avt from '../../assets/img/avt.png'
-import { loginSuccess } from '../../redux/authSlice';
 import moment from 'moment';
 import "./Comment.scss"
+import { useParams } from 'react-router-dom';
+import { userStore } from 'store/userStore';
+import { useQuery } from 'react-query';
+import { deleteComment, getCommentsByUrl } from 'api/apiComment';
+import { Comment } from 'models/Comment';
+import useCreateComment from 'hooks/useCreateComment';
 
-function Comment(props) {
-    const [count, setCount] = useState(0);
-    const user = useSelector(state => state.user.info)
-    const [comments, setComments] = useState([])
+function ListComment() {
+    const user = userStore(state => state.user)
     const [content, setContent] = useState("")
-    const url = props.url
-    const dispatch = useDispatch()
+    const url: string = useParams().url || ''
 
-    const onClickCreateComment = async (e) => { //xử lý đăng bình luận mới
-        if (user) {
-            const params = { urltruyen:url, content,parentId:"" }//payload
-            apiMain.createComment(params)//gọi API đăng comment
-                .then(res => {
-                    console.log(res)
-                    setComments(pre => [res.comment||res, ...pre])
-                    setContent("")
-                    setCount(pre=>pre+1)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
-        else {
-            toast.warning("Vui lòng đăng nhập trước khi bình luận", {
-                hideProgressBar: true,
-                pauseOnHover: false,
-                autoClose: 1200
-            })
-        }
+    const { isLoading, data: comments, refetch } = useQuery<Comment[], Error>(['get-comments', url],
+        () => getCommentsByUrl(url, { size: 20 }))
+
+    const { handleCreateComment } = useCreateComment(refetch, setContent)
+    const onClickCreateComment = () => { //xử lý đăng bình luận mới
+        const params = { urltruyen: url, content, parentId: "" }//payload
+        handleCreateComment(params)
     }
 
-    const getComments = async () => {//hàm gọi data comments
-        try {
-            const res = await apiMain.getCommentsByUrl(url,{size:20})
-            if (res)
-                return res
-            return []
-        } catch (error) {
-            return []
-        }
-    }
-
-    useEffect(() => {//load comment khi component đc render
-        const loadComment = async () => {
-            const data = await getComments()
-            setCount(data?.length || 0)
-            setComments(data)
-        }
-        loadComment();
-         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    
-
-    const onClickDeleteComment = async (e) => {//xử lý xoá comment
+    const onClickDeleteComment: React.MouseEventHandler<HTMLLIElement> = (e) => {//xử lý xoá comment
         if (user) {//Nếu đã đăng nhập thì mới đc phép xoá
-            console.log(e.target.id)
-            apiMain.deleteComment({ id: e.target.id })
+            deleteComment({ id: e.currentTarget.id })
                 .then(async (res) => {
                     toast.success(res.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
-                    const data = await getComments()
-                    setComments(data)
-                    setCount(pre=>pre-1)
+                    refetch()
                 })
                 .catch(err => {
                     toast.error(err.response.data.detail.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
-                }
-                )
+                })
         }
     }
 
     return (
         <div className="comment__wrap">
-            <h1>Bình luận {count || 0}</h1>
+            <h1>Bình luận {comments?.length || 0}</h1>
             <div className="comment__form d-flex w100">
                 <div className="avatar--45 mr-1">
                     <img src={user?.image || avt} alt="" />
                 </div>
                 <div className="comment__input">
                     <textarea placeholder='Nhập nội dung bình luận'
-                     style={{ 'height': '100%', 'padding': '5px 20px 5px 5px' }} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
+                        style={{ 'height': '100%', 'padding': '5px 20px 5px 5px' }} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
                     <div className='d-flex comment__icon' ><span onClick={onClickCreateComment} className=" fs-20 "><i className='bx bxs-send' ></i></span></div>
                 </div>
 
@@ -95,9 +54,9 @@ function Comment(props) {
             <hr />
             <div>
                 {
-                    comments.map((item, index) => {
+                    comments?.map((item, index) => {
                         return (
-                            <div style={{marginTop:'12px'}} key={item.id} >
+                            <div style={{ marginTop: '12px' }} key={item.id} >
                                 <div className='d-flex'>
                                     <div className="comment__avatar ">
                                         <div className="avatar--45 mr-1">
@@ -127,7 +86,7 @@ function Comment(props) {
                                         </ul>
 
                                     </div>
-                                    </div>
+                                </div>
                                 <hr />
                             </div>)
                     })
@@ -138,23 +97,23 @@ function Comment(props) {
 }
 
 moment.updateLocale('en', {
-    relativeTime : {
+    relativeTime: {
         future: "in %s",
-        past:   "%s trước",
-        s  : 'vài giây',
-        ss : '%d giây',
-        m:  "1 phút",
+        past: "%s trước",
+        s: 'vài giây',
+        ss: '%d giây',
+        m: "1 phút",
         mm: "%d phút",
-        h:  "1 giờ",
+        h: "1 giờ",
         hh: "%d giờ",
-        d:  "1 ngày",
+        d: "1 ngày",
         dd: "%d ngày",
-        w:  "1 tuần",
+        w: "1 tuần",
         ww: "%d tuần",
-        M:  "1 tháng",
+        M: "1 tháng",
         MM: "%d tháng",
-        y:  "1 năm",
+        y: "1 năm",
         yy: "%d năm"
     }
-  });
-export default Comment
+});
+export default ListComment

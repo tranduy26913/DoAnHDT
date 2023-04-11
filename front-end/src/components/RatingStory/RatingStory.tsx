@@ -1,95 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import React, { MouseEvent, useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-import apiMain from '../../api/apiMain';
 import avt from '../../assets/img/avt.png'
-import { loginSuccess } from '../../redux/authSlice';
 import moment from 'moment';
+import { userStore } from 'store/userStore';
+import { ClickEvent } from 'types/react';
+import { createRating, deleteRating, getRatingsByUrl } from 'api/apiStory';
+import { useQuery } from 'react-query';
+import { Rating } from 'models/Rating';
+import useCreateRating from 'hooks/useCreateRating';
+import { useParams } from 'react-router-dom';
 
-function Rating(props) {
-    const [count, setCount] = useState(0);
-    const [rating, setRating] = useState(0);
-    const user = useSelector(state => state.user.info)
-    const [comments, setComments] = useState([])
-    const [content, setContent] = useState("")
-    const url = props.url
-    const dispatch = useDispatch()
+function RatingStory() {
 
-    const handleHoverStar = (star) => {
+    const [rating, setRating] = useState<number>(0);
+    const user = userStore(state => state.user)
+    const [content, setContent] = useState<string>("")
+    const url:string = useParams().url || ''
+
+    const { isLoading, data: ratings, refetch } = useQuery<Rating[], Error>(['get-ratings', { size: 20 }],
+    ()=> getRatingsByUrl(url,{ size: 20 }))
+    const { handleCreateRating } = useCreateRating(refetch, setContent, setRating)
+    const handleHoverStar = (star: number) => {
         setRating(star)
     }
 
+    const onClickCreateRatings = async (e: ClickEvent) => { //xử lý đăng bình luận mới
+        if (rating === 0 || !content) {
+            toast.warning('Vui lòng nhập nội dung đánh giá')
+            return
+        }
+        const params = { url: url, content, rating }//payload
+        handleCreateRating(params)
 
-    const onClickCreateComment = async (e) => { //xử lý đăng bình luận mới
-        if (user) {
-            if(rating===0 || !content){
-                toast.warning('Vui lòng nhập nội dung đánh giá')
-                return
-            }
-            const params = { url: url, content, rating }//payload
-            apiMain.createRating(params)//gọi API đăng comment
-                .then(res => {
-                    loadComment()
-                    setContent("")
-                    setCount(pre => pre + 1)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
-        else {
-            toast.warning("Vui lòng đăng nhập trước khi bình luận", {
-                hideProgressBar: true,
-                pauseOnHover: false,
-                autoClose: 1200
-            })
-        }
     }
 
-    const getComments = async () => {//hàm gọi data comments
-        try {
-            const res = await apiMain.getRatingsByUrl(url, { size: 20 })
-            if (res)
-                return res
-            return []
-        } catch (error) {
-            return []
-        }
-    }
-    const loadComment = async () => {
-        const data = await getComments()
-        setCount(data?.length || 0)
-        setComments(data)
-    }
-    useEffect(() => {//load comment khi component đc render
-
-        loadComment();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-
-    const onClickDeleteComment = async (e) => {//xử lý xoá comment
+    const onClickDeleteRating = async (id: string) => {//xử lý xoá comment
         if (user) {//Nếu đã đăng nhập thì mới đc phép xoá
-            console.log(e.target.id)
-            apiMain.deleteRating({ id: e.target.id })
+            deleteRating({ id })
                 .then(async (res) => {
                     toast.success(res.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
-                    const data = await getComments()
-                    setComments(data)
-                    setCount(pre => pre - 1)
+                    refetch()
                 })
                 .catch(err => {
                     toast.error(err.response.data.detail.message, { hideProgressBar: true, pauseOnHover: false, autoClose: 1000 })
-                }
-                )
+                })
         }
     }
 
     return (
         <div className="comment__wrap">
-            {/* <h1>Đánh giá {count || 0}</h1> */}
+            <h1>Đánh giá {ratings?.length || 0}</h1>
             <div className="heroSide__main__rate" style={{ marginBottom: '8px' }}>
-                <div style={{ marginLeft: '58px',cursor:'pointer' }} className="heroSide__main__rate-wrap fs-22 d-flex">
+                <div style={{ marginLeft: '58px', cursor: 'pointer' }} className="heroSide__main__rate-wrap fs-22 d-flex">
                     Đánh giá của bạn
                     <span style={{ marginLeft: '8px' }} onMouseMove={() => handleHoverStar(1)}
                         className={`bx ${rating >= 1 ? 'bxs-star' : 'bx-star'}`}></span>
@@ -107,7 +69,7 @@ function Rating(props) {
                 <div className="comment__input">
                     <textarea placeholder='Nội dung đánh giá'
                         style={{ 'height': '100%', 'padding': '5px 20px 5px 10px' }} className='fs-15 fw-5' value={content} onChange={e => { setContent(e.target.value) }}></textarea>
-                    <div className='d-flex comment__icon' ><span onClick={onClickCreateComment} className=" fs-20 "><i className='bx bxs-send' ></i></span></div>
+                    <div className='d-flex comment__icon' ><span onClick={onClickCreateRatings} className=" fs-20 "><i className='bx bxs-send' ></i></span></div>
                 </div>
 
 
@@ -115,11 +77,11 @@ function Rating(props) {
             <hr />
             <div>
                 {
-                    comments.map((item, index) => {
+                    ratings && ratings.map((item, index) => {
                         return (
                             <div style={{ marginTop: '8px' }} key={item.id} >
                                 <div className="heroSide__main__rate" style={{ marginBottom: '8px' }}>
-                                    <div style={{ marginLeft: '58px',cursor:'pointer' }} className="heroSide__main__rate-wrap fs-22 d-flex">
+                                    <div style={{ marginLeft: '58px', cursor: 'pointer' }} className="heroSide__main__rate-wrap fs-22 d-flex">
 
                                         <span
                                             className={`bx ${item.rating >= 1 ? 'bxs-star' : 'bx-star'}`}></span>
@@ -140,7 +102,6 @@ function Rating(props) {
                                             <h4>{item.nickname}</h4>
                                             <span className='fs-12 fw-4 text-secondary'>
                                                 {
-
                                                     moment(item.createdAt).fromNow()
                                                 }
                                             </span>
@@ -150,7 +111,7 @@ function Rating(props) {
                                         </div>
                                         <ul className="comment__nav">
                                             {item.username === user?.username ?
-                                                <li id={item.id} onClick={onClickDeleteComment} className='fs-14 text-secondary'><i className='bx bxs-trash-alt'></i> Xoá</li> : ''
+                                                <li id={item.id} onClick={() => onClickDeleteRating(item.id)} className='fs-14 text-secondary'><i className='bx bxs-trash-alt'></i> Xoá</li> : ''
                                             }
                                             {/* <li className='fs-14 text-secondary'><i className="bx bx-reply"></i> Trả lời</li> */}
                                             <li className='fs-14 text-secondary'><i className='bx bxs-flag-alt' ></i> Báo xấu</li>
@@ -188,4 +149,4 @@ moment.updateLocale('en', {
         yy: "%d năm"
     }
 });
-export default Rating
+export default RatingStory
