@@ -27,7 +27,7 @@ function Register(props:any) {
         mutate(user) 
     }
 
-    const onChangeEmail = debounce(async (e: ChangeEvent) => {//validate email
+    const onChangeEmail = debounce(async (e:ChangeEvent)=> {//validate email
         let email = e.target.value
         setEmailRegister(email)
         const payload = await validateEmail(email)

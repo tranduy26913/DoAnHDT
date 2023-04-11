@@ -8,7 +8,7 @@ import Home from "./views/Home/Home";
 // import PrivateRoute from "./views/PrivateRoute";
  import StoryDetail from "./views/StoryDetail/StoryDetail";
 // import Active from "./views/Active/Active";
-// import Chapter from "./views/Chapter/Chapter";
+ import ChapterView from "./views/ChapterView/ChapterView";
 // import Search from "./views/Search/Search";
 // import AllStory from "./views/AllStory/AllStory";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -17,8 +17,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./scss/App.scss";
 import Payment from "views/Payment/Payment";
 import ResultPayment from "views/ResultPayment/ResultPayment";
-import { useDispatch, useSelector } from 'react-redux'
-import { loginSuccess, logoutSuccess } from './redux/authSlice'
 import { axiosInstance } from './api/axiosClient'
 import CheckAuthentication from "components/CheckAuthentication/CheckAuthentication";
 import ScrollToTop from "components/ScrollToTop";
@@ -48,13 +46,14 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="truyen/:url" element={<StoryDetail />} />
+            <Route path="truyen/:url/:chapnum" element={<ChapterView />} />
        {/* 
         <Route path="/user/*" element={<Account />} />
         {/* <Route element={<PrivateRoute roles={["ADMIN"]} />}>
           <Route path="admin/*" element={<Admin />} />
         </Route> 
         <Route path="active/:token" element={<Active />} />
-        <Route path="truyen/:url/:chapnum" element={<Chapter />} />
+        
         <Route path="tim-kiem" element={<Search />} />
         <Route path="tat-ca" element={<AllStory />} />
         <Route path="payment" element={<Payment />} />

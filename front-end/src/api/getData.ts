@@ -1,5 +1,7 @@
-const getData = (response)=>{
-    let result = response?.data;
+import { AxiosResponse } from "axios";
+
+const getData = (response:AxiosResponse)=>{
+    let result:any = response?.data;
     if(result){
         let result2 = result?.data;
         if(result2)

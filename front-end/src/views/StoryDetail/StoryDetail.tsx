@@ -1,21 +1,24 @@
-import { useEffect, useState } from 'react'
+import React, { MouseEvent, ReactElement, useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
 import './StoryDetail.scss'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import apiMain from '../../api/apiMain'
 import LoadingData from '../../components/LoadingData/LoadingData'
 import Grid from '../../components/Grid/Grid'
-import Comment from '../../components/Comment/Comment'
 import Pagination from '../../components/Pagination/Pagination'
-import { useDispatch, useSelector } from 'react-redux'
-import { loginSuccess } from '../../redux/authSlice'
 import { toast } from 'react-toastify'
 import Loading from '../../components/Loading/Loading'
 import Modal, { ModalContent } from '../../components/Modal/Modal'
-import {unlockChapter} from 'api/apiPayment'
+import { unlockChapter } from 'api/apiPayment'
 import getData from 'api/getData'
-import { setUserInfo, updateBalance } from 'redux/userSlice'
-import Rating from 'components/Rating/Rating'
+import RatingStory from 'components/RatingStory/RatingStory'
+import { userStore } from 'store/userStore'
+import { useMutation, useQuery } from 'react-query'
+import { getNameChapters, getStory } from 'api/apiStory'
+import { Story } from 'models/Story'
+import { Chapter } from 'models/Chapter'
+import { getUserInfo } from 'api/apiAuth'
+import { checkSaved, savedStory, unsavedStory } from 'api/apiSaveStory'
+import ListComment from 'components/ListComment/ListComment'
 
 const nav = [//navigate
   {
@@ -46,72 +49,72 @@ const nav = [//navigate
 ]
 
 function StoryDetail() {
-  const { url } = useParams()
-  const [truyen, setTruyen] = useState(null);
+  const url = useParams().url || 'd'
   const catGiu = 100
-  const [main, setMain] = useState(null)
-  const [tab, setTab] = useState('')
+  const [main, setMain] = useState<ReactElement | null>()
+  const [tab, setTab] = useState<string>('')
   const active = nav.findIndex(e => e.path === tab)
-  const [loadingData, setLoadingData] = useState(true)
-  const [handling, setHandling] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [listchapter, setListchapter] = useState(false)
-  const user = useSelector(state => state.user.info)
-  useEffect(() => {//load truyện
-    const getStory = async () => {
-      let params = { url }
-      apiMain.getStory(params).then(res => {
-        setTruyen(res)
-        setTab('about')//set tab mặc định là About
-        setLoadingData(false)
-      })
+  const [handling, setHandling] = useState<boolean>(false)
+  const [saved, setSaved] = useState<boolean>(false)
+  const [listchapter, setListchapter] = useState<boolean>(false)
+
+  const user = userStore(state => state.user)
+
+  const { isLoading, data: truyen,refetch } = useQuery<Story, Error>(['get-story', url], () => getStory(url), {
+    onSuccess(data) {
+      setTab('about')//set tab mặc định là About
     }
-    getStory()
-  }, [url])
+  })
+
+  const { isLoading: isLoadingCheck, data, mutate } = useMutation((variables: string) => checkSaved(variables),
+    {
+      onSuccess(data) {
+        setSaved(data.saved || false)
+      }
+    }
+  )
 
   useEffect(() => {//xử lý đổi tab
-    switch (tab) {
-      case 'about':
-        setMain(<About key={'about'} truyen={truyen} />)
-        break
-      case 'rate':
-        setMain(<Rating key={'rate'}  url={truyen.url} />)
-        break
-      case 'chapter':
-        setMain(<ListChapter key={'chapter'} url={truyen.url} totalPage={truyen.numberofchapter} />)
-        break
-      case 'comment':
-        setMain(<Comment key={'comment'} url={truyen.url} />)
-        break
-      default:
-        setMain(<Donate key={'donate'} />)
+    if (truyen) {
+
+      switch (tab) {
+        case 'about':
+          setMain(<About key={'about'} description={truyen?.description || ''} />)
+          break
+        case 'rate':
+          setMain(<RatingStory key={'rate'} />)
+          break
+        case 'chapter':
+          setMain(<ListChapter key={'chapter'} totalPage={truyen.numberofchapter} />)
+          break
+        case 'comment':
+          setMain(<ListComment key={'comment'} />)
+          break
+        default:
+          setMain(<Donate key={'donate'} />)
+      }
     }
-    return () => { }
   }, [tab, truyen])
 
 
   useEffect(() => {
-    const checkSaved = async () => {
+    const handleCheckSaved = async () => {
       if (user) {
-        setHandling(true)
-        apiMain.checkSaved({ url })
-          .then(res => {
-            setSaved(res.saved || false)
-          })
-          .finally(() => { setHandling(false) })
+        mutate(url)
       }
     }
-    checkSaved();
+    refetch()
+    handleCheckSaved();
   }, [user, url])
 
-  const onClickTab = async (e) => {
-    setTab(e.target.getAttribute("data"))
+  const onClickTab = (tab: string) => {
+    setTab(tab)
   }
 
-  const onClickSaved = async (e) => {
+  const onClickSaved = async () => {
     if (user) {
       setHandling(true)
-      apiMain.savedStory( { url })
+      savedStory({ url })
         .then(res => {
           setSaved(true)
         })
@@ -121,16 +124,15 @@ function StoryDetail() {
     }
   }
 
-  const onClickUnsaved = async (e) => {
+  const onClickUnsaved = async () => {
     if (user) {
       setHandling(true)
-      try {
-        const response = await apiMain.unsavedStory({ url })
-        if (response) {
+
+      unsavedStory({ url })
+        .then(res => {
           setSaved(false)
-        }
-      }
-      finally { setHandling(false) }
+        })
+        .finally(() => { setHandling(false) })
 
     } else {
       toast.warning("Vui lòng đăng nhập để lưu truyện")
@@ -148,7 +150,7 @@ function StoryDetail() {
   return (
     <Layout >
       <div className="main-content">
-        {loadingData ? <LoadingData />
+        {isLoading ? <LoadingData />
           :
           <>
             <div className="heroSide row">
@@ -227,8 +229,8 @@ function StoryDetail() {
                       <li
                         className={`navigate__tab fs-20 bold ${active === index ? 'tab_active' : ''} ${item.mobile === 'hide' ? 'mobileHide' : ''}`}
                         key={index}
-                        data={item.path}
-                        onClick={onClickTab}
+                        //data={item.path}
+                        onClick={() => onClickTab(item.path)}
                       >{item.display}</li>)
                   })
                 }
@@ -243,7 +245,7 @@ function StoryDetail() {
       </div>
       {listchapter && <Modal active={listchapter}>
         <ModalContent onClose={onCloseModalListChapter} style={{ width: '100%' }}>
-          <ListChapter key={'chapter'} url={truyen.url} />
+          <ListChapter key={'chapter'} totalPage={truyen?.numberofchapter || 0 / 20} />
         </ModalContent>
       </Modal>}
     </Layout>
@@ -252,51 +254,34 @@ function StoryDetail() {
 }
 
 
-const About = props => {
+const About: React.FC<{ description: string }> = (props) => {
   return (<>
     <p>
-      {props.truyen?.description}
+      {props.description}
     </p>
   </>)
 }
 
-const Rate = props => {
-  return (
-    <h1>Đánh giá</h1>
-  )
-}
-
-export const ListChapter = props => {
-  const [chapters, setChapters] = useState([])
-  const [loadingData, setLoadingData] = useState(true)
+export const ListChapter: React.FC<{ totalPage: number }> = (props) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isUnlockChapter, setIsUnlockChapter] = useState(false)
-  const [loading,setLoading] = useState(false)
-  const [id,setId] = useState('')
-  const [chapnum,setChapnum] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [id, setId] = useState('')
+  const [chapnum, setChapnum] = useState(1)
   const size = 20;
-  const url = props.url
-  const user = useSelector(state => state.user.info)
-  const dispatch = useDispatch()
+  const url = useParams().url || ''
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const loadList = async () => {//xử lý gọi API danh sách truyện
-      const params = {//payload
-        page: currentPage - 1,
-        size: 20
-      }
+  const user = userStore(state => state.user)
+  const updateBalance = userStore(state => state.updateBalance)
 
-      apiMain.getNameChapters(props.url, params,user).then(res => {
-        setChapters(res)
-        setLoadingData(false)
-      })
-    }
-    loadList()//gọi hàm
-     // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [props.url, currentPage])
+  const { isLoading, data: chapters ,refetch} = useQuery<Chapter[], Error>(['get-chapters', currentPage - 1],
+    () => getNameChapters(url, {//payload
+      page: currentPage - 1,
+      size: 20
+    }))
 
-  const handleChapterLock = (e,id,chapnumber) => {
+  const handleChapterLock = (e: MouseEvent<HTMLAnchorElement>, id: string, chapnumber: number) => {
     e.preventDefault()
     setIsUnlockChapter(true)
     setId(id)
@@ -305,18 +290,18 @@ export const ListChapter = props => {
   const handleUnlock = () => {
     if (user) {
       setLoading(true)
-      unlockChapter(user,{id})
-      .then(res=>{
-        toast.success("Mở khoá truyện thành công")
-        updateUser()
-        setIsUnlockChapter(false)
-        navigate(`/truyen/${url}/${chapnum}`)
-      })
-      .catch(err=>{
-        toast.warning("Mở khoá truyện không thành công")
-
-      })
-      .finally(()=>setLoading(false))
+      unlockChapter({ id })
+        .then(res => {
+          toast.success("Mở khoá truyện thành công")
+          updateUser()
+          refetch()
+          setIsUnlockChapter(false)
+          navigate(`/truyen/${url}/${chapnum}`)
+        })
+        .catch(err => {
+          toast.warning("Mở khoá truyện không thành công")
+        })
+        .finally(() => setLoading(false))
     } else {
       toast.warning("Vui lòng đăng nhập trước khi mở khoá truyện", {
         hideProgressBar: true,
@@ -326,25 +311,24 @@ export const ListChapter = props => {
     }
   }
 
-  const updateUser = async()=>{
-    const res = getData(await apiMain.getUserInfo());
-    const {balance} = res.userInfo
-    dispatch(updateBalance(balance))
+  const updateUser = async () => {
+    const res = getData(await getUserInfo());
+    const { balance } = res.userInfo
+    updateBalance(balance)
   }
 
   return (
     <>
       <h3>Danh sách chương</h3>
       {
-        loadingData ? <LoadingData /> :
-          <Grid gap={15} col={props.col || 3} smCol={1}>
-
+        isLoading ? <LoadingData /> :
+          <Grid gap={15} col={3} smCol={1}>
             {
-              chapters.map((item, index) => <Link to={`/truyen/${url}/${item.chapternumber}`}
+              chapters && chapters.map((item, index) => <Link to={`/truyen/${url}/${item.chapternumber}`}
                 key={index} className='text-overflow-1-lines'
-                onClick={item.isLock && !item.unlock ? e=>handleChapterLock(e,item._id,item.chapternumber) : undefined}
-                style={{ "fontSize": `${props.fontsize || 16}px` }}>
-                  {item.chaptername} {item.isLock && !item.unlock && <i className='bx bx-lock'></i>}
+                onClick={item.isLock && !item.unlock ? (e: MouseEvent<HTMLAnchorElement>) => handleChapterLock(e, item._id, item.chapternumber) : undefined}
+                style={{ "fontSize": `${16}px` }}>
+                {item.chaptername} {item.isLock && !item.unlock && <i className='bx bx-lock'></i>}
               </Link>
               )
             }
@@ -363,7 +347,7 @@ export const ListChapter = props => {
               <div className="auth-body">
                 <div className="listchapter__modal">
                   <p className="">Bạn có muốn dùng 200 coin để mở khoá chương này không?</p>
-                  <button className='btn-primary' onClick={handleUnlock}>{loading&& <Loading/>}Mở khoá</button>
+                  <button className='btn-primary' onClick={handleUnlock}>{loading && <Loading />}Mở khoá</button>
                 </div>
               </div>
             </div>
@@ -378,7 +362,7 @@ export const ListChapter = props => {
 }
 
 
-const Donate = props => {
+const Donate = () => {
   return (
     <h1>Hâm mộ</h1>
   )

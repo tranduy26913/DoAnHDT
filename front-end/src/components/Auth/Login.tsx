@@ -1,6 +1,6 @@
 import useLogin from "hooks/useLogin";
 import { useState } from "react";
-import { ClickEvent } from "types/react";
+import { ClickEventHandler } from "types/react";
 import Loading from '../Loading/Loading'
 import './Login.scss'
 export default function Login(props:any) {
@@ -9,7 +9,7 @@ export default function Login(props:any) {
   
     const { mutate, isLoading } = useLogin()
   
-    const onLogin = async (e: ClickEvent) => {//xử lý đăng nhập
+    const onLogin:ClickEventHandler = async (e) => {//xử lý đăng nhập
       e.preventDefault();
       const user = { username, password };
       mutate(user)
