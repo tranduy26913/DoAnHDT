@@ -4,7 +4,9 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser'
-import {UserRoute,AuthRoute, NovelRoute, CommentRoute, AdminRoute,SavedRoute} from './routers/index.js'
+import {UserRoute,AuthRoute, NovelRoute, CommentRoute, AdminRoute,SavedRoute,PaymentRoute, StatisticRoute, RatingRoute, TrafficRoute} from './routers/index.js'
+import { Novel } from './models/Novel.js';
+import { Chapter } from './models/Chapter.js';
 
 dotenv.config()
 
@@ -40,3 +42,9 @@ app.use('/api/novels',NovelRoute)
 app.use('/api/comment',CommentRoute)
 app.use('/api/admin',AdminRoute)
 app.use('/api/saved',SavedRoute)
+app.use('/api/payment',PaymentRoute)
+app.use('/api/statistic',StatisticRoute)
+app.use('/api/rating',RatingRoute)
+app.use('/api/traffic',TrafficRoute)
+
+Chapter.updateMany({},{isLock:false}).then(res=>console.log('done'))
