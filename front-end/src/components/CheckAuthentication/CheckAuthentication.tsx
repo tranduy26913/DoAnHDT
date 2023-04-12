@@ -1,10 +1,7 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { logoutSuccess } from 'redux/authSlice'
 import { toast } from 'react-toastify'
 import jwt_decode from 'jwt-decode'
-import { clearUserInfo, setUserInfo } from 'redux/userSlice'
 import { useState } from 'react'
 import LoadingData from 'components/LoadingData/LoadingData'
 
@@ -19,10 +16,13 @@ const privatePath = [
 function CheckAuthentication(props:any) {
     const user = userStore(state => state.user)
     const refreshToken = authStore(state => state.auth?.refreshToken)
+    const logoutSuccess = authStore(state => state.logoutSuccess)
+    const setUserInfo = userStore(state => state.setUserInfo)
+    const clearUserInfo = userStore(state => state.clearUserInfo)
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
-    const dispatch = useDispatch()
+
     useEffect(() => {
         const check = () => {
             const isPrivate:boolean = privatePath.findIndex(e => location.pathname.includes(e)) >= 0 ? true : false
@@ -41,7 +41,6 @@ function CheckAuthentication(props:any) {
                 if (!user) {
                     getUserInfo()
                         .then((res:any) => {
-                            console.log(res);
                             setUserInfo(res.data.userInfo)
                         })
                         .finally(()=>setLoading(false))
@@ -56,7 +55,7 @@ function CheckAuthentication(props:any) {
             }
             else {
                 setLoading(false)
-                dispatch(clearUserInfo())
+                clearUserInfo()
                 if (isPrivate) {
                     //toast.warning("Bạn không có quyền truy cập. Vui lòng đăng nhập lại")
                     navigate('/')

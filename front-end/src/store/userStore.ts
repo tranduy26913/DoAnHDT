@@ -10,7 +10,7 @@ interface UserState {
 }
 
 export const userStore = create<UserState>()(
-    persist(
+    
         (set) => ({
             // initial state
             user: null,
@@ -44,8 +44,8 @@ export const userStore = create<UserState>()(
                 }));
             }
         }),
-        {
-            name: 'user',
-            getStorage: () => localStorage,
-        }
-    ));
+        // {
+        //     name: 'user',
+        //     getStorage: () => localStorage,
+        // }
+    );

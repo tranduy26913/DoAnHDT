@@ -8,8 +8,9 @@ import './Header.scss'
 import { numWithCommas } from 'utils/convertNumber';
 import { userStore } from 'store/userStore';
 import { modalStore } from 'store/modalStore';
-import { ClickEvent } from 'types/react';
+import { ClickEvent, ClickEventHandler } from 'types/react';
 import { authStore } from 'store/authStore';
+import { queryStore } from 'store/queryStore';
 
 const menu = {//menu hiển thị cho từng loại tài khoản admin và user thường
     ADMIN: [
@@ -78,8 +79,12 @@ export default function Header() {
     const authInactive = modalStore(state => state.authInactive);
     const clearUserInfo = userStore(state => state.clearUserInfo);
     const logoutSuccess = authStore(state => state.logoutSuccess);
-    const [expand, setExpand] = useState(false)
-    const [search, setSearch] = useState("");
+    const setQuery = queryStore(state => state.setQuery);
+
+    const [search, setSearch] = useState<string>('')
+    const [expand, setExpand] = useState<boolean>(false)
+
+    const navigate = useNavigate()
 
     useEffect(() => {//xử lý dropdown của account
         const hideDropdown = () => {
@@ -96,7 +101,7 @@ export default function Header() {
         }
     }, [])
 
-    const handleExpand = (event: ClickEvent) => {
+    const handleExpand: ClickEventHandler = (event) => {
         //expandRef.current.classList.toggle('active')
         event.stopPropagation()
         setExpand(pre => !pre)
@@ -131,11 +136,10 @@ export default function Header() {
     }
 
     const onClickSearch = () => {//xử lý tìm kiếm 
-        // setQuery(search)
-        // if (navigate.pathname !== '/tim-kiem') {
-        //     navigate('/tim-kiem')
-        // }
-
+        setQuery(search)
+        if (navigate.pathname !== '/tim-kiem') {
+            navigate('/tim-kiem')
+        }
     }
     return (
         <>

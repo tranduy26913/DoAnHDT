@@ -2,6 +2,7 @@ import { register } from "api/apiAuth"
 import { useMutation } from "react-query"
 import { toast } from "react-toastify"
 import { modalStore } from "store/modalStore"
+import { ErrorQuery } from "types/params"
 
 export default function useRegister() {
     const authInactive = modalStore(state => state.authInactive)
@@ -12,9 +13,9 @@ export default function useRegister() {
             toast.success("Đăng ký thành công. Vui lòng vào email để mở liên kết xác thực tài khoản", { autoClose: 3000, pauseOnHover: false, hideProgressBar: true });//hiển thị toast thông báo
             authInactive() //hành động tắt modal login
         },
-        onError: async (data: any, context: any) => {
-            let msg = data.response.data.details
-            let _ = msg.username || msg.password || msg.active || msg.toString()
+        onError: async (error:ErrorQuery) => {
+            let msg = error.response?.data.details
+            let _ = msg?.username || msg?.password || msg?.active || msg?.toString()
             toast.warning(_);
         }
     })

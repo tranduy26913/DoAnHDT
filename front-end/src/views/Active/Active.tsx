@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import apiMain from '../../api/apiMain'
 import Layout from '../../components/Layout/Layout'
 import LoadingData from '../../components/LoadingData/LoadingData'
+import { activeAccount } from 'api/apiAuth'
 
-function Active(props) {
+function Active() {
     const { token } = useParams()
-    const [loadingData, setLoadingData] = useState(true)
-    const [msg, setMsg] = useState("")
-    const [count, setCount] = useState(0)
+    const [loadingData, setLoadingData] = useState<boolean>(true)
+    const [msg, setMsg] = useState<string>("")
+    const [count, setCount] = useState<number>(0)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -16,7 +16,7 @@ function Active(props) {
             const params = {
                 key: token
             }
-            apiMain.activeAccount(params).then(res => {
+            activeAccount(params).then(res => {
                 setLoadingData(false)
                 setMsg("Kích hoạt thành công")
                 setCount(5);
@@ -26,7 +26,7 @@ function Active(props) {
                 })
         }
         active()
-         // eslint-disable-next-line react-hooks/exhaustive-deps 
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [token])
 
     useEffect(() => {
@@ -44,7 +44,7 @@ function Active(props) {
             }, 1000)
         }
         countDown();
-         // eslint-disable-next-line react-hooks/exhaustive-deps 
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [count])
 
     return (

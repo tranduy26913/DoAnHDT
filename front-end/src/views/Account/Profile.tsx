@@ -1,31 +1,32 @@
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import apiMain from '../../api/apiMain';
-import { useSelector, useDispatch } from 'react-redux'
 import avt from '../../assets/img/avt.png'
 import { storage } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-toastify';
 import Loading from '../../components/Loading/Loading';
 import LoadingData from '../../components/LoadingData/LoadingData';
-import { setUserInfo } from 'redux/userSlice';
+import { userStore } from 'store/userStore';
+import { ChangeEventHandler, ClickEventHandler } from 'types/react';
+import { updateUserInfo } from 'api/apiAuth';
 
 function Profile() {
-  const user = useSelector(state => state.user.info);
-  const [image, setImage] = useState("");
+  const user = userStore(state => state.user);
+  const setUserInfo = userStore(state => state.setUserInfo);
+
+  const [image, setImage] = useState<File>();
   const [preview, setPreview] = useState(user?.image || avt)
   const [name, setName] = useState(user?.tenhienthi || "");
   const [birthDate, setBirthDate] = useState(new Date());
-  const [loading,setLoading] = useState(false)
-  const [loadingUser, setLoadingUser] = useState(true)
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+  const [loadingUser, setLoadingUser] = useState(false)
 
   useEffect(() => {
-    const loadUserInfo = async() => {//load thông tin của user
+    const loadUserInfo = async () => {//load thông tin của user
       if (user) {
         setName(user?.nickname)
-        setBirthDate(user?.birthdate?new Date(user?.birthdate):new Date())
+        setBirthDate(user?.birthdate ? new Date(user?.birthdate) : new Date())
         setPreview(user?.image)
         setLoadingUser(false)
       }
@@ -49,22 +50,30 @@ function Profile() {
     })
   }
 
-  const handleSubmitSaveProfile = async (data) => {//xử lý submit lưu thông tin
+  const handleSubmitSaveProfile = async (data: any) => {//xử lý submit lưu thông tin
     try {
-      setLoading(true)
-      const update = await apiMain.updateUserInfo(data)
-      setLoading(false)
-      toast.success("Cập nhật thông tin thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
-      
-      const newUser ={...user, image:update?.userInfo?.image,nickname:update?.userInfo?.nickname,birthdate:update?.userInfo?.birthdate}
-      dispatch(setUserInfo(newUser))
+      if (user) {
+
+        setLoading(true)
+        const update = await updateUserInfo(data)
+        setLoading(false)
+        toast.success("Cập nhật thông tin thành công", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
+
+        const newUser = {
+          ...user,
+          image: update?.image || '',
+          nickname: update?.nickname || '',
+          birthdate: update?.birthdate || ''
+        }
+        setUserInfo(newUser)
+      }
     } catch (error) {
       console.log(error)
       toast.error("Lỗi cập nhật thông tin", { autoClose: 1000, hideProgressBar: true, pauseOnHover: false })
     }
   }
 
-  const handleEdit = async (e) => {
+  const handleEdit: ClickEventHandler = async (e) => {
     e.preventDefault()
     const data = {
       tenhienthi: name,
@@ -75,30 +84,30 @@ function Profile() {
   }
 
   ///OnChange event
-  const onChangeName = (e) => {
+  const onChangeName:ChangeEventHandler = (e) => {
     setName(e.target.value)
   }
-  const onChangeBirthDate = (e) => {//xử lý khi thay đổi ngày sinh
-    try{
-      const date=new Date(e.target.value)
+  const onChangeBirthDate: ChangeEventHandler = (e) => {//xử lý khi thay đổi ngày sinh
+    try {
+      const date = new Date(e.target.value)
       const regex = new RegExp("([0-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")
-      if(regex.test(date.toISOString().substring(0,10))){//nếu ngày hợp lệ
+      if (regex.test(date.toISOString().substring(0, 10))) {//nếu ngày hợp lệ
         setBirthDate(date)
       }
       else//nếu ngày không hợp lệ thì mặc định là ngày hôm nay
         setBirthDate(new Date())
     }
-    catch(err){
+    catch (err) {
       setBirthDate(new Date())
     }
-    
   }
 
-  const onChangeImage = (e) => {//xử lý chọn ảnh
-    if (e.target.files.lenght !== 0) {
-      setImage(e.target.files[0]);
-      setPreview(URL.createObjectURL(e.target.files[0]))
-    }
+  const onChangeImage: ChangeEventHandler = (e) => {//xử lý chọn ảnh
+    if (e.target.files)
+      if (e.target.files.length !== 0) {
+        setImage(e.target.files[0]);
+        setPreview(URL.createObjectURL(e.target.files[0]))
+      }
   }
 
   //style
@@ -115,25 +124,25 @@ function Profile() {
               <button className='btn-primary' onClick={upload}>Upload</button>
             </div>
             <div className="col-7 col-md-12 col-sm-12 profile__main">
-                <form>
-                  <div className="group-info">
-                    <label htmlFor="" style={labelStyle}>Tên hiển thị</label>
-                    <input onChange={onChangeName} value={name || ""} />
-                  </div>
-                  <div className="group-info">
-                    <label htmlFor="" style={labelStyle}>Email</label>
-                    {<input readOnly value={user?.email || ""}></input>}
-                  </div>
-                  <div className="group-info">
-                    <label htmlFor="" style={labelStyle}>Ngày sinh</label>
-                    <input onChange={onChangeBirthDate} type="date" id="birthday" name="birthday" value={birthDate?.toISOString().substring(0, 10)}></input>
-                  </div>
-                  <div className="d-flex">
-                    <button onClick={handleEdit}>{loading ? <Loading /> : ''} Cập nhật</button>
-                  </div>
-                </form>
+              <form>
+                <div className="group-info">
+                  <label htmlFor="" style={labelStyle}>Tên hiển thị</label>
+                  <input onChange={onChangeName} value={name || ""} />
+                </div>
+                <div className="group-info">
+                  <label htmlFor="" style={labelStyle}>Email</label>
+                  {<input readOnly value={user?.email || ""}></input>}
+                </div>
+                <div className="group-info">
+                  <label htmlFor="" style={labelStyle}>Ngày sinh</label>
+                  <input onChange={onChangeBirthDate} type="date" id="birthday" name="birthday" value={birthDate?.toISOString().substring(0, 10)}></input>
+                </div>
+                <div className="d-flex">
+                  <button onClick={handleEdit}>{loading ? <Loading /> : ''} Cập nhật</button>
+                </div>
+              </form>
 
-              </div>
+            </div>
           </div>
       }</>
 

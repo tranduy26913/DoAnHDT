@@ -7,8 +7,19 @@ import { Reading } from "models/Reading";
 export const getStories = async (params:any):Promise<Story[]> => {
     const res = getData(await axiosClient.get<never>(`/novels`, { params }));
     return res;
-
 }
+
+export const getStoriesTopRating = async (params:any):Promise<Story[]> => {
+    const res = getData(await axiosClient.get<never>(`novels/novel-toprating`, { params }));
+    return res;
+}
+
+export const getStoriesByName =async (params:any):Promise<Story[]> => {
+    const res = await axiosClient.get(`/novels/search`, { params: params });
+    return getData(res);
+
+} 
+
 export const getReadings = async ():Promise<Reading[]> => {
     const url = `/novels/readings`
     return getData(await axiosClientWithToken.get(url));
@@ -52,4 +63,17 @@ export const getRatingsByUrl = async (url:string,params:any):Promise<Rating[]> =
 
 export const deleteRating = async (params:any) => {
     return getData(await axiosClientWithToken.delete(`/rating/`,{params}));
+}
+
+export const createStory=async (params:any) => {
+    const url = `/novels/novel/create`
+    return (await axiosClientWithToken.post(url, params)).data;
+}
+export const updateStory= async (params:any) => {
+    const url = `/novels/novel/edit`
+    return getData(await axiosClientWithToken.put(url, params));
+}
+export const deleteStory= async (params:any) => {
+    const url = `/novels/novel`
+    return getData(await axiosClientWithToken.delete(url, {params}));
 }

@@ -10,3 +10,7 @@ export const savedStory = async (params:any) => {
 export const unsavedStory = async (params:any) => {
     return getData(await axiosClientWithToken.delete(`/saved`, { data: params }));
 }
+export const getListSaved = async () => {
+    const url = `/saved`
+    return getData(await axiosClientWithToken.get(url));
+}
