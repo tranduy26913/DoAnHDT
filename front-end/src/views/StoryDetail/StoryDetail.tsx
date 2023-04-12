@@ -262,7 +262,12 @@ const About: React.FC<{ description: string }> = (props) => {
   </>)
 }
 
-export const ListChapter: React.FC<{ totalPage: number }> = (props) => {
+type ListChapterProps = {
+  col?:number,
+  totalPage:number;
+}
+
+export const ListChapter: React.FC<ListChapterProps> = (props) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isUnlockChapter, setIsUnlockChapter] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -322,7 +327,7 @@ export const ListChapter: React.FC<{ totalPage: number }> = (props) => {
       <h3>Danh sách chương</h3>
       {
         isLoading ? <LoadingData /> :
-          <Grid gap={15} col={3} smCol={1}>
+          <Grid gap={15} col={props.col || 3} smCol={1}>
             {
               chapters && chapters.map((item, index) => <Link to={`/truyen/${url}/${item.chapternumber}`}
                 key={index} className='text-overflow-1-lines'

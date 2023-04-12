@@ -4,28 +4,21 @@ import Section, { SectionHeading, SectionBody } from 'components/Section/Section
 import StoryRate from 'components/StoryItem/StoryRate';
 import getData from 'api/getData';
 import { Link } from 'react-router-dom'
+import { useQuery } from 'react-query';
+import { AxiosError } from 'axios';
+import { getStoriesTopRating } from 'api/apiStory';
+import { Story } from 'models/Story';
 
 
 
 function StoryTopRate() {
 
-  const [datas, setData] = useState(Array.from(Array(6).keys(), i=>{return {}}));
-
-  useEffect(() => {
-    const getStory = async () => {//xử lý gọi hàm load truyện
-      let res = getData(await apiMain.getStorys({ size: 6 }));
-      res = res.map(item=>{
-        item = {...item,danhgia:'5.00',soluongdanhgia:10}
-        return item
-    })
-      setData(res);
-    }
-    getStory();
-  }, [])
+   const { data: stories } = useQuery<Story[], AxiosError>(['get-stories-toprating'], getStoriesTopRating)
+  
   return (
     <>
       <div className='row'>
-          <div className="col-12">
+        <div className="col-12">
 
           <Section>
             <SectionHeading>
@@ -33,15 +26,24 @@ function StoryTopRate() {
               <Link to='tat-ca'>Xem tất cả</Link>
             </SectionHeading>
             <SectionBody>
-              <div className='row' style={{marginTop:-24}}>
-                {datas.map((data, index) => <div key={index} className='col-4 col-md-6 col-sm-12'>
-                  <StoryRate  data={data} /></div>)}
+              <div className='row' style={{ marginTop: -24 }}>
+                {
+                  stories ?
+                    stories.map((data, index) => <div key={index} className='col-4 col-md-6 col-sm-12'>
+                      <StoryRate data={data} />
+                    </div>)
+                    :
+                    Array(6).map((data, index) =>
+                      <div key={index} className='col-4 col-md-6 col-sm-12'>
+                        <StoryRate data={data} />
+                      </div>)
+                }
               </div>
             </SectionBody>
           </Section>
-          </div>
-
         </div>
+
+      </div>
     </>
 
   )

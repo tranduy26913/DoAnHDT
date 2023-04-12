@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import apiMain from '../../api/apiMain'
-import Story from '../../components/Story/Story'
+import StoryItem from '../../components/StoryItem/StoryItem'
 import Section, { SectionHeading, SectionBody } from '../../components/Section/Section'
+import { queryStore } from 'store/queryStore'
+import { useQuery } from 'react-query'
+import { AxiosError } from 'axios'
+import { getStoriesByName } from 'api/apiStory'
+import { Story } from 'models/Story'
 
 
-function Search(props) {
-  const [datas, setDatas] = useState([])
-  const query = useSelector(state => state?.message?.query || "")
+function Search() {
+  const query: string = queryStore(state => state?.query)
+
+  const { data: stories, refetch } = useQuery<Story[], AxiosError>(['search-stories', query],
+    () => getStoriesByName({ search: query }))
+
   useEffect(() => {
-    const handleSearch = async () => {//hàm xử lý gọi API search
-      if (!query) {//Kiểm tra xem có nhập dữ liệu vào input search không
-        setDatas([])
-        return
-      }
-      try {
-        const response = await apiMain.getStorysByName({ search: query })
-        if (response) {
-          setDatas(response)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    handleSearch();
+    refetch()
   }, [query])
-  
+
   return (
     <>
       <span
@@ -42,7 +34,7 @@ function Search(props) {
                 </SectionHeading>
                 <SectionBody>
                   <div className='list-story'>
-                    {datas.map((data, index) => <Story key={index} data={data} />)}
+                    {stories?.map((data, index) => <StoryItem key={index} data={data} />)}
                   </div>
                 </SectionBody>
               </Section>

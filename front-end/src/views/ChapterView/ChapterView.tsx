@@ -1,33 +1,53 @@
-import React, { useEffect, useState, useRef } from 'react'
-import {  useSelector } from 'react-redux'
+import React, { useEffect, useState, useRef, MouseEventHandler } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import apiMain from 'api/apiMain'
-import getData from 'api/getData'
 import { Link } from 'react-router-dom'
 import "./Chapter.scss"
 import { ListChapter } from '../StoryDetail/StoryDetail'
 import Skeleton from 'react-loading-skeleton';
 import { toast } from 'react-toastify'
+import { useQuery } from 'react-query'
+import { getChapterByNumber, getStory } from 'api/apiStory'
+import { Chapter } from 'models/Chapter'
+import { AxiosError } from 'axios'
+import { Story } from 'models/Story'
 
-function Chapter() {
-    const { chapnum, url } = useParams()
-    const [chapter, setChapter] = useState({})
-    const [fontsize, setFontsize] = useState(18);
-    const [lineHeight, setLineHeight] = useState(1.5);
-    const [manual, setManual] = useState("")
-    const accessToken = useSelector(state => state.auth.accessToken)
-    const contentRef = useRef(null)
-    const mainContentRef = useRef(null)
-    const [styleManual, setStyleManual] = useState(null)
-    //let styleManual = {} \
-    const [truyen, setTruyen] = useState(null);
+function ChapterView() {
+    const chapnum: string = useParams().chapnum || ''
+    const url: string = useParams().url || ''
+
+    const [fontsize, setFontsize] = useState<number>(18);
+    const [lineHeight, setLineHeight] = useState<number>(1.5);
+    const [manual, setManual] = useState<string>("")
+    const contentRef = useRef<HTMLDivElement>(null)
+    const mainContentRef = useRef<HTMLDivElement>(null)
+    const [styleManual, setStyleManual] = useState<React.CSSProperties>({})
     const navigate = useNavigate()
+
+    const { isLoading, data:chapter, refetch } = useQuery<Chapter, AxiosError>(['get-chapter', url, chapnum],
+        () => getChapterByNumber(url, chapnum),
+        {
+            onError(err) {
+                console.log(err)
+                if (err?.response?.data?.details?.message === 'Bạn chưa mở khoá chương') {
+                    toast.warning('Bạn chưa mở khoá chương')
+                    navigate('/truyen/' + url)
+                }
+            }
+        })
+
+    const { data: truyen } = useQuery<Story, AxiosError>(['get-story', url],
+        () => getStory(url),
+        {
+            onError(err) {
+                toast.warning(err?.response?.data?.details?.message)
+                navigate('/')
+            }
+        })
 
     useEffect(() => {//xử lý dropdown của account
         const hideManual = () => {
             setManual('');
         }
-
         document.addEventListener("click", hideManual)
         return () => {
             document.removeEventListener("click", hideManual)
@@ -35,108 +55,70 @@ function Chapter() {
     }, [])
 
     useEffect(() => {
-        if (styleManual === null) {
-            let tmp = (window.innerWidth - mainContentRef.current?.clientWidth) / 2
-            tmp = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth - 95}px` }
-            setStyleManual(tmp)
-        }
+        // if (styleManual === null ) {
+        //     let tmp:any = (window.innerWidth - (mainContentRef?.current?.clientWidth | 0)) / 2
+        //     tmp = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth || 0 - 95}px` }
+        //     setStyleManual(tmp)
+        // }
         const changeStyleManual = () => {
-            let tmp = (window.innerWidth - mainContentRef.current?.clientWidth) / 2
-            tmp = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth - 95}px` }
-            setStyleManual(tmp)
+            if(mainContentRef.current){
+                let tmp = (window.innerWidth - mainContentRef.current?.clientWidth) / 2
+                let style = { right: `${window.innerWidth - Math.round(tmp) - mainContentRef.current?.clientWidth - 95}px` }
+                setStyleManual(style)
+            }
         }
+        changeStyleManual()
         window.addEventListener('resize', changeStyleManual)
-         // eslint-disable-next-line react-hooks/exhaustive-deps 
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
         return () => {
             window.removeEventListener('resize', changeStyleManual)
         }
     }, [])
 
 
-    useEffect(() => {//Xử lý load dữ liệu chương truyện
-        const getChapter = async () => {//tạo hàm
-            if (accessToken) {
-                apiMain.getChapterByNumber(url, chapnum)
-                    .then(res => {
-                        setChapter(getData(res))
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        if(err.response.data.details.message ==='Bạn chưa mở khoá chương'){
-                        toast.warning('Bạn chưa mở khoá chương')
-                        navigate('/truyen/'+url)
-                        }
-                    })
-            }
-            else{
-                apiMain.getChapterByNumber(url, chapnum)
-                    .then(res => {
-                        setChapter(getData(res))
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            }
-        }
-        getChapter()//gọi hàm
-        setManual("")
-         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [chapnum])
-
-    useEffect(()=>{
-        if(truyen){
+    useEffect(() => {
+        if (truyen) {
             let readings = localStorage.getItem("readings");
-            readings = JSON.parse(readings)
-            if(Array.isArray(readings)){
-                if(Number(chapnum)){
-                
-                    let index = readings.findIndex(item=>item.url===url)
+            readings = JSON.parse(readings!)
+            if (Array.isArray(readings)) {
+                if (Number(chapnum)) {
+
+                    let index = readings.findIndex(item => item.url === url)
                     const newReading = {
-                        name:truyen.name,
+                        name: truyen.name,
                         url,
-                        image:truyen.image,
-                        chapternumber:Number(chapnum),
-                        sochap:truyen.sochap
+                        image: truyen.image,
+                        chapternumber: Number(chapnum),
+                        sochap: truyen.sochap
                     }
-                    if(index!==-1){
+                    if (index !== -1) {
                         readings[index] = newReading
                     }
-                    else{
-                        readings = [newReading,...readings]
+                    else {
+                        readings = [newReading, ...readings]
                         readings.pop()
                     }
-                
+
                 }
-                localStorage.setItem("readings",JSON.stringify(readings))
+                localStorage.setItem("readings", JSON.stringify(readings))
             }
         }
-         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    },[truyen])
-
-    useEffect(()=>{
-        const getStory =async()=>{
-            apiMain.getStory({url})
-            .then(res=>{
-                setTruyen(res)
-            })
-        } 
-        getStory()
-    },[url])
-
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [truyen])
 
     useEffect(() => {//xử lý hiển thị nội dung truyện
-        contentRef.current.innerHTML = chapter?.content || ""
+        if(contentRef.current)
+            contentRef.current.innerHTML = chapter?.content || ""
     }, [chapter])
 
-    const onClickSetting = (e) => {
+    const onClickSetting:MouseEventHandler<HTMLDivElement> = (e) => {
         e.stopPropagation()
     }
 
     const onClickToggleManual = () => {
         let list = document.getElementById('chapter-manual__list');
         let icon = document.getElementById('icon-manual');
-        if (list) {
+        if (list && icon) {
             list.classList.toggle('active');
             if (icon.classList.contains('bx-arrow-from-top'))
                 icon.classList.replace('bx-arrow-from-top', 'bx-arrow-from-bottom')
@@ -145,20 +127,18 @@ function Chapter() {
         }
     }
 
-    const onClickNextChap = ()=>{
-        navigate(`/truyen/${url}/${Number(chapnum)+1}`)
-        setChapter({})
+    const onClickNextChap = () => {
+        navigate(`/truyen/${url}/${Number(chapnum) + 1}`)
     }
-    const onClickPreviousChap = ()=>{
-        if(Number(chapnum)>1){
-            navigate(`/truyen/${url}/${Number(chapnum)-1}`)
-            setChapter({})
+    const onClickPreviousChap = () => {
+        if (Number(chapnum) > 1) {
+            navigate(`/truyen/${url}/${Number(chapnum) - 1}`)
         }
     }
 
-    return (<>
+    return (
         <div className="main" style={{ backgroundColor: "#ced9d9", paddingTop: "30px" }}>
-            <div className="container" style={{paddingBottom:"3rem"}}>
+            <div className="container" style={{ paddingBottom: "3rem" }}>
                 <div ref={mainContentRef} className="main-content--chapter">
                     <div className="d-lex" >
                         <div className="chapter__heading">
@@ -177,18 +157,18 @@ function Chapter() {
                             <li className='text-with-icon'><i className='bx bx-time'></i>{chapter?.createAt || Date()}</li>
                         </ul>
                         <div className={`fs-${fontsize}`} style={{ "lineHeight": `${lineHeight}` }}>
-                           
-                                <div ref={contentRef} id="chapter__content"> </div>{chapter?.content?"":<Skeleton count={20}/>
+
+                            <div ref={contentRef} id="chapter__content"> </div>{chapter?.content ? "" : <Skeleton count={20} />
                             }
-                                
-                            
+
+
                         </div>
 
                     </div>
                 </div>
                 <div className="chapter__nav">
                     <div>
-                        <span  className='text-with-icon'>
+                        <span className='text-with-icon'>
                             <i className='bx bx-arrow-back' ></i>Chương trước
                         </span>
                     </div>
@@ -210,9 +190,11 @@ function Chapter() {
                                 setManual("list-chap")
                         }}>
                             <span><i className='bx bx-list-ul'></i></span>
-                            <div onClick={onClickSetting} className="chapter-manual__popup" >
+                            <div 
+                            onClick={onClickSetting} 
+                            className="chapter-manual__popup" >
                                 <div className="list-chapter" style={{ width: "700px", "maxHeight": "500px", "overflow": "scroll" }}>
-                                    <ListChapter url={url} col={2} fontsize={15} />
+                                    <ListChapter col={2} totalPage={truyen?.numberofchapter} />
                                 </div>
                             </div>
                         </li>
@@ -271,8 +253,7 @@ function Chapter() {
                 </div>
             </div>
         </div>
-
-    </>)
+    )
 }
 
-export default Chapter
+export default ChapterView

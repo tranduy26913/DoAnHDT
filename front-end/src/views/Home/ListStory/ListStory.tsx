@@ -61,7 +61,6 @@ function ListStory() {
 
 
   useEffect(() => {
-    console.log(data)
     if (isSuccess && data)
       setData(data)
 

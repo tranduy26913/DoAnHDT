@@ -15,6 +15,7 @@
     width: 70px;
     position: fixed;
     top: 102px;
+    z-index: 100;
     right: 40px;
     // margin: initial;
     border-radius: 4px;
@@ -71,7 +72,7 @@
         right: 80px;
         padding: 10px;
         background-color: white;
-        z-index: 2;
+        z-index: 100;
         min-width: 500px;
         box-shadow: 0 10px 10px 0px rgba($color: #000000, $alpha: .2);
     }
