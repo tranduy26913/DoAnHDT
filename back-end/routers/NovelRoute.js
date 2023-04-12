@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/novel/newupdate',NovelController.GetNewestChapter);
 
+router.get('/novel-toprating',NovelController.GetNovelsTopRating);
+
 router.get('/', NovelController.GetNovels);
 
 router.get('/search', NovelController.SearchNovelByName);
@@ -35,5 +37,9 @@ router.put('/novel/edit',verifyToken,NovelController.EditNovel)
 router.delete('/novel',verifyToken,NovelController.DeleteNovelByUrl)
 
 router.get('/readingsdefault',NovelController.GetReadingsDefault)
+
+router.get('/updatechapters',NovelController.UpdateChapters)
+
+router.post('/chuong/unlock',verifyToken,NovelController.UnlockChapter)
 
 export default router;
