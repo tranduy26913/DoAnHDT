@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import apiMain from 'api/apiMain'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'react-toastify'
 import getData from 'api/getData'
+import { ChangeEventHandler, ClickEventHandler } from 'types/react';
+import { getChapterByNumber } from 'api/apiStory';
+import { createChapter, updateChapter } from 'api/apiChapter';
 
-const AddChapter = ({ url, chapnumber, onClickBackFromAddChap, getChapters }) => {
-  const [content, setContent] = useState("")
-  const [tenchuong, setTenchuong] = useState("")
-  const [edit, setEdit] = useState(false)
-  const [isLock, setIsLock] = useState(false)
+type AddChapterProps = {
+  url: string,
+  chapnumber: number | string,
+  onClickBackFromAddChap: ClickEventHandler,
+  reloadChapters: ClickEventHandler
+}
+const AddChapter: React.FC<AddChapterProps> = ({ url, chapnumber, onClickBackFromAddChap }) => {
+  const [content, setContent] = useState<string>("")
+  const [tenchuong, setTenchuong] = useState<string>("")
+  const [edit, setEdit] = useState<boolean>(false)
+  const [isLock, setIsLock] = useState<boolean>(false)
 
-  const onChangeTenchuong = (e) => {
+  const onChangeTenchuong: ChangeEventHandler = (e) => {
     setTenchuong(e.target.value)
   }
 
   useEffect(() => {
     const GetChapter = async () => {
       if (chapnumber) {
-        apiMain.getChapterByNumber(url, chapnumber)
+        getChapterByNumber(url, chapnumber)
           .then(res => {
-            setContent(res.content)
+            setContent(res.content || '')
             setTenchuong(res.chaptername)
             setEdit(true)
             setIsLock(res.isLock)
@@ -30,29 +38,27 @@ const AddChapter = ({ url, chapnumber, onClickBackFromAddChap, getChapters }) =>
     GetChapter()
   }, [url, chapnumber])
 
-  const onClickAddChapter = async (e) => {
-    const params = { content, tenchap: tenchuong, url,isLock }
+  const onClickAddChapter:ClickEventHandler = async (e) => {
+    const params = { content, tenchap: tenchuong, url, isLock }
     if (content.length <= 10) {
       toast.warning("Nội dung chương phải dài hơn 10 kí tự");
       return
     }
-    apiMain.createChapter(params)
+    createChapter(params)
       .then(res => {
-        getChapters()
         toast.success("Thêm chương thành công")
       })
       .catch(err => { toast.error(getData(err.response)?.details.message) })
   }
 
-  const onClickEditChapter = async (e) => {
-    const params = { content, tenchap: tenchuong, url, chapnumber ,isLock}
+  const onClickEditChapter:ClickEventHandler = async (e) => {
+    const params = { content, tenchap: tenchuong, url, chapnumber, isLock }
     if (content.length <= 10) {
       toast.warning("Nội dung chương phải dài hơn 10 kí tự");
       return
     }
-    apiMain.updateChapter(params)
+    updateChapter(params)
       .then(res => {
-        getChapters()
         toast.success("Sửa truyện thành công")
       })
       .catch(err => { toast.error(getData(err.response)?.details.message) })
@@ -66,8 +72,8 @@ const AddChapter = ({ url, chapnumber, onClickBackFromAddChap, getChapters }) =>
       <label htmlFor="" className='fs-16' style={labelStyle}>Tên chương</label>
       <input onChange={onChangeTenchuong} value={tenchuong || ""} />
     </div>
-    <div  className='d-flex' style={{ 'marginBottom': '10px', gap:'6px'}}>
-      <input  name='isLock' type='checkbox' checked={isLock} onChange={()=>setIsLock(pre=>!pre)} value={isLock} />
+    <div className='d-flex' style={{ 'marginBottom': '10px', gap: '6px' }}>
+      <input name='isLock' type='checkbox' checked={isLock} onChange={() => setIsLock(pre => !pre)} />
       <label htmlFor="isLock" className='fs-16' style={labelStyle}>Khoá chương (Tính phí 200coin)</label>
     </div>
     <label htmlFor="" className='fs-16' style={labelStyle}>Nội dung chương</label>
@@ -88,7 +94,7 @@ const AddChapter = ({ url, chapnumber, onClickBackFromAddChap, getChapters }) =>
         console.log('Focus.', editor);
       }}
     />
-   
+
 
     <div className='d-flex'>
       {

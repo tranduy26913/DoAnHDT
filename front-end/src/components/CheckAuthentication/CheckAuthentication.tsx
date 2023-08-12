@@ -69,8 +69,16 @@ function CheckAuthentication(props:any) {
         <>
         {
             loading?<>
+            <div className='d-flex' style={{
+                height:'100vh',
+                justifyContent:'center',
+                alignItems:'center',
+                flexDirection:'column'
+            }}>
+
              <LoadingData />
-            {/* <Typography>Đang lấy thông tin người dùng. Vui lòng đợi</Typography> */}
+            <p style={{fontSize:'18px'}}>Đang lấy thông tin người dùng. Vui lòng đợi</p>
+            </div>
             </>
             :props.children
         }

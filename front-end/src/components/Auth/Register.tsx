@@ -2,10 +2,11 @@ import Loading from '../Loading/Loading'
 import { useState, useReducer } from 'react'
 import apiMain from '../../api/apiMain';
 import { toast } from 'react-toastify';
-import { ChangeEvent, ClickEvent } from 'types/react';
+import { ChangeEvent, ClickEvent, ClickEventHandler } from 'types/react';
 import useRegister from 'hooks/useRegister';
+import { checkEmail, checkUsername } from 'api/apiAuth';
 
-function Register(props:any) {
+function Register() {
     const [emailRegister, setEmailRegister] = useState("");
     const [usernameRegister, setUsernameRegister] = useState("");
     const [passwordRegister, setPasswordRegister] = useState("");
@@ -13,7 +14,7 @@ function Register(props:any) {
 
     const [message, dispatchReg] = useReducer(registerReducer, initialValidate);
     const { mutate, isLoading } = useRegister()
-    const onRegister = async (e: ClickEvent) => {//Xử lý gọi API Sign up
+    const onRegister:ClickEventHandler = (e) => {//Xử lý gọi API Sign up
         e.preventDefault();
         if (!message.email.valid || !message.username.valid || !message.password.valid || !message.passwordcf.valid) {
             toast.warning("Vui lòng điền các thông tin phù hợp")
@@ -126,7 +127,6 @@ const registerReducer = (state, action) => {
     switch (action.type) {
         case "EMAIL": {
             let newState = { ...state }
-            console.log(newState)
             newState.email = action.payload
             return newState
         }
@@ -148,14 +148,13 @@ const registerReducer = (state, action) => {
     }
 }
 
-const validateEmail = async (email) => {
+const validateEmail = async (email:string) => {
     const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ ///regex validate email
     if (regex.test(email)) {
         try {
-            const res = await apiMain.checkEmail({ email })
+            const res = await checkEmail({ email })
 
             if (res.valid) {
-                console.log(true)
                 return { valid: true, message: "Email hợp lệ" }
             }
             else {
@@ -170,10 +169,10 @@ const validateEmail = async (email) => {
     }
 }
 
-const validateUsername = async (username) => {
+const validateUsername = async (username:string) => {
     if (username.length > 5) {
         try {
-            const res = await apiMain.checkUsername({ username })
+            const res = await checkUsername({ username })
 
             if (res.valid) {
                 return { valid: true, message: "Tên đăng nhập hợp lệ" }
@@ -191,7 +190,7 @@ const validateUsername = async (username) => {
     }
 }
 
-const validatePassword = (password) => {
+const validatePassword = (password:string) => {
 
     const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");//regex kiểm tra mật khẩu hợp lệ
     if (strongRegex.test(password)) {
@@ -201,7 +200,7 @@ const validatePassword = (password) => {
         return { valid: false, message: "Mật khẩu phải có ít nhất 8 kí tự. Chứa kí tự thường, kí tự hoa và số" }
 }
 
-const validatePasswordCf = (password, passwordcf) => {
+const validatePasswordCf = (password:string, passwordcf:string) => {
     if (password === passwordcf) {
         return { valid: true, message: "Mật khẩu xác nhận trùng khớp" }
     }
@@ -209,8 +208,8 @@ const validatePasswordCf = (password, passwordcf) => {
         return { valid: false, message: "Mật khẩu xác nhận không trùng khớp" }
 }
 
-function debounce(func, wait) {
-    var timeout;
+function debounce(func:Function, wait:number) {
+    var timeout:number;
 
     return function () {
         var context = this,
@@ -221,7 +220,7 @@ function debounce(func, wait) {
         };
 
         clearTimeout(timeout);
-        timeout = setTimeout(executeFunction, wait);
+        timeout = window.setTimeout(executeFunction, wait);
     };
 };
 

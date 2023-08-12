@@ -1,11 +1,12 @@
-
-import  { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import apiMain from 'api/apiMain'
-import Reading from 'components/Reading/Reading'
+import ReadingItem from 'components/ReadingItem/ReadingItem'
 import StoryCreated from './Story/StoryCreated'
 import { Route, Routes, Link, useLocation } from 'react-router-dom'
-import Saveds from './Saved/Saveds'
+import { useQuery } from 'react-query'
+import { Reading } from 'models/Reading'
+import { AxiosError } from 'axios'
+import { getReadings } from 'api/apiStory'
+import ListSaved from './ListSaved/ListSaved'
+
 const nav = [
   {
     path: 'reading',
@@ -31,14 +32,14 @@ function TuTruyen() {
         {
           nav.map((item, index) => {
             return <Link key={item.path} to={item.path} className={`navigate__tab fs-18 fw-6 ${active === index ? 'tab_active' : ''}`}
-              name={item.path}
+              //name={item.path}
             >{item.display}</Link>
           })
         }
       </div>
       <Routes>
         <Route key={'reading'} path='reading' element={<Readings key={'reading'}/>} />
-        <Route key={'saved'} path='saved' element={<Saveds key={'saved'} />} />
+        <Route key={'saved'} path='saved' element={<ListSaved key={'saved'} />} />
         <Route key={'created'} path='created' element={<StoryCreated key={'created'}/>} />
       </Routes>
 
@@ -47,34 +48,13 @@ function TuTruyen() {
   )
 }
 const Readings = () => {
-  const [readings, setReadings] = useState([])
-  const user = useSelector(state=>state.user.info)
-  useEffect(()=>{
-    const LoadReading = async () => {
-      if (user) {
-        apiMain.getReadings()
-          .then(res => {
-            setReadings(res)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      }
-    }
-    LoadReading()
-  }, [user])
+  const {data:readings} = useQuery<Reading[],AxiosError>(['get-readings'], getReadings)
 
   return (
     <div>
       {
-        readings.map((item, i) => <div key={i} >
-          <Reading  data={{
-            tentruyen: item.name,
-            hinhanh: item.image,
-            dadoc: item.chapternumber,
-            total: item.sochap,
-            url: item.url
-          }} />
+        readings?.map((item, i) => <div key={i} >
+          <ReadingItem  data={item} />
             <hr /></div>)
         
       }</div>)

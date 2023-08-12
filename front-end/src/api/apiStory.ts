@@ -43,7 +43,7 @@ export const getChapters = async (url:string, params:any):Promise<Chapter[]> => 
     return getData(res);
 }
 
-export const getChapterByNumber = async (tentruyen:string|undefined, chapnum:string|undefined):Promise<Chapter> => {
+export const getChapterByNumber = async (tentruyen:string|undefined, chapnum:string|number):Promise<Chapter> => {
     return getData(await axiosClientWithToken.get(`/novels/novel/${tentruyen}/chuong/${chapnum}`));
 }
 
@@ -76,4 +76,9 @@ export const updateStory= async (params:any) => {
 export const deleteStory= async (params:any) => {
     const url = `/novels/novel`
     return getData(await axiosClientWithToken.delete(url, {params}));
+}
+
+export const getStoriesByUsername = async (params:any):Promise<Story[]> => {
+    const res = await axiosClientWithToken.get(`/novels/created`, { params });
+    return getData(res);
 }

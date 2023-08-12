@@ -5,6 +5,7 @@ export default function ScrollToTop(props:any) {
   const { pathname } = useLocation();
 
   useLayoutEffect(() => {
+    if(!pathname.includes('/user/'))
     document.documentElement.scrollTo({
       top: 0,
       left: 0,

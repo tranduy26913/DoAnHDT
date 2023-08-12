@@ -3,53 +3,53 @@ import apiMain from 'api/apiMain'
 import Grid from 'components/Grid/Grid'
 import { toast } from 'react-toastify'
 import AddChapter from './AddChapter'
+import { ClickEventHandler } from 'types/react'
+import { deleteChapter } from 'api/apiChapter'
+import { useQuery } from 'react-query'
+import { getNameChapters } from 'api/apiStory'
 
-const ListChap = ({ url,onClickBackFromListChap }) => {
-    const [chapters, setChapters] = useState([])
-    const [addChap, setAddChap] = useState(false)
-    const [chapternumber, setChapternumber] = useState(null)
+type ListChapProps = {
+  url:string,
+  onClickBackFromListChap:ClickEventHandler
+}
+const ListChap:React.FC<ListChapProps> = ({ url,onClickBackFromListChap }) => {
+    const [addChap, setAddChap] = useState<boolean>(false)
+    const [chapternumber, setChapternumber] = useState<number | string>('')
     
-    const onClickUpdateChap = (value) => {
+    const {data:chapters,refetch} = useQuery(['get-chapters'],()=>getNameChapters(url, {size:20}))
+    
+    const onClickUpdateChap = (value:number) => {
       setChapternumber(value)
       setAddChap(true)
     }
-    const onClickDeleteChap = (value) => {
+    const onClickDeleteChap = (value:number) => {
       if (value) {
-        apiMain.deleteChapter({ url, chapnumber: value })
+        deleteChapter({ url, chapnumber: value })
           .then(res => {
-            getChapter()
+            refetch()
             toast.success(res.message)
           })
           .catch(err => {
-            console.log(err)
             toast.error(err.response.details.message)
           })
       }
     }
-    
 
-    const getChapter = useCallback(async () => {
-      apiMain.getNameChapters(url, {size:20})
-        .then(res => {
-          setChapters(res)
-        })},[url])
-
-    
-    useEffect(()=>{
-      getChapter()
-       // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [])
-  
-    const onClickAddChapter = (e) => {
-      e.preventDefault()
-      setAddChap(true)
-      setChapternumber(null)
+    const onClickBackFromAddChap:ClickEventHandler = ()=>{
+      setAddChap(false)
+      refetch()
     }
+  
+    const onClickAddChapter:ClickEventHandler = (e) => {
+      setAddChap(true)
+      setChapternumber('')
+    }
+    const reloadChapters = useCallback(()=>refetch(),[])
     return (
       <>{
         addChap ? <AddChapter url={url} chapnumber={chapternumber} 
-         onClickBackFromAddChap={()=>{setAddChap(false)}}
-         getChapters={getChapter} /> :
+         onClickBackFromAddChap={onClickBackFromAddChap}
+         reloadChapters={reloadChapters}/> :
   
           <div>
             <div className='d-flex' style={{ 'justifyContent': 'space-between' }}>
@@ -57,14 +57,14 @@ const ListChap = ({ url,onClickBackFromListChap }) => {
               <span className='fs-20 fw-6'>Danh sách chương</span>
               <button className='btn-primary' style={{ 'margin': '0px 10px' }} onClick={onClickAddChapter}>Thêm chương</button>
             </div>
-            <Grid gap={15} col={2} snCol={1}>
+            <Grid gap={15} col={2} smCol={1}>
               {
-                chapters.map((item, index) => {
+                chapters?.map((item, index) => {
                   return (
                     <div key={item.chapternumber}>
                     <div className='d-flex'>
                       <div className="col-10 d-flex" style={{'alignItems':'center'}}>
-                        <h4 key={item.chapternumber} name={item.chapternumber} className='text-overflow-1-lines'>{item.chaptername}</h4>
+                        <h4 key={item.chapternumber} className='text-overflow-1-lines'>{item.chaptername}</h4>
                       </div>
                       <div className="col-2">
                         <span className="text-with-icon" onClick={()=>onClickUpdateChap(item.chapternumber)}><i className='bx bx-edit' ></i> Sửa</span>

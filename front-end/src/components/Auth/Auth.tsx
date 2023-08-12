@@ -1,18 +1,14 @@
 import Loading from '../Loading/Loading'
 import { useState, useEffect, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
-import apiMain from '../../api/apiMain';
-import { handleLogin } from '../../handle/handleAuth';
-import { clearMessageLogin, setLoading } from '../../redux/messageSlice';
 import { toast } from 'react-toastify';
 import Register from './Register';
 import './Auth.scss'
-
 import Login from './Login';
 import ReActive from './ReActive';
+import { forgetPassword } from 'api/apiAuth';
+import { ChangeEventHandler, ClickEventHandler } from 'types/react';
 
-function Auth(props) { //component đăng nhập và đăng ký
+function Auth(props:{choose:boolean}) { //component đăng nhập và đăng ký
   const [login, setLogin] = useState(props.choose)
 
   const [isforgetPasswordForm, setIsforgetPasswordForm] = useState(false)
@@ -68,18 +64,18 @@ function Auth(props) { //component đăng nhập và đăng ký
 
 
 
-const ForgetPassword = props => { ///Quên mật khẩu
+const ForgetPassword = () => { ///Quên mật khẩu
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const onChangeEmail = (e) => {
+  const onChangeEmail:ChangeEventHandler = (e) => {
     setEmail(e.target.value)
   }
 
-  const onForgetPassword = async (e) => { //xử lý gọi API gửi mail quên mật khẩu
+  const onForgetPassword:ClickEventHandler = async (e) => { //xử lý gọi API gửi mail quên mật khẩu
     e.preventDefault()
     setLoading(true)
-    apiMain.forgetPassword({ email: email })
+    forgetPassword({ email: email })
       .then(res => {
         toast.success("Đã gửi mật khẩu mới vào email");
       })
